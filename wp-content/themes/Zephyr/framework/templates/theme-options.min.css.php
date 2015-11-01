@@ -1,0 +1,25 @@
+<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
+
+/**
+ * Outputs a minified version of theme-options.css
+ *
+ * Thanks to http://manas.tungare.name/software/css-compression-in-php/
+ *
+ * @action Before the template: 'us_before_template:templates/theme-options.min.css'
+ * @action After the template: 'us_after_template:templates/theme-options.min.css'
+ */
+
+ob_start();
+us_load_template( 'templates/theme-options.css' );
+$buffer = ob_get_clean();
+
+// Remove comments
+$buffer = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer );
+
+// Remove space after colons
+$buffer = str_replace( ': ', ':', $buffer );
+
+// Remove whitespace
+$buffer = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    ' ), '', $buffer );
+
+echo $buffer;

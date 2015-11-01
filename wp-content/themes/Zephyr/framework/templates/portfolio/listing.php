@@ -1,0 +1,245 @@
+<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
+
+/**
+ * Output a single us_portfolio listing. Universal template that is used by all the possible us_portfolio posts listings.
+ *
+ * @var $categories string Comma-separated list of categories slugs to show
+ * @var $style_name string Items style: 'style_1' / 'style_2' / ... / 'style_N'
+ * @var $columns int Columns number: 2 / 3 / 4 / 5
+ * @var $ratio string Items ratio: '3x2' / '4x3' / '1x1' / '2x3' / '3x4'
+ * @var $metas array Meta data that should be shown: array( 'title', 'date', 'categories' )
+ * @var $align string Content alignment: 'left' / 'center' / 'right'
+ * @var $filter string Filter type: 'none' / 'category'
+ * @var $with_indents bool Items have indents?
+ * @var $pagination string Pagination type: 'regular' / 'none' / 'ajax'
+ * @var $orderby string Order type: 'date' / 'rand'
+ * @var $order string Order direction 'desc' / 'asc'
+ * @var $perpage int Items per page (if 0, will output all the items)
+ * @var $page int If paginated, determines the current page number
+ * @var $el_class string Additional classes that will be appended to the main .w-portfolio container
+ *
+ * @action Before the template: 'us_before_template:templates/portfolio/listing'
+ * @action After the template: 'us_after_template:templates/portfolio/listing'
+ * @filter Template variables: 'us_template_vars:templates/portfolio/listing'
+ */
+
+// .w-portfolio container additional classes and inner CSS-styles
+$classes = '';
+$inner_css = '';
+
+$style_name = isset( $style_name ) ? $style_name : 'style_1';
+$classes .= ' ' . $style_name;
+
+$columns = isset( $columns ) ? intval( $columns ) : 3;
+if ( $columns < 2 OR $columns > 5 ) {
+	$columns = 3;
+}
+$classes .= ' columns_' . $columns;
+
+$align = isset( $align ) ? $align : 'left';
+$classes .= ' align_' . $align;
+
+$available_ratios = array( '3x2', '4x3', '1x1', '2x3', '3x4' );
+$ratio = ( isset( $ratio ) AND in_array( $ratio, $available_ratios ) ) ? $ratio : '3x2';
+$classes .= ' ratio_' . str_replace( ':', '-', $ratio );
+
+$available_metas = array( 'title', 'date', 'categories' );
+$metas = ( isset( $metas ) AND is_array( $metas ) ) ? array_intersect( $metas, $available_metas ) : array( 'title' );
+
+$with_indents = ( isset( $with_indents ) AND $with_indents );
+if ( $with_indents ) {
+	$classes .= ' with_indents';
+}
+
+// Preparing query
+$query_args = array(
+	'post_type' => 'us_portfolio',
+	'post_status' => 'publish',
+);
+
+// Show only items from the certain categories
+$categories = ( isset( $categories ) AND ! empty( $categories ) ) ? array_filter( explode( ',', $categories ) ) : array();
+if ( ! empty( $categories ) ) {
+	$query_args['us_portfolio_category'] = implode( ',', $categories );
+}
+
+// Setting items order
+$orderby = ( isset( $orderby ) AND $orderby == 'rand' ) ? 'rand' : 'date';
+$order = ( isset( $order ) AND $order == 'ASC' ) ? 'ASC' : 'DESC';
+if ( $orderby == 'rand' ) {
+	$query_args['orderby'] = 'rand';
+} else/*if ( $atts['order_by'] == 'date' )*/ {
+	$query_args['orderby'] = array(
+		'date' => $order,
+	);
+}
+
+
+// Posts per page
+$pagination = isset( $pagination ) ? $pagination : 'none';
+$has_pagination = ( $pagination != 'none' );
+$perpage = isset( $perpage ) ? intval( $perpage ) : 0;
+$page = isset( $page ) ? max( 1, intval( $page ) ) : 1;
+if ( $perpage < 1 ) {
+	$query_args['nopaging'] = TRUE;
+	$has_pagination = FALSE;
+} else {
+	$query_args['posts_per_page'] = $perpage;
+	$query_args['paged'] = $page;
+}
+
+// Grabbing all the categories with a single request
+global $wpdb;
+$wpdb_query = 'SELECT `terms`.`slug` AS `category_slug`, `terms`.`name` AS `category_name`, `term_relationships`.`object_id` ';
+$wpdb_query .= 'FROM `' . $wpdb->term_taxonomy . '` as `term_taxonomy`, `' . $wpdb->terms . '` as `terms`, `' . $wpdb->term_relationships . '` AS `term_relationships` ';
+$wpdb_query .= 'WHERE `term_taxonomy`.`taxonomy` = \'us_portfolio_category\' AND `terms`.`term_id` = `term_taxonomy`.`term_id`';
+if ( ! empty( $categories ) ) {
+	$wpdb_query .= ' AND `terms`.`slug` IN (\'' . implode( '\',\'', array_map( 'esc_sql', $categories ) ) . '\')';
+}
+$wpdb_query .= ' AND `term_relationships`.`term_taxonomy_id` = `term_taxonomy`.`term_taxonomy_id`';
+// Categories slugs for all the portfolio items that may be shown by the element
+$items_categories = array();
+// Category names for all the slugs
+$categories_names = array();
+foreach ( $wpdb->get_results( $wpdb_query ) as $row ) {
+	if ( ! isset( $items_categories[ $row->object_id ] ) ) {
+		$items_categories[ $row->object_id ] = array();
+	}
+	$items_categories[ $row->object_id ][] = $row->category_slug;
+	if ( ! isset( $categories_names[ $row->category_slug ] ) ) {
+		$categories_names[ $row->category_slug ] = $row->category_name;
+	}
+}
+if ( $has_pagination AND count( $items_categories ) <= $perpage ) {
+	$has_pagination = FALSE;
+}
+
+if ( empty( $items_categories ) ) {
+	return;
+}
+
+$tile_sizes = array();
+$items_ids = implode( ',', array_keys( $items_categories ) );
+// Grabbing information about non-standard tile sizes to show them properly from the very beginning
+$wpdb_query = 'SELECT `post_id`, `meta_value` FROM `' . $wpdb->postmeta . '` ';
+$wpdb_query .= 'WHERE `post_id` IN (' . $items_ids . ') AND `meta_key`=\'us_tile_size\' AND `meta_value` NOT IN (\'\', \'1x1\')';
+foreach ( $wpdb->get_results( $wpdb_query ) as $result ) {
+	$tile_sizes[ $result->post_id ] = $result->meta_value;
+}
+
+if ( $has_pagination AND ! empty( $categories_names ) ) {
+	// We count the element order for the various cases at the very beginning for complex ajax algorithms
+	$wpdb_query = 'SELECT `ID` FROM `' . $wpdb->posts . '` ';
+	$wpdb_query .= 'WHERE `ID` IN (' . $items_ids . ') AND `post_type`=\'us_portfolio\' AND `post_status`=\'publish\' ';
+	$wpdb_query .= 'ORDER BY ' . ( ( $orderby == 'rand' ) ? 'RAND()' : ( '`post_date` ' . $order ) );
+	$tile_order = array(
+		'*' => array_map( 'absint', $wpdb->get_col( $wpdb_query ) ),
+	);
+	if ( $filter == 'category' ) {
+		$tile_order = array_merge( $tile_order, array_fill_keys( array_keys( $categories_names ), array() ) );
+		foreach ( $tile_order['*'] as $elm_id ) {
+			foreach ( $items_categories[ $elm_id ] AS $category_slug ) {
+				$tile_order[ $category_slug ][] = $elm_id;
+			}
+		}
+	}
+
+	// Overloading the query by selecting the certain IDs
+	$query_args['post__in'] = $tile_order['*'];
+	$query_args['orderby'] = 'post__in';
+}
+
+us_open_wp_query_context();
+global $wp_query;
+$wp_query = new WP_Query( $query_args );
+if ( ! have_posts() ) {
+	// TODO Move to a separate variable
+	_e( 'No portfolio items were found.', 'us' );
+
+	return;
+}
+
+$filter_html = '';
+$filter = isset( $filter ) ? $filter : 'none';
+if ( $filter == 'category' ) {
+	// $categories_names already contains only the used categories
+	if ( count( $categories_names ) > 1 ) {
+		$classes .= ' with_filters';
+		$filter_html .= '<div class="g-filters"><div class="g-filters-list">';
+		$filter_html .= '<div class="g-filters-item active" data-category="*">' . __( 'All', 'us' ) . '</div>';
+		foreach ( $categories_names as $category_slug => $category_name ) {
+			$filter_html .= '<div class="g-filters-item" data-category="' . $category_slug . '">' . $category_name . '</div>';
+		}
+		$filter_html .= '</div></div>';
+	}
+}
+
+if ( ! empty( $filter_html ) OR $has_pagination OR ! empty( $tile_sizes ) ) {
+	// We'll need the isotope script for any of the above cases
+	wp_enqueue_script( 'us-isotope' );
+	$classes .= ' position_isotope';
+}
+
+$el_class = isset( $el_class ) ? $el_class : '';
+if ( ! empty( $el_class ) ) {
+	$classes .= ' ' . $el_class;
+}
+
+// TODO Move to some theme-overloaded filter
+$classes .= ' animate_revealgrid';
+
+?><div class="w-portfolio<?php echo $classes ?>"><?php echo $filter_html ?><div class="w-portfolio-list"><?php
+
+// Preparing template settings for loop post template
+$template_vars = array(
+	'metas' => $metas,
+);
+
+// Start the loop.
+while ( have_posts() ){
+	the_post();
+
+	us_load_template( 'templates/portfolio/listing-post', $template_vars );
+}
+
+?></div><?php
+
+if ( $has_pagination ) {
+	$json_data = array(
+		// Controller options
+		'ajax_url' => admin_url( 'admin-ajax.php' ),
+		// Portfolio listing template variables that will be passed to this file in the next call
+		'template_vars' => array(
+			'ratio' => $ratio,
+			'metas' => $metas,
+		),
+		'perpage' => $perpage,
+		'page' => $page,
+		'order' => $tile_order,
+		'sizes' => $tile_sizes,
+	);
+	?><div class="w-portfolio-json hidden"<?php echo us_pass_data_to_js( $json_data ) ?>></div><?php
+	if ( $pagination == 'regular' ) {
+		?><div class="g-pagination"><?php
+		the_posts_pagination( array(
+			'prev_text' => '<',
+			'next_text' => '>',
+			'before_page_number' => '<span>',
+			'after_page_number' => '</span>',
+		) );
+		?></div><?php
+	} elseif ( $pagination == 'ajax' ) {
+		// Passing g-loadmore options to JavaScript via onclick event
+		?><div class="g-loadmore">
+			<a href="javascript:void(0);" class="w-btn color_primary style_flat size_large">
+				<label><?php _e( 'Load More', 'us' ) ?></label>
+			</a>
+			<div class="g-preloader style_2"></div>
+		</div><?php
+	}
+}
+
+?></div><?php
+
+// Cleaning up
+us_close_wp_query_context();
