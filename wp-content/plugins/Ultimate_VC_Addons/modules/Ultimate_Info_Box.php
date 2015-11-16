@@ -46,7 +46,7 @@ if(!class_exists('AIO_Icons_Box'))
 				'box_border_color'=>'',
 				'box_bg_color'=>"",
 				'read_more'  => 'none',
-				'read_text'  => '',
+				'read_text'  => 'Read More',
 				'title_font' => '',
 				'title_font_style' => '',
 				'title_font_size' => '',
@@ -453,7 +453,8 @@ if(!class_exists('AIO_Icons_Box'))
 								"heading" => __("Description", "ultimate_vc"),
 								"param_name" => "content",
 								"value" => "",
-								"description" => __("Provide the description for this icon box.", "ultimate_vc")
+								"description" => __("Provide the description for this icon box.", "ultimate_vc"),
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 							),
 							// Select link option - to box or with read more text
 							array(

@@ -54,7 +54,7 @@
 				$(element).find('.vc-row-translate-wrapper').children().each(function(index, child) {
 					if(!jQuery(child).is(find_class)) 
 					{
-						$(child).css({'transform':'translate3d(0,'+translate+'px,0)', '-webkit-transform':'translate3d(0,'+translate+'px,0)', '-ms-transform':'translate3d(0,'+translate+'px,0)','-webkit-backface-visibility':'hidden','-webkit-perspective':'1000'});
+						$(child).css({'transform':'translate3d(0,'+translate+'px,0)', '-webkit-transform':'translate3d(0,'+translate+'px,0)', '-ms-transform':'translate3d(0,'+translate+'px,0)'});
 					}
 				});
 			}
@@ -164,8 +164,8 @@
 			jQuery('.ifb-jq-height').each(function(){			
 				jQuery(this).find('.ifb-back').css('height','auto');
 				jQuery(this).find('.ifb-front').css('height','auto');
-				var fh = parseInt(jQuery(this).find('.ifb-front').outerHeight(true));
-				var bh = parseInt(jQuery(this).find('.ifb-back').outerHeight(true));
+				var fh = parseInt(jQuery(this).find('.ifb-front > div').outerHeight(true));
+				var bh = parseInt(jQuery(this).find('.ifb-back > div').outerHeight(true));
 				var gr = (fh>bh)?fh:bh;
 				jQuery(this).find('.ifb-front').css('height',gr+'px');
 				jQuery(this).find('.ifb-back').css('height',gr+'px');
@@ -181,8 +181,8 @@
 			})	
 			jQuery('.ifb-auto-height').each(function(){
 				if( (jQuery(this).hasClass('horizontal_door_flip')) || (jQuery(this).hasClass('vertical_door_flip')) ){
-					var fh = parseInt(jQuery(this).find('.ifb-front').outerHeight());
-					var bh = parseInt(jQuery(this).find('.ifb-back').outerHeight());
+					var fh = parseInt(jQuery(this).find('.ifb-front > div').outerHeight());
+					var bh = parseInt(jQuery(this).find('.ifb-back > div').outerHeight());
 					var gr = (fh>bh)?fh:bh;
 					jQuery(this).find('.ifb-flip-box').css('height',gr+'px');
 				}
@@ -196,6 +196,9 @@
 		else{
 			flip_box_resize();
 		}
+		jQuery(document).on('ultAdvancedTabClicked',function(event, nav){
+			flip_box_resize();
+		});
 		jQuery(window).resize(function(){
 			flip_resize_count++;
 			setTimeout(function() {
@@ -354,7 +357,8 @@
 			function(){
 				var $this = jQuery(this);
 				$this.find(".ubtn-text").css("color",$this.data('hover'));
-				$this.find(".ubtn-hover").css("background",$this.data('hover-bg'));
+				$this.find(".ubtn-hover").css("background",$this.data('hover-bg')).addClass('ubtn-hover-active');
+				//$this.css("background",$this.data('hover-bg'));
 				var old_style = $this.attr('style');
 				if($this.data('shadow-hover') != ''){
 					var old_shadow = $this.css('box-shadow');
@@ -382,7 +386,9 @@
 			function(){
 				var $this = jQuery(this);
 				$this.find(".ubtn-text").removeAttr('style');
-				$this.find(".ubtn-hover").removeAttr('style');
+				$this.find(".ubtn-hover").removeClass('ubtn-hover-active');
+				//$this.find(".ubtn-hover").removeAttr('style');
+				//$this.css("background",$this.data('bg'));
 				var border_color = $this.data('border-color');
 				var old_style = $this.attr('style');
 				if($this.data('shadow-hover') != '')
@@ -901,10 +907,15 @@ jQuery(document).ready(function(){
 		jQuery('.ultimate-map-wrapper').each(function(i,wrapelement){
 			
 			var wrap = jQuery(wrapelement).attr('id');
+
+			if(typeof wrap === 'undefined' || wrap === '')
+				return false;
+
 			var map = jQuery(wrapelement).find('.ultimate_google_map').attr('id');
 			var map_override = jQuery('#'+map).attr('data-map_override');
+
 			var is_relative = 'true';
-			
+
 			jQuery('#'+map).css({'margin-left' : 0 });
 			
 			var ancenstor = jQuery('#'+wrap).parent();

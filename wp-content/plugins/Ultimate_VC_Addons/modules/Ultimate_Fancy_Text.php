@@ -5,7 +5,7 @@
 */
 if(!class_exists('Ultimate_FancyText')){
 	class Ultimate_FancyText{
-		
+
 		function __construct(){
 			add_action('init',array($this,'ultimate_fancytext_init'));
 			add_shortcode('ultimate_fancytext',array($this,'ultimate_fancytext_shortcode'));
@@ -113,7 +113,7 @@ if(!class_exists('Ultimate_FancyText')){
 								"dependency" => array("element" => "fancytext_effect", "value" => array("typewriter")),
 								"description" => __("Example - If set to 5000, the first string will appear after 5 seconds.", "ultimate_vc")
 							),
-							
+
 							array(
 								"type" => "number",
 								"heading" => __("Back Delay", "ultimate_vc"),
@@ -308,9 +308,9 @@ if(!class_exists('Ultimate_FancyText')){
 		}
 		function ultimate_fancytext_shortcode($atts, $content = null){
 			$output = $fancytext_strings = $fancytext_prefix = $fancytext_suffix = $fancytext_effect = $strings_textspeed = $strings_tickerspeed = $typewriter_cursor = $typewriter_cursor_text = $typewriter_loop = $fancytext_align = $strings_font_family = $strings_font_style = $strings_font_size = $strings_color = $strings_line_height = $strings_startdelay = $strings_backspeed = $strings_backdelay = $ticker_wait_time = $ticker_show_items = $ticker_hover_pause = $ex_class = '';
-			
+
 			$id = uniqid(rand());
-			
+
 			extract(shortcode_atts(array(
 				'fancytext_strings' => '',
 				'fancytext_prefix' => '',
@@ -339,44 +339,45 @@ if(!class_exists('Ultimate_FancyText')){
 				'fancytext_color' => '',
 				'ex_class' => ''
 			),$atts));
-			
+
 			$string_inline_style = $vticker_inline = $valign = '';
-			
+
 			if($strings_font_family != '')
 			{
 				$font_family = get_ultimate_font_family($strings_font_family);
-				$string_inline_style .= 'font-family:\''.$font_family.'\';';
+				if($font_family !== '')
+					$string_inline_style .= 'font-family:\''.$font_family.'\';';
 			}
-			
+
 			$string_inline_style .= get_ultimate_font_style($strings_font_style);
-			
+
 			if($strings_font_size != '')
 				$string_inline_style .= 'font-size:'.$strings_font_size.'px;';
-			
+
 			if($strings_color != '')
 				$string_inline_style .= 'color:'.$strings_color.';';
-				
+
 			if($strings_line_height != '')
 				$string_inline_style .= 'line-height:'.$strings_line_height.'px;';
-				
+
 			if($fancytext_align != '')
 				$string_inline_style .= 'text-align:'.$fancytext_align.';';
-			
+
 			// Order of replacement
 			$order   = array("\r\n", "\n", "\r", "<br/>", "<br>");
 			$replace = '|';
-			
+
 			// Processes \r\n's first so they aren't converted twice.
 			$str = str_replace($order, $replace, $fancytext_strings);
-			
+
 			$lines = explode("|", $str);
-			
+
 			$count_lines = count($lines);
-			
+
 			$ex_class .= ' uvc-type-align-'.$fancytext_align.' ';
 			if($fancytext_prefix == '')
 				$ex_class .= 'uvc-type-no-prefix';
-				
+
 			if($fancytext_color != '')
 				$vticker_inline .= 'color:'.$fancytext_color.';';
 			if($ticker_background != '')
@@ -387,9 +388,9 @@ if(!class_exists('Ultimate_FancyText')){
 				else
 					$valign = 'fancytext-background-enabled';
 			}
-			
+
 			$ultimate_js = get_option('ultimate_js');
-			
+
 			$output = '<'.$fancytext_tag.' class="uvc-type-wrap '.$ex_class.' uvc-wrap-'.$id.'" style="'.$string_inline_style.'">';
 				if(trim($fancytext_prefix) != '')
 				{
@@ -420,23 +421,23 @@ if(!class_exists('Ultimate_FancyText')){
 							}
 							$output .= '<li '.$style.'>'.strip_tags($line).'</li>';
 						}
-					$output .= '</ul></div>'; 
+					$output .= '</ul></div>';
 				}
 				else
 				{
 					if($ultimate_js != 'enable')
 						wp_enqueue_script('ultimate-typed-js');
 					if($typewriter_loop != 'true')
-						$typewriter_loop = 'false';			
+						$typewriter_loop = 'false';
 					if($typewriter_cursor != 'true')
-						$typewriter_cursor = 'false';						
-					$strings = '['; 
-						foreach($lines as $key => $line)  
-						{ 
+						$typewriter_cursor = 'false';
+					$strings = '[';
+						foreach($lines as $key => $line)
+						{
 							$strings .= '"'.__(trim(htmlspecialchars_decode(strip_tags($line))),'js_composer').'"';
 							if($key != ($count_lines-1))
-								$strings .= ','; 
-						} 
+								$strings .= ',';
+						}
 					$strings .= ']';
 					$output .= '<span id="typed-'.$id.'" class="ultimate-typed-main '.$valign.'" style="'.$vticker_inline.'"></span>';
 				}
@@ -464,7 +465,7 @@ if(!class_exists('Ultimate_FancyText')){
 				}
 				else
 				{
-					$output .= '<script type="text/javascript"> jQuery(function($){ $("#typed-'.$id.'").typed({ 
+					$output .= '<script type="text/javascript"> jQuery(function($){ $("#typed-'.$id.'").typed({
 								strings: '.$strings.',
 								typeSpeed: '.$strings_textspeed.',
 								backSpeed: '.$strings_backspeed.',
@@ -488,12 +489,12 @@ if(!class_exists('Ultimate_FancyText')){
 					}
 				}
 			$output .= '</'.$fancytext_tag.'>';
-			
+
 			/*$args = array(
 				$strings_font_family
 			);
 			enquque_ultimate_google_fonts($args);*/
-			
+
 			return $output;
 		}
 	} // end class

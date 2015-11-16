@@ -1016,6 +1016,7 @@
 .ult-ih-item.ult-ih-square.ult-ih-effect7 .ult-ih-info {
     opacity: 0;
     visibility: hidden;
+    z-index: -1;
     -webkit-transition: all .35s ease .2s;
     -moz-transition: all .35s ease .2s;
     transition: all .35s ease .2s
@@ -1032,6 +1033,7 @@
 .ult-ih-item.ult-ih-circle.ult-ih-effect7:hover .ult-ih-info,
 .ult-ih-item.ult-ih-square.ult-ih-effect7:hover .ult-ih-info {
     visibility: visible;
+    z-index: 0;
     opacity: 1
 }
 .ult-ih-item.ult-ih-circle.ult-ih-effect7.ult-ih-left_to_right:hover .ult-ih-info,

@@ -3,42 +3,24 @@
 /**
  * Shortcode: us_logos
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['columns'] int Quantity of displayed logos
+ * @param $atts ['with_indents'] bool Add indents between items?
+ * @param $atts ['style'] string Hover style: '1' / '2'
+ * @param $atts ['arrows'] bool Show navigation arrows?
+ * @param $atts ['auto_scroll'] bool Enable auto rotation?
+ * @param $atts ['interval'] int Rotation interval
+ * @param $atts ['orderby'] string Items order: '' / 'rand'
+ * @param $atts ['el_class'] string Extra class name
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var int Quantity of displayed logos
-	 */
-	'columns' => 5,
-	/**
-	 * @var string Hover style: '1' / '2'
-	 */
-	'style' => '1',
-	/**
-	 * @var bool Show navigation arrows?
-	 */
-	'arrows' => FALSE,
-	/**
-	 * @var bool Enable auto rotation?
-	 */
-	'auto_scroll' => FALSE,
-	/**
-	 * @var int Rotation interval
-	 */
-	'interval' => 3,
-	/**
-	 * @var string Items order: '' / 'rand'
-	 */
-	'orderby' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_logos' );
 
 $classes = '';
 
@@ -50,6 +32,10 @@ if ( $atts['columns'] < 1 OR $atts['columns'] > 6 ) {
 $classes .= ' type_carousel style_' . $atts['style'];
 
 $classes .= ' nav_' . ( $atts['arrows'] ? 'arrows' : 'none' );
+
+if ( $atts['with_indents'] ) {
+	$classes .= ' with_indents';
+}
 
 if ( $atts['el_class'] != '' ) {
 	$classes .= ' ' . $atts['el_class'];
@@ -79,7 +65,7 @@ $wp_query = new WP_Query( $query_args );
 while ( have_posts() ){
 	the_post();
 	if ( has_post_thumbnail() ) {
-		$tnail = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'tnail-3x2' );
+		$tnail = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'tnail-masonry' );
 		if ( $tnail ) {
 			$output .= '<div class="w-logos-item">';
 			$url = rwmb_meta( 'us_client_url' );

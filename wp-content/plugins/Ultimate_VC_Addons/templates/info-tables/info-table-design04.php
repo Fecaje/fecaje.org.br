@@ -14,11 +14,11 @@ if(!function_exists('ult_info_table_generate_design04')) {
 			'icon' => '',
 			'icon_img' => '',
 			'img_width' => '48',
-			'icon_size' => '32',				
+			'icon_size' => '32',
 			'icon_color' => '#333333',
 			'icon_style' => 'none',
 			'icon_color_bg' => '#ffffff',
-			'icon_color_border' => '#333333',			
+			'icon_color_border' => '#333333',
 			'icon_border_style' => '',
 			'icon_border_size' => '1',
 			'icon_border_radius' => '500',
@@ -53,7 +53,7 @@ if(!function_exists('ult_info_table_generate_design04')) {
 			'button_line_height' => '',
 			'el_class' => '',
 			'features_min_ht'=>'',
-			
+
 		),$atts));
 		$output = $link = $target = $featured = $featured_style = $normal_style = $dynamic_style = $box_icon = '';
 		if($icon_type !== "none"){
@@ -91,20 +91,21 @@ if(!function_exists('ult_info_table_generate_design04')) {
 		if($use_cta_btn == "box"){
 			$output .= '<a href="'.$link.'" '.$target.' class="ult_price_action_button" style="'.$featured_style.'">'.$package_btn_text;
 		}
-		
+
 		/* typography */
-		
+
 		$heading_style_inline = $sub_heading_inline = $features_inline = $button_inline = '';
-		
+
 		// heading
 		if($heading_font_family != '')
 		{
 			$hdfont_family = get_ultimate_font_family($heading_font_family);
-			$heading_style_inline .= 'font-family:\''.$hdfont_family.'\';';
+			if($hdfont_family !== '')
+				$heading_style_inline .= 'font-family:\''.$hdfont_family.'\';';
 		}
-		
+
 		$heading_style_inline .= get_ultimate_font_style($heading_font_style);
-		
+
 		if($heading_font_size != '')
 			$heading_style_inline .= 'font-size:'.$heading_font_size.'px;';
 
@@ -113,45 +114,47 @@ if(!function_exists('ult_info_table_generate_design04')) {
 
 		if($heading_line_height != '')
 			$heading_style_inline .= 'line-height:'.$heading_line_height.'px;';
-			
+
 		// sub heading
 		if($subheading_font_family != '')
 		{
 			$shfont_family = get_ultimate_font_family($subheading_font_family);
-			$sub_heading_inline .= 'font-family:\''.$shfont_family.'\';';
+			if($shfont_family !== '')
+				$sub_heading_inline .= 'font-family:\''.$shfont_family.'\';';
 		}
-		
+
 		$sub_heading_inline .= get_ultimate_font_style($subheading_font_style);
-		
+
 		if($subheading_font_size != '')
 			$sub_heading_inline .= 'font-size:'.$subheading_font_size.'px;';
-				
+
 		if($subheading_font_color != '')
 			$sub_heading_inline .= 'color:'.$subheading_font_color.';';
 
 		if($subheading_line_height != '')
 			$sub_heading_inline .= 'line-height:'.$subheading_line_height.'px;';
-		
+
 		// features
 		if($features_font_family != '')
 		{
 			$featuresfont_family = get_ultimate_font_family($features_font_family);
-			$features_inline .= 'font-family:\''.$featuresfont_family.'\';';
+			if($featuresfont_family !== '')
+				$features_inline .= 'font-family:\''.$featuresfont_family.'\';';
 		}
-		
+
 		$features_inline .= get_ultimate_font_style($features_font_style);
-		
+
 		if($features_font_size != '')
 			$features_inline .= 'font-size:'.$features_font_size.'px;';
-				
+
 		if($features_font_color != '')
 			$features_inline .= 'color:'.$features_font_color.';';
 
 		if($features_line_height != '')
 			$features_inline .= 'line-height:'.$features_line_height.'px;';
-		
 
-		
+
+
 		/*---min ht style---*/
 		$info_tab_ht='';$info_tab_ht_style='';
 		if($features_min_ht !== ""){
@@ -163,20 +166,21 @@ if(!function_exists('ult_info_table_generate_design04')) {
 		if($button_font_family != '')
 		{
 			$buttonfont_family = get_ultimate_font_family($button_font_family);
-			$button_inline .= 'font-family:\''.$buttonfont_family.'\';';
+			if($buttonfont_family !== '')
+				$button_inline .= 'font-family:\''.$buttonfont_family.'\';';
 		}
-		
+
 		$button_inline .= get_ultimate_font_style($button_font_style);
-		
+
 		if($button_font_size != '')
 			$button_inline .= 'font-size:'.$button_font_size.'px;';
-				
+
 		if($button_font_color != '')
 			$button_inline .= 'color:'.$button_font_color.';';
 
 		if($button_line_height != '')
 			$button_inline .= 'line-height:'.$button_line_height.'px;';
-		
+
 		$output .= '<div class="ult_pricing_table_wrap ult_info_table ult_design_4 '.$featured.' ult-cs-'.$color_scheme.' '.$el_class.'">
 					<div class="ult_pricing_table '.$info_tab_ht.'" style="'.$normal_style.' '.$info_tab_ht_style.'">';
 			$output .= '<div class="ult_pricing_heading">

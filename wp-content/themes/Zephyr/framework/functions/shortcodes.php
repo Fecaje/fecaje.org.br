@@ -44,7 +44,7 @@ class US_Shortcodes {
 	}
 
 	protected function __construct() {
-		global $us_template_directory, $us_stylesheet_directory;;
+		global $us_template_directory, $us_stylesheet_directory;
 		$this->config = us_config( 'shortcodes' );
 
 		// TODO Figure out all the mess about paragraphs
@@ -66,14 +66,17 @@ class US_Shortcodes {
 	public function init() {
 		// Adding new shortcodes
 		foreach ( $this->config as $shortcode => $shortcode_params ) {
-			if ( isset( $shortcode_params['disabled'] ) AND $shortcode_params['disabled'] ) {
+			if ( isset( $shortcode_params['supported'] ) AND ! $shortcode_params['supported'] ) {
 				// If the shortcode is disabled, don't handle it at all
 				if ( ! us_get_option( 'enable_unsupported_vc_shortcodes', FALSE ) AND shortcode_exists( $shortcode ) ) {
 					remove_shortcode( $shortcode );
 				}
 				continue;
 			}
-			// Taking over the previous declaration
+			if ( isset( $shortcode_params['overload'] ) AND ! $shortcode_params['overload'] ) {
+				continue;
+			}
+			// Overloading the previous declaration
 			if ( shortcode_exists( $shortcode ) ) {
 				remove_shortcode( $shortcode );
 			}

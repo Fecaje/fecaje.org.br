@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @param $settings
  * @param $value
@@ -7,7 +8,7 @@
  * @return string
  */
 function vc_href_form_field( $settings, $value ) {
-	if ( ! is_string( $value ) || strlen( $value ) == 0 ) {
+	if ( ! is_string( $value ) || strlen( $value ) === 0 ) {
 		$value = 'http://';
 	}
 

@@ -625,7 +625,7 @@ if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
 						if ( $plugin['required'] ) {
 							$message['notice_can_install_required'][] = $plugin['name'];
 						} // This plugin is only recommended.
-						else {
+						elseif ( ! isset( $plugin['recommended'] ) OR $plugin['recommended'] ) {
 							$message['notice_can_install_recommended'][] = $plugin['name'];
 						}
 					} // Need higher privileges to install the plugin.
@@ -640,7 +640,7 @@ if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
 						if ( isset( $plugin['required'] ) && $plugin['required'] ) {
 							$message['notice_can_activate_required'][] = $plugin['name'];
 						} // This plugin is only recommended.
-						else {
+						elseif ( ! isset( $plugin['recommended'] ) OR $plugin['recommended'] ) {
 							$message['notice_can_activate_recommended'][] = $plugin['name'];
 						}
 					} // Need higher privileges to activate the plugin.

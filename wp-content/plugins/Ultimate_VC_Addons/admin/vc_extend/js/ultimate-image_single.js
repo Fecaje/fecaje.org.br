@@ -34,7 +34,6 @@
 	        .children( 'img' )
 	            .attr( 'src', url )
 	            .attr( 'alt', caption )
-	            .attr( 'title', title )
 	            .show()
 		        .parent()
 		        .removeClass( 'hidden' );
@@ -67,6 +66,9 @@
 		//	Insert from {SELECT}
 		fn.on( 'insert', function() {
 	
+			// console.log(wp.media.string);
+			console.log( wp.media.string );			
+			
 	        // Read the JSON data returned from the Media Uploader
 			json = fn.state().get( 'selection' ).first().toJSON();
 

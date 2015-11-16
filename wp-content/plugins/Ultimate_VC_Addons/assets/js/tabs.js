@@ -307,7 +307,9 @@ jQuery(document).ready(function(a) {
     //for icon color changes on click event
     a(this).find("ul.ult_tabmenu li a.ult_a").click(function(b) {
         //location.hash = '';
+        a(document).trigger('ultAdvancedTabClicked', a(this));
          jQuery("html,body").stop();
+
 
        a(this).closest("li.ult_tab_li").siblings().each(function(index,value){
             

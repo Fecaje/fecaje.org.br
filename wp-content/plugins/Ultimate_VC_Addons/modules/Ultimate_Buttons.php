@@ -7,7 +7,7 @@ if(!class_exists("Ultimate_Buttons")){
 		function __construct(){
 			add_action( 'init', array($this, 'init_buttons') );
 			add_shortcode( 'ult_buttons',array($this,'ult_buttons_shortcode'));
-			//add_action( 'admin_enqueue_scripts', array( $this, 'button_admin_scripts') );
+			add_action( 'admin_enqueue_scripts', array( $this, 'button_admin_scripts') );
 			add_action( "wp_enqueue_scripts", array( $this, "advanced_button_scripts"),1 );
 		}
 		function advanced_button_scripts() {
@@ -31,13 +31,8 @@ if(!class_exists("Ultimate_Buttons")){
 					$js_path = '../assets/js/';
 					$css_path = '../assets/css/';
 					$ext = '';
+					wp_enqueue_style( 'ult-button', plugins_url($css_path.'advanced-buttons'.$ext.'.css', __FILE__) );
 				}
-				else {
-					$js_path = '../assets/min-js/';
-					$css_path = '../assets/min-css/';
-					$ext = '.min';
-				}
-				wp_enqueue_style( 'ult-button', plugins_url($css_path.'advanced-buttons'.$ext.'.css', __FILE__) );
 			}
 		}
 		function ult_buttons_shortcode($atts){
@@ -89,7 +84,7 @@ if(!class_exists("Ultimate_Buttons")){
 			
 			$style = $hover_style = $btn_style_inline = $link_sufix = $link_prefix = $img = $shadow_hover = $shadow_click = $shadow_color = $box_shadow = $main_extra_class = '';
 			$main_extra_class = $el_class;
-			$tooltip = $tooltip_class = '';
+			$tooltip = $tooltip_class = $el_class = '';
 			$el_class .= ' '.$btn_anim_effect.' ';
 			$uniqid = uniqid();
 			$tooltip_class = 'tooltip-'.$uniqid;
@@ -218,11 +213,14 @@ if(!class_exists("Ultimate_Buttons")){
 			if($btn_title == "" && $icon !== ""){
 				$el_class .= ' ubtn-only-icon ';
 			}
-			$output .= '<button type="button" class="ubtn '.$btn_size.' '.$btn_hover.' '.$el_class.' '.$btn_shadow.' '.$tooltip_class.'" '.$tooltip.' data-hover="'.$btn_title_color_hover.'" data-border-color="'.$btn_color_border.'" data-hover-bg="'.$btn_bg_color_hover.'" data-border-hover="'.$btn_color_border_hover.'" data-shadow-hover="'.$shadow_hover.'" data-shadow-click="'.$shadow_click.'" data-shadow="'.$box_shadow.'" data-shd-shadow="'.$btn_shadow_size.'" style="'.$style.'">';
+			if($btn_link === '') {
+				$el_class .= $main_extra_class;
+			}
+			$output .= '<button type="button" class="ubtn '.$btn_size.' '.$btn_hover.' '.$el_class.' '.$btn_shadow.' '.$tooltip_class.'" '.$tooltip.' data-hover="'.$btn_title_color_hover.'" data-border-color="'.$btn_color_border.'" data-bg="'.$btn_bg_color.'" data-hover-bg="'.$btn_bg_color_hover.'" data-border-hover="'.$btn_color_border_hover.'" data-shadow-hover="'.$shadow_hover.'" data-shadow-click="'.$shadow_click.'" data-shadow="'.$box_shadow.'" data-shd-shadow="'.$btn_shadow_size.'" style="'.$style.'">';
 			if($icon !== ''){
 				$output .= '<span class="ubtn-data ubtn-icon"><i class="'.$icon.'" style="font-size:'.$icon_size.'px;color:'.$icon_color.';"></i></span>';
 			}
-			$output .= '<span class="ubtn-hover"></span>';
+			$output .= '<span class="ubtn-hover" style="background-color:'.$btn_bg_color_hover.'"></span>';
 			$output .= '<span class="ubtn-data ubtn-text">'.$btn_title.'</span>';
 			$output .= '</button>';
 			

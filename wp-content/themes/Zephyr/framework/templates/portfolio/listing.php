@@ -6,7 +6,7 @@
  * @var $categories string Comma-separated list of categories slugs to show
  * @var $style_name string Items style: 'style_1' / 'style_2' / ... / 'style_N'
  * @var $columns int Columns number: 2 / 3 / 4 / 5
- * @var $ratio string Items ratio: '3x2' / '4x3' / '1x1' / '2x3' / '3x4'
+ * @var $ratio string Items ratio: '3x2' / '4x3' / '1x1' / '2x3' / '3x4' / 'initial'
  * @var $metas array Meta data that should be shown: array( 'title', 'date', 'categories' )
  * @var $align string Content alignment: 'left' / 'center' / 'right'
  * @var $filter string Filter type: 'none' / 'category'
@@ -39,7 +39,7 @@ $classes .= ' columns_' . $columns;
 $align = isset( $align ) ? $align : 'left';
 $classes .= ' align_' . $align;
 
-$available_ratios = array( '3x2', '4x3', '1x1', '2x3', '3x4' );
+$available_ratios = array( '3x2', '4x3', '1x1', '2x3', '3x4', 'initial' );
 $ratio = ( isset( $ratio ) AND in_array( $ratio, $available_ratios ) ) ? $ratio : '3x2';
 $classes .= ' ratio_' . str_replace( ':', '-', $ratio );
 
@@ -64,16 +64,33 @@ if ( ! empty( $categories ) ) {
 }
 
 // Setting items order
-$orderby = ( isset( $orderby ) AND $orderby == 'rand' ) ? 'rand' : 'date';
+$orderby_translate = array(
+	'date' => 'date',
+	'date_asc' => 'date',
+	'alpha' => 'title',
+	'rand' => 'rand'
+);
+$orderby_translate_sql = array(
+	'date' => '`post_date`',
+	'date_asc' => '`post_date`',
+	'alpha' => '`post_title`',
+	'rand' => 'RAND()'
+);
+$order_translate = array(
+	'date' => 'DESC',
+	'date_asc' => 'ASC',
+	'alpha' => 'ASC',
+	'rand' => ''
+);
+$orderby = ( isset( $orderby ) AND in_array( $orderby, array ( 'date', 'date_asc', 'alpha', 'rand' ) ) ) ? $orderby : 'date';
 $order = ( isset( $order ) AND $order == 'ASC' ) ? 'ASC' : 'DESC';
 if ( $orderby == 'rand' ) {
 	$query_args['orderby'] = 'rand';
 } else/*if ( $atts['order_by'] == 'date' )*/ {
 	$query_args['orderby'] = array(
-		'date' => $order,
+		$orderby_translate[$orderby] => $order_translate[$orderby],
 	);
 }
-
 
 // Posts per page
 $pagination = isset( $pagination ) ? $pagination : 'none';
@@ -110,14 +127,26 @@ foreach ( $wpdb->get_results( $wpdb_query ) as $row ) {
 		$categories_names[ $row->category_slug ] = $row->category_name;
 	}
 }
+if ( empty( $items_categories ) ) {
+	if ( ! empty( $categories ) ) {
+		// Nothing is found in the needed categories
+		return;
+	} else {
+		// Very unlikely, but still: portfolio posts may be not attached to categories, so fetching them the other way
+		// TODO Rewrite the whole algorithm in a more lean way
+		us_open_wp_query_context();
+		foreach ( get_posts( array( 'post_type' => 'us_portfolio' ) ) as $post ) {
+			$items_categories[ $post->ID ] = array();
+		}
+		us_close_wp_query_context();
+	}
+}
+
 if ( $has_pagination AND count( $items_categories ) <= $perpage ) {
 	$has_pagination = FALSE;
 }
 
-if ( empty( $items_categories ) ) {
-	return;
-}
-
+// Obtaining tiles sizes for proper
 $tile_sizes = array();
 $items_ids = implode( ',', array_keys( $items_categories ) );
 // Grabbing information about non-standard tile sizes to show them properly from the very beginning
@@ -127,15 +156,15 @@ foreach ( $wpdb->get_results( $wpdb_query ) as $result ) {
 	$tile_sizes[ $result->post_id ] = $result->meta_value;
 }
 
-if ( $has_pagination AND ! empty( $categories_names ) ) {
+if ( $has_pagination ) {
 	// We count the element order for the various cases at the very beginning for complex ajax algorithms
 	$wpdb_query = 'SELECT `ID` FROM `' . $wpdb->posts . '` ';
 	$wpdb_query .= 'WHERE `ID` IN (' . $items_ids . ') AND `post_type`=\'us_portfolio\' AND `post_status`=\'publish\' ';
-	$wpdb_query .= 'ORDER BY ' . ( ( $orderby == 'rand' ) ? 'RAND()' : ( '`post_date` ' . $order ) );
+	$wpdb_query .= 'ORDER BY ' . $orderby_translate_sql[$orderby] . ' ' . $order_translate[$orderby];
 	$tile_order = array(
 		'*' => array_map( 'absint', $wpdb->get_col( $wpdb_query ) ),
 	);
-	if ( $filter == 'category' ) {
+	if ( ! empty( $categories_names ) AND $filter == 'category' ) {
 		$tile_order = array_merge( $tile_order, array_fill_keys( array_keys( $categories_names ), array() ) );
 		foreach ( $tile_order['*'] as $elm_id ) {
 			foreach ( $items_categories[ $elm_id ] AS $category_slug ) {
@@ -174,7 +203,7 @@ if ( $filter == 'category' ) {
 	}
 }
 
-if ( ! empty( $filter_html ) OR $has_pagination OR ! empty( $tile_sizes ) ) {
+if ( ! empty( $filter_html ) OR $has_pagination OR $ratio == 'initial' OR ! empty( $tile_sizes ) ) {
 	// We'll need the isotope script for any of the above cases
 	wp_enqueue_script( 'us-isotope' );
 	$classes .= ' position_isotope';
@@ -185,16 +214,17 @@ if ( ! empty( $el_class ) ) {
 	$classes .= ' ' . $el_class;
 }
 
-// TODO Move to some theme-overloaded filter
-$classes .= ' animate_revealgrid';
+$classes = apply_filters( 'us_portfolio_listing_classes', $classes );
 
-?><div class="w-portfolio<?php echo $classes ?>"><?php echo $filter_html ?><div class="w-portfolio-list"><?php
+?>
+	<div class="w-portfolio<?php echo $classes ?>"><?php echo $filter_html ?>
+	<div class="w-portfolio-list"><?php
 
 // Preparing template settings for loop post template
 $template_vars = array(
 	'metas' => $metas,
+	'ratio' => $ratio,
 );
-
 // Start the loop.
 while ( have_posts() ){
 	the_post();
@@ -218,9 +248,11 @@ if ( $has_pagination ) {
 		'order' => $tile_order,
 		'sizes' => $tile_sizes,
 	);
-	?><div class="w-portfolio-json hidden"<?php echo us_pass_data_to_js( $json_data ) ?>></div><?php
+	?>
+<div class="w-portfolio-json hidden"<?php echo us_pass_data_to_js( $json_data ) ?>></div><?php
 	if ( $pagination == 'regular' ) {
-		?><div class="g-pagination"><?php
+		?>
+		<div class="g-pagination"><?php
 		the_posts_pagination( array(
 			'prev_text' => '<',
 			'next_text' => '>',
@@ -230,11 +262,12 @@ if ( $has_pagination ) {
 		?></div><?php
 	} elseif ( $pagination == 'ajax' ) {
 		// Passing g-loadmore options to JavaScript via onclick event
-		?><div class="g-loadmore">
-			<a href="javascript:void(0);" class="w-btn color_primary style_flat size_large">
-				<label><?php _e( 'Load More', 'us' ) ?></label>
-			</a>
-			<div class="g-preloader style_2"></div>
+		?>
+		<div class="g-loadmore">
+		<div class="g-loadmore-btn">
+			<span><?php _e( 'Load More', 'us' ) ?></span>
+		</div>
+		<div class="g-preloader type_1"></div>
 		</div><?php
 	}
 }

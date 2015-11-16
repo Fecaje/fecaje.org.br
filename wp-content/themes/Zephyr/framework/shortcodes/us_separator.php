@@ -3,50 +3,25 @@
 /**
  * Shortcode: us_separator
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['type'] string Separator type: 'default' / 'fullwidth' / 'short' / 'invisible'
+ * @param $atts ['size'] string Separator size: 'small' / 'medium' / 'large' / 'huge'
+ * @param $atts ['thick'] string Line thickness: '1' / '2' / '3' / '4' / '5'
+ * @param $atts ['style'] string Line style: 'solid' / 'dashed' / 'dotted' / 'double'
+ * @param $atts ['color'] string Color style: 'border' / 'primary' / 'secondary' / 'custom'
+ * @param $atts ['bdcolor'] string Border color value
+ * @param $atts ['icon'] string Icon
+ * @param $atts ['text'] string Text
+ * @param $atts ['el_class'] string Extra class name
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var string Separator type: 'default' / 'fullwidth' / 'short' / 'invisible'
-	 */
-	'type' => 'default',
-	/**
-	 * @var string Separator size: 'small' / 'medium' / 'large' / 'huge'
-	 */
-	'size' => 'medium',
-	/**
-	 * @var string Line thickness: '1' / '2' / '3' / '4' / '5'
-	 */
-	'thick' => '1',
-	/**
-	 * @var string Line style: 'solid' / 'dashed' / 'dotted' / 'double'
-	 */
-	'style' => 'solid',
-	/**
-	 * @var string Color style: 'border' / 'primary' / 'secondary' / 'custom'
-	 */
-	'color' => 'border',
-	/**
-	 * @var string Border color value
-	 */
-	'bdcolor' => '',
-	/**
-	 * @var string Icon
-	 */
-	'icon' => '',
-	/**
-	 * @var string Text
-	 */
-	'text' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_separator' );
 
 $classes = '';
 $inner_css = '';

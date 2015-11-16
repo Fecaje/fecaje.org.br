@@ -7,6 +7,7 @@
  * @link https://codex.wordpress.org/Class_Reference/WP_Query#Standard_Loop
  *
  * @var $metas array Meta data that should be shown: array('title', 'date', 'categories')
+ * @var $ratio string Items ratio: '3x2' / '4x3' / '1x1' / '2x3' / '3x4' / 'initial'
  *
  * @action Before the template: 'us_before_template:templates/blog/listing-post'
  * @action After the template: 'us_after_template:templates/blog/listing-post'
@@ -18,19 +19,28 @@ $classes = '';
 $anchor_atts = '';
 $anchor_inner_css = '';
 
-$available_ratios = array( '3x2', '4x3', '1x1', '2x3', '3x4' );
+$tile_size = '1x1';
+if ( rwmb_meta( 'us_tile_size' ) != '' ) {
+	$tile_size = rwmb_meta( 'us_tile_size' );
+}
 
 // In case of any image issue using placeholder so admin could understand it quickly
 // TODO Move placeholder URL to some config
 global $us_template_directory_uri;
-$placeholder_url = $us_template_directory_uri . '/img/placeholder/500x500.gif';
+$placeholder_url = $us_template_directory_uri . '/framework/img/us-placeholder-square.png';
 
 $tnail_id = get_post_thumbnail_id();
-if ( ! $tnail_id OR ! ( $image = wp_get_attachment_image_src( $tnail_id, 'tnail-masonry' ) ) ) {
+if ( $tnail_id ) {
+	$image = wp_get_attachment_image_src( $tnail_id, 'large' );
+	if ( $tile_size == '1x1' ) {
+		$image = wp_get_attachment_image_src( $tnail_id, 'tnail-masonry' );
+	}
+}
+if ( ! $tnail_id OR ( ! $image ) ) {
 	$image = array( $placeholder_url, 500, 500 );
 }
 $item_title = get_the_title();
-$image_html = '<img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" alt="' . esc_attr( $item_title ) . '">';
+$image_html = '<img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" alt="' . esc_attr( $item_title ) . '" />';
 
 $categories = get_the_terms( get_the_ID(), 'us_portfolio_category' );
 $categories_slugs = array();
@@ -74,10 +84,6 @@ if ( in_array( 'categories', $metas ) AND count( $categories ) > 0 ) {
 	$meta_html['categories'] .= '</span>';
 }
 
-$tile_size = '1x1';
-if ( rwmb_meta( 'us_tile_size' ) != '' ) {
-	$tile_size = rwmb_meta( 'us_tile_size' );
-}
 $classes .= ' size_' . $tile_size;
 
 if ( rwmb_meta( 'us_tile_bg_color' ) != '' ) {
@@ -90,21 +96,39 @@ if ( $anchor_inner_css != '' ) {
 	$anchor_inner_css = ' style="' . $anchor_inner_css . '"';
 }
 
-$classes .= ' animate_reveal';
-
+$classes = apply_filters( 'us_portfolio_listing_item_classes', $classes );
 
 ?>
 <div class="w-portfolio-item<?php echo $classes ?>" data-id="<?php the_ID() ?>" data-categories="<?php echo implode( ',', $categories_slugs ) ?>">
 	<a class="w-portfolio-item-anchor" href="<?php echo $link ?>"<?php echo $anchor_atts . $anchor_inner_css ?>>
-		<div class="w-portfolio-item-image" style="background-image: url(<?php echo $image[0] ?>)">
+		<div class="w-portfolio-item-image"<?php if ( $ratio != 'initial' ) { ?> style="background-image: url(<?php echo $image[0] ?>)"<?php } ?>>
 			<?php echo $image_html ?>
 		</div>
-<?php if ( ! empty( $meta_html ) ): ?>
-		<div class="w-portfolio-item-meta">
-			<div class="w-portfolio-item-meta-h">
-				<?php echo implode( '', $meta_html ) ?>
+		<?php
+		$image2_id = rwmb_meta( 'us_tile_additional_image' );
+		if ( $image2_id ) {
+			$image2 = wp_get_attachment_image_src( $image2_id, 'large' );
+			if ( $tile_size == '1x1' ) {
+				$image2 = wp_get_attachment_image_src( $image2_id, 'tnail-masonry' );
+			}
+		}
+		if ( $image2_id != '' AND is_array( $image2 ) ) {
+			echo '<div class="w-portfolio-item-image second"';
+			if ( $ratio != 'initial' ) {
+				echo ' style="background-image: url(' . $image2[0] . ')"';
+			}
+			echo '>';
+			echo '<img src="' . $image2[0] . '" width="' . $image2[1] . '" height="' . $image2[2] . '" alt="' . esc_attr( $item_title ) . '" />';
+			echo '</div>';
+		}
+		?>
+		<?php if ( ! empty( $meta_html ) ): ?>
+			<div class="w-portfolio-item-meta">
+				<div class="w-portfolio-item-meta-h">
+					<?php echo implode( '', $meta_html ) ?>
+					<span class="w-portfolio-item-arrow"></span>
+				</div>
 			</div>
-		</div>
-<?php endif; ?>
+		<?php endif; ?>
 	</a>
 </div>

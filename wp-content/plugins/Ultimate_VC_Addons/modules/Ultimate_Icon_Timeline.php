@@ -40,7 +40,7 @@ if(!class_exists('Ultimate_Icon_Timeline'))
 					   "description" => __("Timeline of old memories and events.","smile"),
 					   "as_parent" => array('only' => 'icon_timeline_item,icon_timeline_sep,icon_timeline_feat',),
 					   "content_element" => true,
-					   "show_settings_on_create" => false,	
+					   "show_settings_on_create" => true,	
 					   //"is_container"    => true,
 					   "front_enqueue_css" =>  preg_replace( '/\s/', '%20', plugins_url( '../assets/css/advacne_carosal_front.css', __FILE__ ) ),				   
 					   "params" => array(					   	
@@ -316,6 +316,7 @@ if(!class_exists('Ultimate_Icon_Timeline'))
 								"param_name" => "content",
 								"admin_label" => true,
 								"value" => "",
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 								"description" => __("Provide some description.", "ultimate_vc"),
 							),
 							array(
@@ -656,6 +657,7 @@ if(!class_exists('Ultimate_Icon_Timeline'))
 								"param_name" => "content",
 								"admin_label" => true,
 								"value" => "",
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 								"description" => __("Provide some description.", "ultimate_vc"),
 							),
 							array(

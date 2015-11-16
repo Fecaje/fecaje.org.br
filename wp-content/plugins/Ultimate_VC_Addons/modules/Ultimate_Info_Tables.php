@@ -274,6 +274,7 @@ if(!class_exists("Ultimate_Info_Table")){
 							"param_name" => "content",
 							"value" => "",
 							"description" => __("Describe the Info Table in brief.", "ultimate_vc"),
+							"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 						),
 						array(
 							"type" => "dropdown",

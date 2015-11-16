@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shortcode attributes
  * @var $atts
@@ -15,6 +16,7 @@
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Cta_button
  */
+$color = $icon = $size = $target = $href = $target = $call_text = $position = $el_class = $css_animation = '';
 $output = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
@@ -32,7 +34,7 @@ $icon = ( '' !== $icon && 'none' !== $icon ) ? ' ' . $icon : '';
 $i_icon = ( '' !== $icon ) ? ' <i class="icon"> </i>' : '';
 
 $color = ( '' !== $color ) ? ' wpb_' . $color : '';
-$size = ( '' !== $size && $size != 'wpb_regularsize' ) ? ' wpb_' . $size : ' ' . $size;
+$size = ( '' !== $size && 'wpb_regularsize' !== $size ) ? ' wpb_' . $size : ' ' . $size;
 
 $a_class = '';
 if ( '' !== $el_class ) {
@@ -49,7 +51,6 @@ if ( '' !== $href ) {
 	$button = '<span class="wpb_button ' . $color . $size . $icon . '">' . $title . $i_icon . '</span>';
 	$button = '<a class="wpb_button_a' . $a_class . '" href="' . $href . '"' . $target . '>' . $button . '</a>';
 } else {
-	//$button = '<button class="wpb_button '.$color.$size.$icon.'">'.$title.$i_icon.'</button>';
 	$button = '';
 	$el_class .= ' cta_no_button';
 }
@@ -61,10 +62,9 @@ if ( 'cta_align_bottom' !== $position ) {
 	$output .= $button;
 }
 $output .= apply_filters( 'wpb_cta_text', '<h2 class="wpb_call_text">' . $call_text . '</h2>', array( 'content' => $call_text ) );
-//$output .= '<h2 class="wpb_call_text">'. $call_text . '</h2>';
 if ( 'cta_align_bottom' === $position ) {
 	$output .= $button;
 }
-$output .= '</div> ' . $this->endBlockComment( $this->getShortcode() ) . "\n";
+$output .= '</div>';
 
 echo $output;

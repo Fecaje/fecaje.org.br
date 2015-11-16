@@ -59,12 +59,12 @@ class Vc_Vendor_Revslider implements Vc_Vendor_Interface {
 			'icon' => 'icon-wpb-revslider',
 			'category' => __( 'Content', 'js_composer' ),
 			'description' => __( 'Place Revolution slider', 'js_composer' ),
-			"params" => array(
+			'params' => array(
 				array(
 					'type' => 'textfield',
 					'heading' => __( 'Widget title', 'js_composer' ),
 					'param_name' => 'title',
-					'description' => __( 'Enter text used as widget title (Note: located above content element).', 'js_composer' )
+					'description' => __( 'Enter text used as widget title (Note: located above content element).', 'js_composer' ),
 				),
 				array(
 					'type' => 'dropdown',
@@ -72,15 +72,16 @@ class Vc_Vendor_Revslider implements Vc_Vendor_Interface {
 					'param_name' => 'alias',
 					'admin_label' => true,
 					'value' => $revsliders,
-					'description' => __( 'Select your Revolution Slider.', 'js_composer' )
+					'save_always' => true,
+					'description' => __( 'Select your Revolution Slider.', 'js_composer' ),
 				),
 				array(
 					'type' => 'textfield',
 					'heading' => __( 'Extra class name', 'js_composer' ),
 					'param_name' => 'el_class',
-					'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' )
-				)
-			)
+					'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
+				),
+			),
 		) );
 	}
 
@@ -95,5 +96,4 @@ class Vc_Vendor_Revslider implements Vc_Vendor_Interface {
 	public function setId( $output ) {
 		return preg_replace( '/rev_slider_(\d+)_(\d+)/', 'rev_slider_$1_$2' . time() . '_' . self::$instanceIndex ++, $output );
 	}
-
 }

@@ -1,11 +1,11 @@
 <?php
 
-Class Vc_Grid_Item_Preview {
+class Vc_Grid_Item_Preview {
 	protected $shortcodes_string = '';
 	protected $post_id = false;
 
 	public function render() {
-		$this->post_id = vc_request_param( 'post_id' );
+		$this->post_id = (int) vc_request_param( 'post_id' );
 		$this->shortcodes_string = stripslashes( vc_request_param( 'shortcodes_string', true ) );
 		require_once vc_path_dir( 'PARAMS_DIR', 'vc_grid_item/class-vc-grid-item.php' );
 		$grid_item = new Vc_Grid_Item();
@@ -90,7 +90,9 @@ Class Vc_Grid_Item_Preview {
 		wp_enqueue_style( 'js_composer_front' );
 		wp_enqueue_script( 'wpb_composer_front_js' );
 		wp_enqueue_style( 'js_composer_custom_css' );
-		require_once vc_path_dir( 'SHORTCODES_DIR', 'vc-basic-grid.php' );
+
+		VcShortcodeAutoloader::getInstance()->includeClass( 'WPBakeryShortCode_VC_Basic_Grid' );
+
 		$grid = new WPBakeryShortCode_VC_Basic_Grid( array( 'base' => 'vc_basic_grid' ) );
 		$grid->shortcodeScripts();
 		$grid->enqueueScripts();
@@ -109,7 +111,7 @@ Class Vc_Grid_Item_Preview {
 	public function addPlaceholderImage( $img ) {
 		if ( null === $img || false === $img ) {
 			$img = array(
-				'thumbnail' => '<img class="vc_img-placeholder vc_single_image-img" src="' . vc_asset_url( 'vc/vc_gitem_image.png' ) . '" />'
+				'thumbnail' => '<img class="vc_img-placeholder vc_single_image-img" src="' . vc_asset_url( 'vc/vc_gitem_image.png' ) . '" />',
 			);
 		}
 

@@ -304,7 +304,7 @@ class sidebar_generator {
 									<select name="sidebar_generator[<?php echo $i ?>]" style="display: none;">
 										<option value="0"<?php if ( $selected_sidebar[ $i ] == '' ) {
 											echo " selected";
-										} ?>><?php _e( 'WP Default Sidebar', 'us' ) ?>
+										} ?>><?php _e( 'Default Sidebar', 'us' ) ?>
 										</option>
 										<?php
 										$sidebars = $wp_registered_sidebars;// sidebar_generator::get_sidebars();

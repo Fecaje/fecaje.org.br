@@ -3,50 +3,25 @@
 /**
  * Shortcode: us_single_image
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['image'] int WordPress media library image ID
+ * @param $atts ['size'] string Image size: 'large' / 'medium' / 'thumbnail' / 'full'
+ * @param $atts ['align'] string Image alignment: '' / 'left' / 'center' / 'right'
+ * @param $atts ['lightbox'] bool Enable lignbox with th original image on click
+ * @param $atts ['link'] string Image link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+ * @param $atts ['animate'] string Animation type: '' / 'fade' / 'afc' / 'afl' / 'afr' / 'afb' / 'aft' / 'hfc' / 'wfc'
+ * @param $atts ['animate_delay'] float Animation delay (in seconds)
+ * @param $atts ['el_class'] string Extra class name
+ * @param $atts ['css'] string Custom CSS
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var int WordPress media library image ID
-	 */
-	'image' => '',
-	/**
-	 * @var string Image size: 'large' / 'medium' / 'thumbnail' / 'full'
-	 */
-	'size' => 'large',
-	/**
-	 * @var string Image alignment: '' / 'left' / 'center' / 'right'
-	 */
-	'align' => '',
-	/**
-	 * @var bool Enable lignbox with th original image on click
-	 */
-	'lightbox' => FALSE,
-	/**
-	 * @var string Image link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
-	 */
-	'link' => '',
-	/**
-	 * @var string Animation type: '' / 'fade' / 'afc' / 'afl' / 'afr' / 'afb' / 'aft' / 'hfc' / 'wfc'
-	 */
-	'animate' => '',
-	/**
-	 * @var float Animation delay (in seconds)
-	 */
-	'animate_delay' => 0,
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-	/**
-	 * @var string Custom CSS
-	 */
-	'css' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_single_image' );
 
 $classes = '';
 
@@ -54,19 +29,20 @@ $classes = '';
 $link = array();
 
 $img_id = intval( $atts['image'] );
-if ( ! $img_id OR ! ( $image = wp_get_attachment_image_src( $img_id, $atts['size'] ) ) ) {
-	// In case of any image issue using placeholder so admin could understand it quickly
-	// TODO Move placeholder URL to some config
-	global $us_template_directory_uri;
-	$placeholder_url = $us_template_directory_uri . '/img/placeholder/500x500.gif';
-	$image_html = '<img src="' . $placeholder_url . '" width="500" height="500" alt="">';
-} else {
-	$image_html = '<img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" alt="">';
+
+if ( $img_id AND ( $image_html = wp_get_attachment_image( $img_id, $atts['size'] ) ) ) {
+	// We got image
 	if ( $atts['lightbox'] ) {
 		$link['url'] = wp_get_attachment_image_src( $img_id, 'full' );
 		$link['url'] = ( $link['url'] ) ? $link['url'][0] : $image[0];
 		$link['ref'] = 'magnificPopup';
 	}
+} else {
+	// In case of any image issue using placeholder so admin could understand it quickly
+	// TODO Move placeholder URL to some config
+	global $us_template_directory_uri;
+	$placeholder_url = $us_template_directory_uri . '/framework/img/us-placeholder-square.png';
+	$image_html = '<img src="' . $placeholder_url . '" width="500" height="500" alt="">';
 }
 
 $link_target = '';

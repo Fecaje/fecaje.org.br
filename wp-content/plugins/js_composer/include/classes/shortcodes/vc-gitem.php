@@ -36,7 +36,9 @@ class WPBakeryShortCode_VC_Gitem extends WPBakeryShortCodesContainer {
 	}
 
 	public function mainHtmlBlockParams( $width, $i ) {
-		return 'data-element_type="' . $this->settings["base"] . '" class="' . $this->settings['base'] . '-shortcode wpb_sortable wpb_content_holder vc_shortcodes_container"' . $this->customAdminBlockParams();
+		$sortable = ( vc_user_access_check_shortcode_all( $this->shortcode ) ? 'wpb_sortable' : $this->nonDraggableClass );
+
+		return 'data-element_type="' . $this->settings['base'] . '" class="' . $this->settings['base'] . '-shortcode ' . $sortable . ' wpb_content_holder vc_shortcodes_container"' . $this->customAdminBlockParams();
 	}
 
 	public function itemGrid() {
@@ -59,24 +61,45 @@ class WPBakeryShortCode_VC_Gitem extends WPBakeryShortCodesContainer {
 		return 'class="vc_gitem-content"';
 	}
 
+	/**
+	 * Get rendered controls
+	 *
+	 * @param array $controls
+	 *
+	 * @return string
+	 */
 	public function getControls( $controls ) {
-		$output = '';
-		$controls_start = '<div class="vc_controls vc_controls-dark vc_controls-visible">';
-		$controls_end = '</div>';
-		$controls_add = ' <a class="vc_control-btn vc_control-btn-add" href="#" title="' . __( ' Add to this grid item', '' ) . '" data-vc-control="add"><i class="vc_icon"></i></a>';
-		$controls_edit = ' <a class="vc_control-btn vc_control-btn-edit" href="#" title="' . __( 'Edit this grid item', 'js_composer' ) . '" data-vc-control="edit"><i class="vc_icon"></i></a>';
-		$controls_delete = ' <a class="vc_control-btn vc_control-btn-delete" href="#" title="' . __( 'Delete this grid item ', 'js_composer' ) . '" data-vc-control="delete"><i class="vc_icon"></i></a>';
-		if ( is_array( $controls ) && ! empty( $controls ) ) {
-			$output = $controls_start;
-			foreach ( $controls as $control ) {
-				$control_var = 'controls_' . $control;
-				$output .= $$control_var;
-			}
-			$output .= $controls_end;
-		} else {
-			$output = ''; // $controls_start . $controls_edit . $controls_end;
+		if ( ! is_array( $controls ) || empty( $controls ) ) {
+			return '';
 		}
 
-		return $output;
+		$buttons = array();
+		$editAccess = vc_user_access_check_shortcode_edit( $this->shortcode );
+		$allAccess = vc_user_access_check_shortcode_all( $this->shortcode );
+		foreach ( $controls as $control ) {
+			switch ( $control ) {
+				case 'add':
+					if ( $allAccess ) {
+						$buttons[] = '<a class="vc_control-btn vc_control-btn-add" href="#" title="' . __( 'Add to this grid item', 'js_composer' ) . '" data-vc-control="add"><i class="vc_icon"></i></a>';
+					}
+					break;
+
+				case 'edit':
+					if ( $editAccess ) {
+						$buttons[] = '<a class="vc_control-btn vc_control-btn-edit" href="#" title="' . __( 'Edit this grid item', 'js_composer' ) . '" data-vc-control="edit"><i class="vc_icon"></i></a>';
+					}
+					break;
+
+				case 'delete':
+					if ( $allAccess ) {
+						$buttons[] = '<a class="vc_control-btn vc_control-btn-delete" href="#" title="' . __( 'Delete this grid item ', 'js_composer' ) . '" data-vc-control="delete"><i class="vc_icon"></i></a>';
+					}
+					break;
+			}
+		}
+
+		$html = '<div class="vc_controls vc_controls-dark vc_controls-visible">' . implode( ' ', $buttons ) . '</div>';
+
+		return $html;
 	}
 }

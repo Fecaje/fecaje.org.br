@@ -3,58 +3,26 @@
 /**
  * Shortcode: us_iconbox
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['icon'] string Icon
+ * @param $atts ['style'] string Icon style: 'default' / 'circle' / 'outlined'
+ * @param $atts ['color'] string Icon color: 'primary' / 'secondary' / 'light' / 'contrast' / 'custom'
+ * @param $atts ['icon_color'] string Icon color value
+ * @param $atts ['bg_color'] string Icon circle color
+ * @param $atts ['iconpos'] string Icon position: 'top' / 'left'
+ * @param $atts ['size'] string Icon size: 'tiny' / 'small' / 'medium' / 'large' / 'huge'
+ * @param $atts ['title'] string Title
+ * @param $atts ['link'] string Link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+ * @param $atts ['img'] int Icon image (from WordPress media)
+ * @param $atts ['el_class'] string Extra class name
  */
-
-$atts = shortcode_atts( array(
-	/**
-	 * @var string Icon
-	 */
-	'icon' => 'star',
-	/**
-	 * @var string Icon style: 'default' / 'circle'
-	 */
-	'style' => 'default',
-	/**
-	 * @var string Icon color: 'primary' / 'secondary' / 'light' / 'contrast' / 'custom'
-	 */
-	'color' => 'primary',
-	/**
-	 * @var string Icon color value
-	 */
-	'icon_color' => FALSE,
-	/**
-	 * @var string Icon circle color
-	 */
-	'bg_color' => FALSE,
-	/**
-	 * @var string Icon position: 'top' / 'left'
-	 */
-	'iconpos' => 'top',
-	/**
-	 * @var string Icon size: 'tiny' / 'small' / 'medium' / 'large' / 'huge'
-	 */
-	'size' => 'medium',
-	/**
-	 * @var string Title
-	 */
-	'title' => '',
-	/**
-	 * @var string Link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
-	 */
-	'link' => '',
-	/**
-	 * @var int Icon image (from WordPress media)
-	 */
-	'img' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_iconbox' );
 
 $classes = '';
 $icon_inner_css = '';
@@ -66,7 +34,7 @@ $classes .= ' style_' . $atts['style'];
 $classes .= ' color_' . $atts['color'];
 if ( $atts['color'] == 'custom' ) {
 	if ( $atts['bg_color'] != '' ) {
-		$icon_inner_css .= 'background-color: ' . $atts['bg_color'] . ';border-color: ' . $atts['bg_color'] . ';';
+		$icon_inner_css .= 'background-color: ' . $atts['bg_color'] . ';box-shadow: 0 0 0 2px ' . $atts['bg_color'] . ' inset;';
 	}
 	if ( $atts['icon_color'] != '' ) {
 		$icon_inner_css .= 'color: ' . $atts['icon_color'] . ';';
@@ -84,11 +52,11 @@ if ( $atts['img'] != '' ) {
 	if ( is_numeric( $atts['img'] ) ) {
 		$img = wp_get_attachment_image_src( intval( $atts['img'] ), 'full' );
 		if ( $img !== FALSE ) {
-			$icon_html = '<img src="' . $img[0] . '" width="' . $img[1] . '" height="' . $img[2] . '" alt="">';
+			$icon_html = '<img src="' . $img[0] . '" width="' . $img[1] . '" height="' . $img[2] . '" alt="'.$atts['title'].'">';
 		}
 	} else {
 		// Direct link to image is set in the shortcode attribute
-		$icon_html = '<img src="' . $atts['img'] . '" alt="">';
+		$icon_html = '<img src="' . $atts['img'] . '" alt="'.$atts['title'].'">';
 	}
 } else {
 	$atts['icon'] = trim( $atts['icon'] );

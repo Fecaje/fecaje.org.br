@@ -1,78 +1,76 @@
 /**
  * UpSolution Widget: w-search
  */
-(function ($) {
+!function ($) {
 	"use strict";
 
 	$.fn.wSearch = function () {
 
 		return this.each(function(){
-			var $this = $(this),
-				searchForm = $this.find('.w-search-form'),
-				searchShow = $this.find('.w-search-show'),
-				searchClose = $this.find('.w-search-close'),
-				searchInput = searchForm.find('.w-search-input input'),
-				searchOverlay = $this.find('.w-search-form-overlay'),
+			var $container = $(this),
+				$form = $container.find('.w-form'),
+				$btnOpen = $container.find('.w-search-open'),
+				$btnClose = $container.find('.w-search-close'),
+				$input = $form.find('[name="s"]'),
+				$overlay = $container.find('.w-search-background'),
 				$window = $(window),
 				searchOverlayInitRadius = 25,
-				$body = document.body || document.documentElement,
-				$bodyStyle = $body.style,
 				showHideTimer = null,
 				searchHide = function(){
-					searchInput.blur();
-					searchForm.css({
+					$input.blur();
+					$form.css({
 						'-webkit-transition': 'opacity 0.4s',
 						transition: 'opacity 0.4s'
 					});
 					window.setTimeout(function(){
-						searchOverlay
+						$overlay
 							.removeClass('overlay-on')
 							.addClass('overlay-out')
 							.css({
-								"-webkit-transform": "scale(0.1)",
-								"transform": "scale(0.1)"
+								'-webkit-transform': 'scale(0.1)',
+								'transform': 'scale(0.1)'
 							});
-						searchForm.css('opacity', 0);
+						$form.css('opacity', 0);
 						clearTimeout(showHideTimer);
 						showHideTimer = window.setTimeout(function(){
-							searchForm.css('display', 'none');
-							searchOverlay.css('display', 'none');
+							$form.css('display', 'none');
+							$overlay.css('display', 'none');
 						}, 700);
 					}, 25);
 				};
 
 			// Handling virtual keyboards at touch devices
 			if (jQuery.isMobile){
-				searchInput
+				$input
 					.on('focus', function(){
 						// Transforming hex to rgba
-						var originalColor = searchOverlay.css('background-color'),
-							overlayOpacity = searchOverlay.css('opacity'),
+						var originalColor = $overlay.css('background-color'),
+							overlayOpacity = $overlay.css('opacity'),
 							matches;
 						// RGB Format
 						if (matches = /^rgb\((\d+), (\d+), (\d+)\)$/.exec(originalColor)){
-							searchForm.css('background-color', "rgba("+parseInt(matches[1])+","+parseInt(matches[2])+","+parseInt(matches[3])+", "+overlayOpacity+")");
+							$form.css('background-color', "rgba("+parseInt(matches[1])+","+parseInt(matches[2])+","+parseInt(matches[3])+", "+overlayOpacity+")");
 						}
 						// Hex format
 						else if (matches = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})$/.exec(originalColor)){
-							searchForm.css('background-color', "rgba("+parseInt(matches[1], 16)+","+parseInt(matches[2], 16)+","+parseInt(matches[3], 16)+", "+overlayOpacity+")");
+							$form.css('background-color', "rgba("+parseInt(matches[1], 16)+","+parseInt(matches[2], 16)+","+parseInt(matches[3], 16)+", "+overlayOpacity+")");
 						}
 						// Fault tolerance
 						else {
-							searchForm.css('background-color', originalColor);
+							$form.css('background-color', originalColor);
 						}
-						searchOverlay.addClass('mobilefocus');
+						$overlay.addClass('mobilefocus');
 					})
 					.on('blur', function(){
-						searchOverlay.removeClass('mobilefocus');
-						searchForm.css('background-color', 'transparent');
+						$overlay.removeClass('mobilefocus');
+						$form.css('background-color', 'transparent');
 					});
 			}
 
-			searchShow.click(function(){
-				var searchPos = searchShow.offset(),
-					searchWidth = searchShow.width(),
-					searchHeight = searchShow.height();
+			$btnOpen.click(function(){
+				var searchPos = $btnOpen.offset(),
+					searchWidth = $btnOpen.width(),
+					searchHeight = $btnOpen.height();
 				// Preserving scroll position
 				searchPos.top -= $window.scrollTop();
 				searchPos.left -= $window.scrollLeft();
@@ -84,7 +82,7 @@
 					overlayRadius = Math.sqrt(Math.pow(Math.max(winWidth - overlayX, overlayX), 2) + Math.pow(Math.max(winHeight - overlayY, overlayY), 2)),
 					overlayScale = (overlayRadius+15)/searchOverlayInitRadius;
 
-				searchOverlay.css({
+				$overlay.css({
 					width: searchOverlayInitRadius*2,
 					height: searchOverlayInitRadius*2,
 					left: overlayX,
@@ -92,42 +90,42 @@
 					"margin-left": -searchOverlayInitRadius,
 					"margin-top": -searchOverlayInitRadius
 				});
-				searchOverlay
+				$overlay
 					.removeClass('overlay-out')
 					.show();
-				searchForm.css({
+				$form.css({
 					opacity: 0,
 					display: 'block',
 					'-webkit-transition': 'opacity 0.4s 0.3s',
 					transition: 'opacity 0.4s 0.3s'
 				});
 				window.setTimeout(function(){
-					searchOverlay
+					$overlay
 						.addClass('overlay-on')
 						.css({
 							"-webkit-transform": "scale(" + overlayScale + ")",
 							"transform": "scale(" + overlayScale + ")"
 						});
-					searchForm.css('opacity', 1);
+					$form.css('opacity', 1);
 					clearInterval(showHideTimer);
 					showHideTimer = window.setTimeout(function() {
-						searchInput.focus();
+						$input.focus();
 					}, 700);
 				}, 25);
 			});
 
-			searchInput.keyup(function(e) {
+			$input.keyup(function(e) {
 				if (e.keyCode == 27) searchHide();
 			});
 
-			searchClose.on('click touchstart', searchHide);
+			$btnClose.on('click touchstart', searchHide);
 		});
 	};
 
 	$(function(){
-		jQuery('.l-header .w-search').wSearch();
+		jQuery('.l-header .w-search.layout_fullscreen').wSearch();
 	});
-})(jQuery);
+}(jQuery);
 
 
 /**
@@ -214,12 +212,61 @@
 
 }(jQuery);
 
+/**
+ * UpSolution Widget: w-blog
+ */
+!function( $ ){
+	// TODO Make proper reveal grid animation for "load more"
+	$us.WBlog.prototype.beforeAppendItems = function($items){
+		//this.$list.addClass('animate_revealgrid');
+		//$items.addClass('animate_reveal');
+	};
+	$us.WBlog.prototype.afterAppendItems = function($items){
+		//$items.revealGridMD();
+	};
+	$(function(){
+		$('.w-blog').wBlog();
+	});
+}(jQuery);
+
+/**
+ * UpSolution Widget: w-portfolio
+ */
+jQuery(function($){
+	// TODO Make proper reveal grid animation for "load more"
+	$us.WPortfolio.prototype.itemLoaded = function(itemID){
+		if (this.$container.hasClass('animate_revealgrid')) {
+			this.items[itemID].usMod('animate', false).css('opacity', 0);
+		}
+	};
+	$us.WPortfolio.prototype.itemsLoaded = function($items){
+		if (this.$container.hasClass('animate_revealgrid')) {
+			$items.revealGridMD();
+		}
+	};
+
+	$('.w-portfolio').wPortfolio();
+});
+
 // Fixing contact form 7 semantics, when requested
 jQuery('.wpcf7').each(function(){
 	var $form = jQuery(this);
 
+	// Removing wrong newlines
+	$form.find('br').remove();
+
+	// Fixing quiz layout
+	$form.find('.w-form-row .wpcf7-quiz').each(function(){
+		var $input = jQuery(this),
+			$row = $input.closest('.w-form-row'),
+			$field = $row.find('.w-form-row-field:first'),
+			$label = $row.find('.wpcf7-quiz-label');
+		$label.insertBefore($field).attr('class', 'w-form-row-label');
+		$input.unwrap();
+	});
+
 	// Removing excess wrappers
-	$form.find('.w-form-field > .wpcf7-form-control-wrap > .wpcf7-form-control').each(function(){
+	$form.find('.w-form-row-field > .wpcf7-form-control-wrap > .wpcf7-form-control').each(function(){
 		var $input = jQuery(this);
 		if (($input.attr('type')||'').match(/^(text|email|url|tel|number|date|quiz|captcha)$/) || $input.is('textarea')){
 			// Moving wrapper classes to .w-form-field, and removing the span wrapper
@@ -230,7 +277,7 @@ jQuery('.wpcf7').each(function(){
 	});
 
 	// Transforming submit button
-	$form.find('.w-form-field > .wpcf7-submit').each(function(){
+	$form.find('.w-form-row-field > .wpcf7-submit').each(function(){
 		var $input = jQuery(this),
 			classes = $input.attr('class').split(' '),
 			value = $input.attr('value') || '';
@@ -239,7 +286,7 @@ jQuery('.wpcf7').each(function(){
 			classes.push('w-btn');
 		}
 		var buttonHtml = '<button id="message_send" class="'+classes.join(' ')+'">' +
-			'<div class="g-preloader style_2"></div>' +
+			'<div class="g-preloader"></div>' +
 			'<span class="w-btn-label">'+value+'</span>' +
 			'<span class="ripple-container"></span>' +
 			'</button>';
@@ -250,6 +297,12 @@ jQuery('.wpcf7').each(function(){
 	$form.find('.wpcf7-form-control-wrap > select').each(function(){
 		var $select = jQuery(this);
 		if ( ! $select.attr('multiple')) $select.parent().addClass('type_select');
+	});
+
+	jQuery('<span class="w-form-row-field-bar"></span>').appendTo($form.find('.wpcf7-form-control-wrap'));
+
+	$form.on('mailsent.wpcf7', function(){
+		$form.find('.w-form-row.not-empty').removeClass('not-empty');
 	});
 });
 
@@ -403,23 +456,11 @@ jQuery(function($){
 		});
 	};
 
-	if ($.fn.waypoint) {
-		$('.animate_revealgrid').each(function(){
-			var $elm = $(this);
-			new Waypoint({
-				element: this,
-				handler: function(){
-					var $items = $elm.find('.animate_reveal');
-					if ($us.canvas.$body.hasClass('disable_effects')) return $items.removeClass('animate_reveal');
-					$items.revealGridMD();
-					this.destroy();
-				},
-				offset : '85%'
-			});
+	$('.animate_revealgrid').each(function(){
+		$us.scroll.addWaypoint($(this), '15%', function($elm){
+			var $items = $elm.find('.animate_reveal');
+			if ($us.canvas.$body.hasClass('disable_effects')) return $items.removeClass('animate_reveal');
+			$items.revealGridMD();
 		});
-	}
-	else {
-		// Fallback for waypoints script turned off
-		$('.animate_revealgrid').removeClass('animate_revealgrid').find('animate_reveal').removeClass('animate_reveal');
-	}
+	});
 });

@@ -532,7 +532,7 @@ tr.registered td:first-child {
 	border-radius: 0;
 	margin: -4px 4px -1px 0;
 }
-.bsf-sp-screen h2 .nav-tab-active, 
+.bsf-sp-screen h2 .nav-tab-active,
 .bsf-sp-screen h2 .nav-tab-active:hover {
 	border-bottom: 1px solid #F1F1F1;
 	background: #F1F1F1;
@@ -742,10 +742,34 @@ li.bsf-extension:nth-child(2n) {
 }
 .bsf-extension-start-install-content {
 	transform: translate(-50%,-50%);
-	position: absolute;    
-	top: 50%;    
+	position: absolute;
+	top: 50%;
 	left: 50%;
 	width:100%;
+}
+.bsf-plugin-installed {
+	border-color: #C9ECC9;
+}
+.bsf-plugin-installed .show-install {
+    opacity: 0;
+    z-index: -1;
+}
+.bsf-plugin-installed-button {
+    cursor: default !important;
+}
+.bsf-plugin-installed-button i {
+	line-height: inherit;
+    width: 12px;
+    height: auto;
+    color: #42D142;
+}
+.bsf-update-spinner {
+    float: none;
+    vertical-align: bottom;
+}
+.bsf-update-spinner.show {
+	visibility: visible;
+	display: inline-block;
 }
 .bsf-extension-start-install-content h2 {
 	font-weight: 400 !important;
@@ -824,7 +848,7 @@ li.bsf-extension:nth-child(2n) {
 .bsf-pr-form-row.bsf-rem-top-margin {
 	margin: 0 !important;
 }
-input.bsf-pr-input, 
+input.bsf-pr-input,
 select.bsf-pr-input {
 	display: block !important;
 	position: relative;
@@ -847,7 +871,7 @@ select.bsf-pr-input {
 	-moz-transition: all 100ms linear;
 	transition: all 100ms linear;
 }
-input.bsf-pr-input:focus, 
+input.bsf-pr-input:focus,
 select.bsf-pr-input:focus {
 	border-color: #BDBDBD !important;
 }
@@ -855,7 +879,7 @@ input.bsf-pr-input.bsf-pr-input-required,
 select.bsf-pr-input.bsf-pr-input-required {
 	border: 1px solid #F57373 !important;
 }
-.bsf-pr-form-row input[type=checkbox], 
+.bsf-pr-form-row input[type=checkbox],
 .bsf-pr-form-row input[type=radio] {
 	border: 1px solid #DDD;
 	border-radius: 3px;
@@ -930,13 +954,13 @@ label.checkbox-privacy {
    color: #999;
 }
 :-moz-placeholder { /* Firefox 18- */
-   color: #999; 
+   color: #999;
 }
 ::-moz-placeholder {  /* Firefox 19+ */
-   color: #999; 
+   color: #999;
 }
-:-ms-input-placeholder {  
-   color: #999; 
+:-ms-input-placeholder {
+   color: #999;
 }
 
 /* License Screen Table */
@@ -949,7 +973,7 @@ table.licenses {
 	padding: 0 !important;
 	table-layout: auto !important;
 }
-table.licenses, 
+table.licenses,
 table.licenses td,
 table.licenses th {
     border: 1px solid #DFDFDF !important;
@@ -1103,7 +1127,7 @@ table.wp-list-table.bsf-sys-info {
 	margin-bottom: 41px !important;
 	table-layout: fixed !important;
 }
-table.bsf-sys-info, 
+table.bsf-sys-info,
 table.bsf-sys-info td,
 table.bsf-sys-info th {
     border: 1px solid #dfdfdf !important;
@@ -1188,7 +1212,7 @@ table.bsf-sys-info.bsf-table-active-plugin {
 	letter-spacing: 0.25px;
 	color: #777;
 }
-.bsf-logged-user-email:before {	
+.bsf-logged-user-email:before {
 	content: "\f465";
 	position: absolute;
 	left: -25px;
@@ -1713,7 +1737,7 @@ table.bsf-sys-info.bsf-table-active-plugin {
 	-webkit-background-size: 85px 85px;
 	text-align: center;
 	margin: 0;
-	display: inline-block;	
+	display: inline-block;
 	text-rendering: optimizeLegibility;
 }
 .bend-product-ver {

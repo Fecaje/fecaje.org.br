@@ -7,7 +7,7 @@ vcWoocommerceProductAttributeFilterDependencyCallback = function () {
 	(function ( $, that ) {
 		var $filterDropdown, $empty;
 
-		$filterDropdown = $( '.vc_shortcode-param.vc_dependent-hidden', that.$content );
+		$filterDropdown = $( '[data-vc-ui-element="panel-shortcode-param"].vc_dependent-hidden', that.$content );
 		$filterDropdown.removeClass( 'vc_dependent-hidden' );
 		$empty = $( '#filter-empty', $filterDropdown );
 		if ( $empty.length ) {
@@ -25,7 +25,8 @@ vcWoocommerceProductAttributeFilterDependencyCallback = function () {
 				url: window.ajaxurl,
 				data: {
 					action: 'vc_woocommerce_get_attribute_terms',
-					attribute: this.value
+					attribute: this.value,
+					_vcnonce: window.vcAdminNonce
 				}
 			} ).done( function ( data ) {
 				if ( 0 < data.length ) {

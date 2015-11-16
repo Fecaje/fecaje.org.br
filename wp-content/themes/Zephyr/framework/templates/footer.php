@@ -5,14 +5,19 @@ $us_layout = US_Layout::instance();
 </div>
 <!-- /CANVAS -->
 
-<?php do_action( 'us_after_header' ) ?>
-
-<?php if ( $us_layout->footer_show_top OR $us_layout->footer_show_bottom ): ?>
+<?php if ( $us_layout->footer_show_top OR $us_layout->footer_show_bottom ) { ?>
 
 <?php do_action( 'us_before_footer' ) ?>
 
+<?php
+$footer_classes = '';
+$footer_layout = us_get_option( 'footer_layout' );
+if ( $footer_layout != NULL ) {
+	$footer_classes .= ' layout_' . $footer_layout;
+}
+?>
 <!-- FOOTER -->
-<div class="l-footer">
+<div class="l-footer<?php echo $footer_classes; ?>">
 
 <?php if ( $us_layout->footer_show_top ): ?>
 	<!-- subfooter: top -->
@@ -78,9 +83,9 @@ $us_layout = US_Layout::instance();
 
 <?php do_action( 'us_after_footer' ) ?>
 
-<?php endif/*( $us_layout->footer_show_top OR $us_layout->footer_show_bottom )*/; ?>
+<?php }/*( $us_layout->footer_show_top OR $us_layout->footer_show_bottom )*/; ?>
 
-<a class="w-toplink" href="#"></a>
+<a class="w-toplink" href="#" title="<?php _e( 'Back to top', 'us'); ?>"></a>
 <script type="text/javascript">
 	if (window.$us === undefined) window.$us = {};
 	$us.canvasOptions = ($us.canvasOptions || {});

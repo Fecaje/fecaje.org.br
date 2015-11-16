@@ -2,7 +2,7 @@
 /*
 * Add-on Name: Highlight Box.
 */
-if(!class_exists('Ultimate_Highlight_Box')) 
+if(!class_exists('Ultimate_Highlight_Box'))
 {
 	class Ultimate_Highlight_Box{
 		function __construct(){
@@ -45,6 +45,7 @@ if(!class_exists('Ultimate_Highlight_Box'))
 								"param_name" => "content",
 								"admin_label" => true,
 								"value" => "",
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 								//"description" => __("Give a title to this banner","smile")
 							),
 							array(
@@ -149,7 +150,7 @@ if(!class_exists('Ultimate_Highlight_Box'))
 								"value" => "",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_type","value" => array("selector")),
-								"group" => "Icon"				
+								"group" => "Icon"
 							),
 							array(
 								"type" => "dropdown",
@@ -172,7 +173,7 @@ if(!class_exists('Ultimate_Highlight_Box'))
 								"heading" => __("Background Color", "ultimate_vc"),
 								"param_name" => "icon_color_bg",
 								"value" => "",
-								"description" => __("Select background color for icon.", "ultimate_vc"),	
+								"description" => __("Select background color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_style", "value" => array("circle","square","advanced")),
 								"group" => "Icon"
 							),
@@ -200,7 +201,7 @@ if(!class_exists('Ultimate_Highlight_Box'))
 								"heading" => __("Border Color", "ultimate_vc"),
 								"param_name" => "icon_color_border",
 								"value" => "#333333",
-								"description" => __("Select border color for icon.", "ultimate_vc"),	
+								"description" => __("Select border color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 								"group" => "Icon"
 							),
@@ -266,8 +267,8 @@ if(!class_exists('Ultimate_Highlight_Box'))
 								"dependency" => Array("element" => "icon_type","value" => array("custom")),
 								"group" => "Icon"
 							),
-							
-							
+
+
 							array(
 								"type" => "ultimate_google_fonts",
 								"heading" => __("Font Family", "ultimate_vc"),
@@ -381,7 +382,7 @@ if(!class_exists('Ultimate_Highlight_Box'))
 		{
 			//wp_enqueue_script('utl-ctaction-script');
 			$output = $el_class = $style = $data = $text_style_inline = $ctaction_link_html = $icon_inline = $effect = '';
-			
+
 			extract(shortcode_atts( array(
 				'content_alignment' 		=> 'ctaction-text-center',
 				'ctaction_background' 		=> '#e74c3c',
@@ -414,34 +415,34 @@ if(!class_exists('Ultimate_Highlight_Box'))
 				'effect' 					=> 'right-push',
 				'el_class' 					=> '',
 			),$atts));
-			
+
 			$el_class .= ' '.$content_alignment;
-			
+
 			/* typography */
-			
+
 			if($text_font_family != '')
 			{
 				$temp = get_ultimate_font_family($text_font_family);
 				$text_style_inline .= 'font-family:'.$temp.';';
 			}
-			
+
 			$text_style_inline .= get_ultimate_font_style($text_font_style);
-			
+
 			if($text_font_size != '')
 				$text_style_inline .= 'font-size:'.$text_font_size.'px;';
-			
+
 			if($text_color != '')
 				$text_style_inline .= 'color:'.$text_color.';';
-				
+
 			if($text_line_height != '')
 				$text_style_inline .= 'line-height:'.$text_line_height.'px;';
-				
+
 			/*$args = array(
 				$text_font_family
 			);
 			enquque_ultimate_google_fonts($args);*/
 			/*end typography */
-			
+
 			if($ctaction_background != '')
 			{
 				$data .= ' data-background="'.$ctaction_background.'" ';
@@ -449,18 +450,18 @@ if(!class_exists('Ultimate_Highlight_Box'))
 			}
 			if($ctaction_background_hover != '')
 				$data .= ' data-background-hover="'.$ctaction_background_hover.'" ';
-				
+
 			$data .= ' data-override="'.$ctaction_override.'" ';
-			
+
 			if($ctaction_padding_top != '')
 				$text_style_inline .= 'padding-top:'.$ctaction_padding_top.'px;';
 			if($ctaction_padding_bottom != '')
-				$text_style_inline .= 'padding-bottom:'.$ctaction_padding_bottom.'px;';	
+				$text_style_inline .= 'padding-bottom:'.$ctaction_padding_bottom.'px;';
 			if($ctaction_padding_left != '')
 				$text_style_inline .= 'padding-left:'.$ctaction_padding_left.'px;';
 			if($ctaction_padding_right != '')
-				$text_style_inline .= 'padding-right:'.$ctaction_padding_right.'px;';			
-				
+				$text_style_inline .= 'padding-right:'.$ctaction_padding_right.'px;';
+
 			if($ctaction_link != '')
 			{
 				$ctaction_link = vc_build_link($ctaction_link);
@@ -474,20 +475,20 @@ if(!class_exists('Ultimate_Highlight_Box'))
 					$ctaction_link_html = '<a href="'.$url.'" class="ulimate-call-to-action-link" '.$target.'></a>';
 				}
 			}
-			
+
 			if($enable_icon == 'enable_icon_value')
 			{
 				$icon_inline = do_shortcode('[just_icon icon_align="center" icon_type="'.$icon_type.'" icon="'.$icon.'" icon_img="'.$icon_img.'" img_width="'.$img_width.'" icon_size="'.$icon_size.'" icon_color="'.$icon_color.'" icon_style="'.$icon_style.'" icon_color_bg="'.$icon_color_bg.'" icon_color_border="'.$icon_color_border.'"  icon_border_style="'.$icon_border_style.'" icon_border_size="'.$icon_border_size.'" icon_border_radius="'.$icon_border_radius.'" icon_border_spacing="'.$icon_border_spacing.'"]');
 			}
 			else
 				$effect = 'no-effect';
-			
+
 			$output .= '<div class="ultimate-call-to-action '.$el_class.'" style="'.$text_style_inline.'" '.$data.'>';
 				if($icon_inline != '')
-					$output .= '<span class="ultimate-ctaction-icon ctaction-icon-'.$effect.'">'.$icon_inline.'</span>';
-				$output .= '<span class="uvc-ctaction-data uvc-ctaction-data-'.$effect.'">'.$content.'</span>';
+					$output .= '<div class="ultimate-ctaction-icon ctaction-icon-'.$effect.'">'.$icon_inline.'</div>';
+				$output .= '<div class="uvc-ctaction-data uvc-ctaction-data-'.$effect.'">'.$content.'</div>';
 			$output .= $ctaction_link_html.'</div>';
-			
+
 			return $output;
 		}
 	}

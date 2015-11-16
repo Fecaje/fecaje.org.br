@@ -65,6 +65,15 @@
     -ms-backface-visibility: hidden;
     backface-visibility: hidden
 }
+
+.flip-box-wrap .ifb-front * {
+ -webkit-backface-visibility: hidden;
+ -moz-backface-visibility: hidden;
+ -o-backface-visibility: hidden;
+ -ms-backface-visibility: hidden;
+ backface-visibility: hidden;
+}
+
 .flip-box-wrap .ifb-back {
     position: absolute;
     top: 0;
@@ -804,6 +813,9 @@
 .ifb-flip-box-section.ifb-flip-box-section-vertical-middle {
     vertical-align: middle !important;
     top: 50%;
+    -moz-backface-visibility: hidden; 
+    -webkit-backface-visibility: hidden; 
+    backface-visibility: hidden;
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     transform: translateY(-50%)

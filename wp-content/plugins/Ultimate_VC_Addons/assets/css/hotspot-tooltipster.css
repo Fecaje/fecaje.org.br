@@ -26,10 +26,9 @@
     margin-left: 4px
 }
 .ult-tooltipster-default {
-    border-radius: 5px;
-    border: 2px solid #000;
-    background: #4c4c4c;
-    color: #fff;
+    /*border-radius: 5px;
+    background: #fff;
+    color: #4c4c4c;*/
     max-width: 100%
 }
 .ult-tooltipster-default .ult-tooltipster-content {

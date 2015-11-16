@@ -3,91 +3,41 @@
 /**
  * Shortcode: us_cta
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['title'] string ActionBox title
+ * @param $atts ['color'] string ActionBox color style: 'primary' / 'secondary' / 'light' / 'custom'
+ * @param $atts ['bg_color'] string Background color
+ * @param $atts ['text_color'] string Text color
+ * @param $atts ['controls'] string Button(s) location: 'right' / 'bottom'
+ * @param $atts ['btn_label'] string Button 1 label
+ * @param $atts ['btn_link'] string Button 1 link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+ * @param $atts ['btn_color'] string Button 1 color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white'
+ * @param $atts ['btn_bg_color'] string Button 1 background color
+ * @param $atts ['btn_text_color'] string Button 1 text color
+ * @param $atts ['btn_style'] string Button 1 style: 'raised' / 'flat'
+ * @param $atts ['btn_size'] string Button 1 size: '' / 'large'
+ * @param $atts ['btn_icon'] string Button 1 icon
+ * @param $atts ['btn_iconpos'] string Button 1 icon position: 'left' / 'right'
+ * @param $atts ['second_button'] bool Has second button?
+ * @param $atts ['btn2_label'] string Button 2 label
+ * @param $atts ['btn2_link'] string Button 2 link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+ * @param $atts ['btn2_color'] string Button 2 color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white'
+ * @param $atts ['btn2_bg_color'] string Button 2 background color
+ * @param $atts ['btn2_text_color'] string Button 2 text color
+ * @param $atts ['btn2_style'] string Button 2 style: 'raised' / 'flat'
+ * @param $atts ['btn2_size'] string Button 2 size: '' / 'large'
+ * @param $atts ['btn2_icon'] string Button 2 icon
+ * @param $atts ['btn2_iconpos'] string Button 2 icon position: 'left' / 'right'
+ * @param $atts ['el_class'] string Extra class name
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var string ActionBox title
-	 */
-	'title' => __( 'This is ActionBox', 'us' ),
-	/**
-	 * @var string ActionBox text
-	 */
-	'message' => '',
-	/**
-	 * @var string ActionBox color style: 'primary' / 'secondary' / 'alternate' / 'custom'
-	 */
-	'color' => 'alternate',
-	/**
-	 * @var string Background color
-	 */
-	'bg_color' => '',
-	/**
-	 * @var string Text color
-	 */
-	'text_color' => '',
-	/**
-	 * @var string Button(s) location: 'right' / 'bottom'
-	 */
-	'controls' => 'right',
-	/**
-	 * @var string Button label
-	 */
-	'btn_label' => __( 'Click Me', 'us' ),
-	'btn2_label' => __( 'Or Me', 'us' ),
-	/**
-	 * @var string Button link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
-	 */
-	'btn_link' => '',
-	'btn2_link' => '',
-	/**
-	 * @var string Button color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white'
-	 */
-	'btn_color' => 'primary',
-	'btn2_color' => 'secondary',
-	/**
-	 * @var string Button background color
-	 */
-	'btn_bg_color' => '',
-	'btn2_bg_color' => '',
-	/**
-	 * @var string Button text color
-	 */
-	'btn_text_color' => '',
-	'btn2_text_color' => '',
-	/**
-	 * @var string Button style: 'raised' / 'flat'
-	 */
-	'btn_style' => 'raised',
-	'btn2_style' => 'raised',
-	/**
-	 * @var string Button size: '' / 'large'
-	 */
-	'btn_size' => 'medium',
-	'btn2_size' => 'medium',
-	/**
-	 * @var string Button icon
-	 */
-	'btn_icon' => '',
-	'btn2_icon' => '',
-	/**
-	 * @var string Button icon position: 'left' / 'right'
-	 */
-	'btn_iconpos' => 'left',
-	'btn2_iconpos' => 'left',
-	/**
-	 * @var bool Has second button?
-	 */
-	'second_button' => FALSE,
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_cta' );
 
 // .w-actionbox container additional classes and inner CSS-styles
 $classes = '';
@@ -150,7 +100,7 @@ foreach ( $btn_prefixes as $prefix ) {
 	if ( ! empty( $btn_inner_css ) ) {
 		$buttons[ $prefix ] .= ' style="' . $btn_inner_css . '"';
 	}
-	$buttons[ $prefix ] .= '>' . $icon_html . '<label>' . $atts[ $prefix . '_label' ] . '</label></a>';
+	$buttons[ $prefix ] .= '>' . $icon_html . '<span class="w-btn-label">' . $atts[ $prefix . '_label' ] . '</span></a>';
 }
 
 if ( ! empty( $inner_css ) ) {
@@ -161,9 +111,12 @@ $output = '<div class="w-actionbox' . $classes . '"' . $inner_css . '><div class
 if ( ! empty( $atts['title'] ) ) {
 	$output .= '<h2>' . html_entity_decode( $atts['title'] ) . '</h2>';
 }
-if ( ! empty( $atts['message'] ) ) {
-	$output .= '<p>' . html_entity_decode( $atts['message'] ) . '</p>';
+if ( ! empty( $content ) ) {
+	$output .= '<p>' . do_shortcode( $content ) . '</p>';
 }
+//if ( ! empty( $atts['message'] ) ) {
+//	$output .= '<p>' . html_entity_decode( $atts['message'] ) . '</p>';
+//}
 $output .= '</div>';
 
 if ( ! empty( $buttons ) ) {

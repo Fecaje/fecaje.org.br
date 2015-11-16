@@ -93,11 +93,11 @@ function us_get_post_prevnext() {
 			}
 		}
 		$in_same_term = ! ! us_get_option( 'portfolio_prevnext_category' );
-		$prev_post = get_next_post( $in_same_term, '', 'us_portfolio_category' );
-		$next_post = get_previous_post( $in_same_term, '', 'us_portfolio_category' );
+		$next_post = get_next_post( $in_same_term, '', 'us_portfolio_category' );
+		$prev_post = get_previous_post( $in_same_term, '', 'us_portfolio_category' );
 	} else {
-		$prev_post = get_next_post( FALSE );
-		$next_post = get_previous_post( FALSE );
+		$next_post = get_next_post( FALSE );
+		$prev_post = get_previous_post( FALSE );
 	}
 	if ( ! empty( $prev_post ) ) {
 		$result['prev'] = array(
@@ -126,19 +126,25 @@ function us_exclude_hidden_portfolios_from_prevnext( $where ) {
 
 add_filter( 'the_password_form', 'us_the_password_form' );
 function us_the_password_form() {
-	$output = '<form class="w-form for_protected" action="' . get_option( 'siteurl' ) . '/wp-login.php?action=postpass" method="post">
-				<div class="w-form-row">
-					<div class="w-form-label">
-						<label>' . __( 'This post is password protected. To view it please enter your password below:', 'us' ) . '</label>
-					</div>
-					<div class="w-form-field for_input">
-						<input type="password" value="" name="post_password"/><i class="mdfi_action_lock"></i><span class="w-form-field-bar"></span>
-					</div>
-					<div class="w-form-field for_submit">
-						<input class="w-btn type_raised" type="submit" value="' . 'Submit' . '" />
-					</div>
-				</div>
-			</form>';
+	$template_vars = array(
+		'type' => 'protectedpost',
+		'action' => get_option( 'siteurl' ) . '/wp-login.php?action=postpass',
+		'method' => 'post',
+		'fields' => array(
+			'info' => array(
+				'type' => 'info',
+				'title' => __( 'This post is password protected. To view it please enter your password below:', 'us' ),
+			),
+			'post_password' => array(
+				'type' => 'password',
+			),
+			'submit' => array(
+				'type' => 'submit',
+				'title' => __( 'Submit', 'us' ),
+				'btn_classes' => '',
+			),
+		),
+	);
 
-	return $output;
+	return us_get_template( 'templates/form/form', $template_vars );
 }

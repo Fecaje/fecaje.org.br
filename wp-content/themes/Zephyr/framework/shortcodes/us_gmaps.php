@@ -3,73 +3,38 @@
 /**
  * Shortcode: us_gmaps
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['marker_address'] string Marker 1 address
+ * @param $atts ['marker_text'] string Marker 1 text
+ * @param $atts ['show_infowindow'] bool Show Marker's InfoWindow
+ * @param $atts ['markers'] string Additional markers
+ * @param $atts ['custom_marker_img'] int Custom marker image (from WordPress media)
+ * @param $atts ['custom_marker_size'] int Custom marker size
+ * @param $atts ['height'] int Map height
+ * @param $atts ['type'] string Map type: 'roadmap' / 'satellite' / 'hybrid' / 'terrain'
+ * @param $atts ['zoom'] int Map zoom
+ * @param $atts ['latitude'] float Map latitude
+ * @param $atts ['longitude'] float Map longitude
+ * @param $atts ['hide_controls'] bool Hide all map controls
+ * @param $atts ['disable_zoom'] bool Disable map zoom on mouse wheel scroll
+ * @param $atts ['disable_dragging'] bool Disable dragging on touch screens
+ * @param $atts ['map_style_json'] string Map Style
+ * @param $atts ['map_bg_color'] string Map Background Color
+ * @param $atts ['el_class'] string Extra class name
  *
  * @filter 'us_gmaps_js_options' Allows to filter options, passed to JavaScript
  */
-$atts = shortcode_atts( array(
-	/**
-	 * @var string Marker address
-	 */
-	'marker_address' => '1600 Amphitheatre Parkway, Mountain View, CA 94043, United States',
-	'marker2_address' => '',
-	'marker3_address' => '',
-	'marker4_address' => '',
-	'marker5_address' => '',
-	/**
-	 * @var string Marker text
-	 */
-	'marker_text' => '',
-	'marker2_text' => '',
-	'marker3_text' => '',
-	'marker4_text' => '',
-	'marker5_text' => '',
-	/**
-	 * @var bool Add more markers?
-	 */
-	'add_markers' => FALSE,
-	/**
-	 * @var int Custom marker image (from WordPress media)
-	 */
-	'custom_marker_img' => FALSE,
-	/**
-	 * @var int Custom marker size
-	 */
-	'custom_marker_size' => 20,
-	/**
-	 * @var int Map height
-	 */
-	'height' => 400,
-	/**
-	 * @var string Map type: 'roadmap' / 'satellite' / 'hybrid' / 'terrain'
-	 */
-	'type' => 'roadmap',
-	/**
-	 * @var int Map zoom
-	 */
-	'zoom' => 14,
-	/**
-	 * @var float Map latitude
-	 */
-	'latitude' => '',
-	/**
-	 * @var float Map longitude
-	 */
-	'longitude' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_gmaps' );
 
 // Decoding base64-encoded HTML attributes
-foreach ( array( 'marker_text', 'marker2_text', 'marker3_text', 'marker4_text', 'marker5_text' ) as $mkey ) {
-	if ( ! empty( $atts[ $mkey ] ) ) {
-		$atts[ $mkey ] = rawurldecode( base64_decode( $atts[ $mkey ] ) );
-	}
+if ( ! empty( $atts['marker_text'] ) ) {
+	$atts['marker_text'] = rawurldecode( base64_decode( $atts['marker_text'] ) );
 }
 
 $classes = '';
@@ -104,19 +69,42 @@ if ( ! empty( $atts['latitude'] ) AND ! empty( $atts['longitude'] ) ) {
 $script_options['markers'] = array(
 	array_merge( $script_options, array(
 		'html' => $atts['marker_text'],
-	) )
+		'infowindow' => $atts['show_infowindow']
+	) ),
 );
 
-if ( $atts['add_markers'] ) {
-	foreach ( array( 'marker2', 'marker3', 'marker4', 'marker5' ) as $mkey ) {
-		if ( ! empty( $atts[ $mkey . '_text' ] ) AND ! empty( $atts[ $mkey . '_address' ] ) ) {
-			$script_options['markers'][] = array(
-				'html' => $atts[ $mkey . '_text' ],
-				'address' => $atts[ $mkey . '_address' ],
-			);
-		}
+
+if ( empty( $atts['markers'] ) ) {
+	$atts['markers'] = array();
+} else {
+	$atts['markers'] = json_decode( urldecode( $atts['markers'] ), TRUE );
+	if ( ! is_array( $atts['markers'] ) ) {
+		$atts['markers'] = array();
 	}
 }
+
+foreach ( $atts['markers'] as $index => $marker ) {
+	/**
+	 * Filtering the included markers
+	 *
+	 * @param $marker ['marker_address'] string Marker Address
+	 * @param $marker ['marker_text'] string Marker Text
+	 * @param $marker ['marker_latitude'] string Marker Latitude (optional)
+	 * @param $marker ['marker_longitude'] string Marker Longitude (optional)
+	 */
+
+
+	if ( ( ! empty( $marker['marker_text'] ) AND ! empty( $marker['marker_address'] ) ) OR ( ! empty( $marker['marker_text'] ) AND ! empty( $marker['marker_latitude'] ) AND ! empty( $marker['marker_longitude'] ) ) ) {
+		$script_options['markers'][] = array(
+			'html' => $marker['marker_text'],
+			'address' => ( ! empty( $marker['marker_address'] ) ) ? $marker['marker_address'] : '',
+			'latitude' => ( ! empty( $marker['marker_latitude'] ) ) ? $marker['marker_latitude'] : null,
+			'longitude' => ( ! empty( $marker['marker_longitude'] ) ) ? $marker['marker_longitude'] : null,
+		);
+	}
+}
+
+
 
 if ( ! empty( $atts['zoom'] ) ) {
 	$script_options['zoom'] = intval( $atts['zoom'] );
@@ -127,10 +115,13 @@ if ( ! empty( $atts['type'] ) ) {
 		$script_options['maptype'] = $atts['type'];
 	}
 }
+if ( ! empty( $atts['map_bg_color'] ) ) {
+	$script_options['mapBgColor'] = $atts['map_bg_color'];
+}
 
 $custom_marker_options = '';
 
-if ( $atts['custom_marker_img'] != '' ) {
+if ( $atts['custom_marker_img'] != '' AND $atts['custom_marker_img'] != 'false' ) {
 	if ( is_numeric( $atts['custom_marker_img'] ) ) {
 		$atts['custom_marker_img'] = wp_get_attachment_image_src( intval( $atts['custom_marker_img'] ), 'thumbnail' );
 		if ( $atts['custom_marker_img'] != NULL ) {
@@ -139,17 +130,28 @@ if ( $atts['custom_marker_img'] != '' ) {
 	}
 	$atts['custom_marker_size'] = intval( $atts['custom_marker_size'] );
 	$script_options['icon'] = array(
-		'image' => $atts['custom_marker_img'],
-		'iconsize' => array( $atts['custom_marker_size'], $atts['custom_marker_size'] ),
-		'iconanchor' => array( ceil( $atts['custom_marker_size'] / 2 ), $atts['custom_marker_size'] ),
+		'url' => $atts['custom_marker_img'],
+		'size' => array( $atts['custom_marker_size'], $atts['custom_marker_size'] ),
+		'anchor' => array( ceil( $atts['custom_marker_size'] / 2 ), $atts['custom_marker_size'] ),
 	);
 }
 
 if ( empty( $atts['height'] ) ) {
 	$atts['height'] = 400;
 }
+$script_options['height'] = $atts['height'];
 $inner_css = ' style="height: ' . $atts['height'] . 'px"';
 
+// Advanced options
+if ( $atts['hide_controls'] ) {
+	$script_options['hideControls'] = TRUE;
+}
+if ( $atts['disable_zoom'] ) {
+	$script_options['disableZoom'] = TRUE;
+}
+if ( $atts['disable_dragging'] ) {
+	$script_options['disableDragging'] = TRUE;
+}
 // Enqueued the script only once
 wp_enqueue_script( 'us-google-maps' );
 wp_enqueue_script( 'us-gmap' );
@@ -159,5 +161,9 @@ $script_options = apply_filters( 'us_gmaps_js_options', $script_options, get_the
 $output = '<div class="w-map' . $classes . '" id="us_map_' . $us_gmaps_index . '"' . $inner_css . '>';
 $output .= '<div class="w-map-h"></div>';
 $output .= '<div class="w-map-json"' . us_pass_data_to_js( $script_options ) . '></div>';
+// Style JSON
+if ( $atts['map_style_json'] != '' ) {
+	$output .= '<div class="w-map-style-json" onclick=\'return ' . str_replace( "'", '&#39;', rawurldecode( base64_decode( $atts['map_style_json'] ) ) ) . '\'></div>';
+}
 $output .= '</div>';
 echo $output;

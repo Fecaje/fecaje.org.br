@@ -1,22 +1,39 @@
-<?php
-$output = $el_class = $css_animation = '';
+<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
 
-extract(shortcode_atts(array(
-    'el_class' => '',
-    'css' => '',
-), $atts));
+/**
+ * Shortcode: vc_column_text
+ *
+ * Overloaded by UpSolution custom implementation.
+ *
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['el_class'] string Additional class
+ * @param $atts ['css'] string Custom CSS
+ */
 
-if (mb_substr(trim($content), 0, 1) != '<') {
-    $content = '<p>'.$content;
+$atts = us_shortcode_atts( $atts, 'vc_column_text' );
+
+$classes = '';
+
+if ( mb_substr( trim( $content ), 0, 1 ) != '<' ) {
+	$content = '<p>' . $content . '</p>';
 }
 
-$custom_css_class = (function_exists('vc_shortcode_custom_css_class'))?vc_shortcode_custom_css_class( $css, ' ' ):'';
+if ( function_exists( 'vc_shortcode_custom_css_class' ) AND ! empty( $atts['css'] ) ) {
+	$classes .= ' ' . vc_shortcode_custom_css_class( $atts['css'] );
+}
 
-$css_class = 'wpb_text_column '.$el_class.$custom_css_class;
-$output .= "\n\t".'<div class="'.$css_class.'">';
-$output .= "\n\t\t".'<div class="wpb_wrapper">';
-$output .= "\n\t\t\t".do_shortcode(shortcode_unautop($content));
-$output .= "\n\t\t".'</div> ';
-$output .= "\n\t".'</div> ';
+if ( ! empty( $atts['el_class'] ) ) {
+	$classes .= ' ' . $atts['el_class'];
+}
+
+$output = '<div class="wpb_text_column ' . $classes . '">';
+$output .= '<div class="wpb_wrapper">' . do_shortcode( shortcode_unautop( $content ) ) . '</div> ';
+$output .= '</div> ';
 
 echo $output;

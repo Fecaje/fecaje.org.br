@@ -31,7 +31,6 @@ foreach ( $prefixes as $prefix ) {
 	}
 }
 
-global $smof_data;
 ?>
 
 <?php if ( FALSE ): ?><style>/* Setting IDE context */<?php endif; ?>
@@ -194,8 +193,7 @@ h6 {
 
 /* Header Options
    ========================================================================== */
-
-@media (min-width: 901px) {
+@media (min-width: <?php echo us_get_option('responsive_layout') ? '901px' : '300px' ?>) {
 .l-subheader.at_middle {
 	line-height: <?php echo us_get_option( 'header_main_height', 100 ) ?>px;
 	}
@@ -280,6 +278,13 @@ h6 {
 	}
 }
 
+/* Menu Options
+   ========================================================================== */
+   
+.l-header .w-nav.type_desktop .w-nav-anchor.level_1 {
+	padding: 0 <?php echo us_get_option( 'menu_indents' )/2 ?>px;
+	}
+   
 /* Logo Options
    ========================================================================== */
 
@@ -419,18 +424,18 @@ h6 {
 	color: <?php echo us_get_option( 'color_header_transparent_text_hover' ) ?>;
 	}
 
-/* Search Screen Background Color */
-.w-search-form-overlay {
+/* Search Form Background Color */
+.w-search-background {
 	background-color: <?php echo us_get_option( 'color_header_search_bg' ) ?>;
 	}
 
-/* Search Screen Text Color */
-.l-subheader .w-search-form {
+/* Search Form Text Color */
+.w-search.layout_fullscreen .w-form {
 	color: <?php echo us_get_option( 'color_header_search_text' ) ?>;
 	}
-.l-subheader .w-search-input:after,
-.l-subheader input:focus ~ .w-search-input-bar:before,
-.l-subheader input:focus ~ .w-search-input-bar:after {
+.w-search.layout_fullscreen .w-form-row-field:after,
+.w-search.layout_fullscreen .w-form-row.focused .w-form-row-field-bar:before,
+.w-search.layout_fullscreen .w-form-row.focused .w-form-row-field-bar:after {
 	background-color: <?php echo us_get_option( 'color_header_search_text' ) ?>;
 	}
 
@@ -548,12 +553,13 @@ h6 {
 /*************************** MAIN CONTENT ***************************/
 
 /* Background Color */
+.l-preloader,
 .l-canvas,
 .w-blog.layout_masonry .w-blog-post-h,
 .w-cart-dropdown,
 .w-portfolio-item-anchor,
 .w-pricing.style_1 .w-pricing-item-h,
-.w-person.style_card,
+.w-person.layout_card,
 #lang_sel ul ul,
 #lang_sel_click ul ul,
 #lang_sel_footer,
@@ -583,15 +589,19 @@ a.w-btn.color_contrast.style_raised,
 .l-canvas.sidebar_none .l-section.for_comments,
 .no-touch .w-btn.style_flat:hover,
 .no-touch .pagination a.page-numbers:hover,
-.w-actionbox.color_alternate,
+.w-actionbox.color_light,
 .w-blog-post-preview-icon,
 .w-form.for_protected,
 .w-iconbox.style_circle.color_light .w-iconbox-icon,
+.g-loadmore-btn,
 .no-touch .w-logos .owl-prev:hover,
 .no-touch .w-logos .owl-next:hover,
 .w-profile,
 .w-pricing.style_1 .w-pricing-item-header,
 .w-pricing.style_2 .w-pricing-item-h,
+.w-progbar-bar,
+.w-progbar.style_3 .w-progbar-bar:before,
+.w-progbar.style_3 .w-progbar-bar-count,
 .w-socials-item-link,
 .w-tabs-item .ripple,
 .w-testimonial.style_1,
@@ -636,11 +646,11 @@ textarea,
 select,
 .l-section,
 .g-cols > div,
-.w-form-field > input:focus,
-.w-form-field > textarea:focus,
-.w-search.submit_inside input[type="text"]:focus,
+.w-form-row-field input:focus,
+.w-form-row-field textarea:focus,
+.widget_search input[type="text"]:focus,
 .w-separator,
-.w-sharing.type_simple .w-sharing-item,
+.w-sharing-item,
 .w-tabs-list,
 .w-tabs-section,
 .w-tabs-section-header:before,
@@ -674,6 +684,7 @@ select,
 button.w-btn.color_light.style_raised,
 a.w-btn.color_light.style_raised,
 .no-touch .color_alternate .w-btn.style_flat:hover,
+.no-touch .g-loadmore-btn:hover,
 .no-touch .color_alternate .w-logos .owl-prev:hover,
 .no-touch .color_alternate .w-logos .owl-next:hover,
 .no-touch .color_alternate .pagination a.page-numbers:hover,
@@ -687,8 +698,12 @@ h1, h2, h3, h4, h5, h6,
 .w-portfolio-item-anchor,
 .no-touch .w-portfolio-item-anchor:hover,
 .l-section.color_primary a.w-portfolio-item-anchor,
-.l-section.color_secondary a.w-portfolio-item-anchor {
+.l-section.color_secondary a.w-portfolio-item-anchor,
+.w-progbar.color_custom .w-progbar-title {
 	color: <?php echo us_get_option( 'color_content_heading' ) ?>;
+	}
+.w-progbar.color_contrast .w-progbar-bar-h {
+	background-color: <?php echo us_get_option( 'color_content_heading' ) ?>;
 	}
 
 /* Text Color */
@@ -699,7 +714,7 @@ a.w-btn.color_light.style_raised,
 .w-cart-dropdown,
 .w-iconbox.style_circle.color_light .w-iconbox-icon,
 .w-pricing-item-h,
-.w-person.style_card,
+.w-person.layout_card,
 .w-testimonial.style_1,
 .woocommerce .form-row .chosen-drop,
 .woocommerce-type_2 .product-h {
@@ -714,6 +729,7 @@ a.w-btn.color_contrast.style_raised,
 /* Primary Color */
 a,
 .highlight_primary,
+.l-preloader,
 .w-blog.layout_compact .w-blog-post-link,
 .w-blog.layout_related .w-blog-post-link,
 button.w-btn.color_primary.style_flat,
@@ -721,9 +737,9 @@ a.w-btn.color_primary.style_flat,
 .w-counter.color_primary .w-counter-number,
 .w-iconbox.style_default.color_primary .w-iconbox-icon,
 .g-filters-item.active,
-.w-form-field > input:focus ~ i,
-.w-form-field > textarea:focus ~ i,
-.w-search-input > input:focus ~ i,
+.w-form-row.focused:before,
+.w-form-row.focused > i,
+.no-touch .w-sharing.type_simple.color_primary .w-sharing-item:hover .w-sharing-icon,
 .w-separator.color_primary,
 .w-tabs-item.active,
 .w-tabs-section.active .w-tabs-section-header,
@@ -739,26 +755,22 @@ input[type="checkbox"]:checked + .wpcf7-list-item-label:before {
 .highlight_primary_bg,
 button,
 input[type="submit"],
-button.w-btn.color_primary.style_raised,
 a.w-btn.color_primary.style_raised,
 .pagination .page-numbers.current,
 .w-actionbox.color_primary,
-input:focus ~ .w-form-field-bar:before,
-input:focus ~ .w-form-field-bar:after,
-textarea:focus ~ .w-form-field-bar:before,
-textarea:focus ~ .w-form-field-bar:after,
-input:focus ~ .w-search-input-bar:before,
-input:focus ~ .w-search-input-bar:after,
+.w-form-row.focused .w-form-row-field-bar:before,
+.w-form-row.focused .w-form-row-field-bar:after,
 .w-iconbox.style_circle.color_primary .w-iconbox-icon,
 .w-pricing.style_1 .type_featured .w-pricing-item-header,
 .w-pricing.style_2 .type_featured .w-pricing-item-h,
+.w-progbar.color_primary .w-progbar-bar-h,
+.w-sharing.type_solid.color_primary .w-sharing-item,
+.w-sharing.type_fixed.color_primary .w-sharing-item,
 .w-tabs-list-bar,
 .w-tabs.layout_timeline .w-tabs-item.active,
 .no-touch .w-tabs.layout_timeline .w-tabs-item:hover,
 .w-tabs.layout_timeline .w-tabs-section.active .w-tabs-section-header-h,
 .rsDefault .rsThumb.rsNavSelected,
-.tp-bullets.custom .bullet.selected,
-.no-touch .tp-bullets.custom .bullet.selected:hover,
 .woocommerce .button.alt,
 .woocommerce .button.checkout,
 .widget_price_filter .ui-slider-range,
@@ -776,6 +788,8 @@ textarea:focus,
 .woocommerce .quantity.buttons_added input.qty:focus,
 .validate-required.woocommerce-validated input:focus,
 .validate-required.woocommerce-invalid input:focus,
+.woocommerce .button.loading:before,
+.woocommerce .button.loading:after,
 .woocommerce .form-row .chosen-search input[type="text"]:focus,
 .woocommerce-tabs .tabs li.active,
 .select2-dropdown-open.select2-drop-above a.select2-choice {
@@ -803,6 +817,7 @@ a.w-btn.color_secondary.style_flat,
 .no-touch .w-iconbox.style_default .w-iconbox-link:hover .w-iconbox-icon,
 .w-iconbox-link:active .w-iconbox-title,
 .no-touch .w-iconbox-link:hover .w-iconbox-title,
+.no-touch .w-sharing.type_simple.color_secondary .w-sharing-item:hover .w-sharing-icon,
 .w-separator.color_secondary,
 .no-touch .l-main .widget_tag_cloud a:hover,
 .no-touch .l-main .widget_product_tag_cloud .tagcloud a:hover,
@@ -817,9 +832,12 @@ button.w-btn.color_secondary.style_raised,
 a.w-btn.color_secondary.style_raised,
 .w-actionbox.color_secondary,
 .w-iconbox.style_circle.color_secondary .w-iconbox-icon,
+.w-progbar.color_secondary .w-progbar-bar-h,
+.w-sharing.type_solid.color_secondary .w-sharing-item,
+.w-sharing.type_fixed.color_secondary .w-sharing-item,
 .no-touch .w-toplink.active:hover,
-.no-touch .tp-leftarrow.custom:hover,
-.no-touch .tp-rightarrow.custom:hover,
+.no-touch .tp-leftarrow.tparrows.custom:hover,
+.no-touch .tp-rightarrow.tparrows.custom:hover,
 p.demo_store,
 .woocommerce .onsale,
 .woocommerce .form-row .chosen-results li.highlighted {
@@ -877,9 +895,9 @@ a.w-btn.color_light.style_flat,
 .l-subfooter.at_top input,
 .l-subfooter.at_top textarea,
 .l-subfooter.at_top select,
-.l-subfooter.at_top .w-form-field > input:focus,
-.l-subfooter.at_top .w-form-field > textarea:focus,
-.l-subfooter.at_top .w-search.submit_inside input[type="text"]:focus {
+.l-subfooter.at_top .w-form-row-field input:focus,
+.l-subfooter.at_top .w-form-row-field textarea:focus,
+.l-subfooter.at_top .widget_search input[type="text"]:focus {
 	border-color: <?php echo us_get_option( 'color_subfooter_border' ) ?>;
 	}
 
@@ -907,19 +925,14 @@ a.w-btn.color_light.style_flat,
 
 /* Link Hover Color */
 .no-touch .l-subfooter.at_top a:hover,
-.l-subfooter.at_top .w-form-field > input:focus ~ i,
-.l-subfooter.at_top .w-form-field > textarea:focus ~ i,
-.l-subfooter.at_top .w-search-input > input:focus ~ i,
+.l-subfooter.at_top .w-form-row.focused:before,
+.l-subfooter.at_top .w-form-row.focused > i,
 .no-touch .l-subfooter.at_top .widget_tag_cloud .tagcloud a:hover,
 .no-touch .l-subfooter.at_top .widget_product_tag_cloud .tagcloud a:hover {
 	color: <?php echo us_get_option( 'color_subfooter_link_hover' ) ?>;
 	}
-.l-subfooter.at_top input:focus ~ .w-form-field-bar:before,
-.l-subfooter.at_top input:focus ~ .w-form-field-bar:after,
-.l-subfooter.at_top textarea:focus ~ .w-form-field-bar:before,
-.l-subfooter.at_top textarea:focus ~ .w-form-field-bar:after,
-.l-subfooter.at_top input:focus ~ .w-search-input-bar:before,
-.l-subfooter.at_top input:focus ~ .w-search-input-bar:after {
+.l-subfooter.at_top .w-form-row.focused .w-form-row-field-bar:before,
+.l-subfooter.at_top .w-form-row.focused .w-form-row-field-bar:after {
 	background-color: <?php echo us_get_option( 'color_subfooter_link_hover' ) ?>;
 	}
 .l-subfooter.at_top input:focus,

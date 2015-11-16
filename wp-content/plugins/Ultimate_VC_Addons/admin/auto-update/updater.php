@@ -2,11 +2,11 @@
 // Alternative function for wp_remote_get
 if(!function_exists('bsf_get_remote_version')) {
 	function bsf_get_remote_version($products, $check_license){
-		
+
 		global $bsf_product_validate_url;
-		
-		$path = base64_decode($bsf_product_validate_url);
-		
+
+		$path = $bsf_product_validate_url;
+
 		$data = array(
 				'action' => 'bsf_get_product_versions',
 				'ids' => $products,
@@ -17,15 +17,15 @@ if(!function_exists('bsf_get_remote_version')) {
 				'body' => $data,
 				'timeout' => '60',
 				'sslverify' => false
-			) 
+			)
 		);
 
 		if (!is_wp_error($request) || wp_remote_retrieve_response_code($request) === 200)
 		{
 			$result = json_decode($request['body']);
-			
+
 			bsf_update_license_checked($result->updated_licenses);
-			
+
 			if(!$result->error)
 				return $result->updated_versions;
 			else
@@ -42,7 +42,7 @@ if(!function_exists('bsf_update_license_checked')) {
 			return false;
 
 		$is_updated = false;
-			
+
 		foreach($updated_licenses as $license) :
 			$product_id = $license->product_id;
 			$type = $license->type.'s';
@@ -58,8 +58,8 @@ if(!function_exists('bsf_update_license_checked')) {
 				}
 			}
 		endforeach;
-		
-		if($is_updated) 
+
+		if($is_updated)
 			update_option('brainstrom_products', $brainstrom_products);
 	}
 }
@@ -67,25 +67,27 @@ if(!function_exists('bsf_check_product_update')) {
 	function bsf_check_product_update(){
 		$brainstrom_products = (get_option('brainstrom_products')) ? get_option('brainstrom_products') : array();
 		$bsf_users = (get_option('brainstrom_users')) ? get_option('brainstrom_users') : array();
-				
+
 		$mix = $bsf_product_plugins = $bsf_product_themes = $registered = $check_license = array();
-		
+
 		if(!empty($bsf_users)) {
 			$bsf_user_email = $bsf_users[0]['email'];
 			$bsf_user_name = $bsf_users[0]['name'];
 		}
-	
+
 		if(!empty($brainstrom_products)) :
 			$bsf_product_plugins = (isset($brainstrom_products['plugins'])) ? $brainstrom_products['plugins'] : array();
 			$bsf_product_themes = (isset($brainstrom_products['themes'])) ? $brainstrom_products['themes'] : array();
 		endif;
-		
+
 		$mix = array_merge($bsf_product_plugins, $bsf_product_themes);
-		
+
 		$is_update = false;
-				
+
 		if(!empty($mix)) :
 			foreach($mix as $key => $product) :
+				if(!isset($product['id']))
+					continue;
 				$constant = strtoupper(str_replace('-', '_', $product['id']));
 				$constant = 'BSF_'.$constant.'_CHECK_UPDATES';
 				if(defined($constant) && (constant($constant) === 'false' || constant($constant) === false))
@@ -102,20 +104,20 @@ if(!function_exists('bsf_check_product_update')) {
 				$temp['product_id'] = $product['id'];
 				$temp['type'] = $product['type'];
 				array_push($check_license, $temp);
-				
+
 			endforeach;
 		endif;
 
-		if(!empty($registered)) 
+		if(!empty($registered))
 		{
 			$remote_versions = bsf_get_remote_version($registered, $check_license);
-			
+
 			$brainstrom_products = (get_option('brainstrom_products')) ? get_option('brainstrom_products') : array();
 			$brainstrom_bundled_products = (get_option('brainstrom_bundled_products')) ? get_option('brainstrom_bundled_products') : array();
-	
+
 			if($remote_versions !== false)
 			{
-				if(!empty($remote_versions)) 
+				if(!empty($remote_versions))
 				{
 					$is_bundled_update = false;
 					foreach($remote_versions as $rkey => $remote_data)
@@ -126,10 +128,13 @@ if(!function_exists('bsf_check_product_update')) {
 						$on_market = (isset($remote_data->on_market)) ? $remote_data->on_market : '';
 						$is_product_free = (isset($remote_data->is_product_free)) ? $remote_data->is_product_free : '';
 						$short_name = (isset($remote_data->short_name)) ? $remote_data->short_name : '';
+						$changelog_url = (isset($remote_data->changelog_url)) ? $remote_data->changelog_url : '';
 						if(!empty($bsf_product_plugins))
 						{
-							foreach($bsf_product_plugins as $key => $plugin) 
+							foreach($bsf_product_plugins as $key => $plugin)
 							{
+								if(!isset($plugin['id']))
+									continue;
 								$pid = (string)$plugin['id'];
 								if($pid === $rid)
 								{
@@ -138,14 +143,17 @@ if(!function_exists('bsf_check_product_update')) {
 									$brainstrom_products['plugins'][$key]['on_market'] = $on_market;
 									$brainstrom_products['plugins'][$key]['is_product_free'] = $is_product_free;
 									$brainstrom_products['plugins'][$key]['short_name'] = $short_name;
+									$brainstrom_products['plugins'][$key]['changelog_url'] = $changelog_url;
 									$is_update = true;
 								}
 							}
 						}
 						if(!empty($bsf_product_themes))
 						{
-							foreach($bsf_product_themes as $key => $theme) 
+							foreach($bsf_product_themes as $key => $theme)
 							{
+								if(!isset($theme['id']))
+									continue;
 								$pid = $theme['id'];
 								if($pid === $rid)
 								{
@@ -153,20 +161,26 @@ if(!function_exists('bsf_check_product_update')) {
 									$brainstrom_products['themes'][$key]['in_house'] = $in_house;
 									$brainstrom_products['themes'][$key]['on_market'] = $on_market;
 									$brainstrom_products['themes'][$key]['is_product_free'] = $is_product_free;
-									$brainstrom_products['plugins'][$key]['short_name'] = $short_name;
+									$brainstrom_products['themes'][$key]['short_name'] = $short_name;
+									$brainstrom_products['themes'][$key]['changelog_url'] = $changelog_url;
 									$is_update = true;
 								}
 							}
 						}
-						
+
 						if(isset($remote_data->bundled_products) && !empty($remote_data->bundled_products)) {
 							if(!empty($brainstrom_bundled_products)) {
 								foreach($brainstrom_bundled_products as $bkey => $bp) {
+									if(!isset($bp->id))
+										continue;
 									foreach($remote_data->bundled_products as $rbp) {
+										if(!isset($rbp->id))
+											continue;
 										if($rbp->id === $bp->id) {
 											$brainstrom_bundled_products[$bkey]->remote = $rbp->remote_version;
 											$brainstrom_bundled_products[$bkey]->parent = $rbp->parent;
 											$brainstrom_bundled_products[$bkey]->short_name = $rbp->short_name;
+											$brainstrom_bundled_products[$bkey]->changelog_url = $rbp->changelog_url;
 											$is_bundled_update = true;
 										}
 									}
@@ -179,10 +193,10 @@ if(!function_exists('bsf_check_product_update')) {
 				}
 			}
 		}
-		
+
 		if($is_update)
 			update_option('brainstrom_products', $brainstrom_products);
-		
+
 		//new Ultimate_Auto_Update(ULTIMATE_VERSION, 'http://ec2-54-183-173-184.us-west-1.compute.amazonaws.com/updates/?'.time(), 'Ultimate_VC_Addons/Ultimate_VC_Addons.php');
 	}
 }
@@ -198,23 +212,23 @@ if((false === get_transient( 'bsf_check_product_updates') && ($BSF_CHECK_PRODUCT
 if(!function_exists('get_bsf_product_upgrade_link')) {
 	function get_bsf_product_upgrade_link($product) {
 		$brainstrom_products = (get_option('brainstrom_products')) ? get_option('brainstrom_products') : array();
-		
+
 		$mix = $bsf_product_plugins = $bsf_product_themes = $registered = array();
-	
+
 		if(!empty($brainstrom_products)) :
 			$bsf_product_plugins = (isset($brainstrom_products['plugins'])) ? $brainstrom_products['plugins'] : array();
 			$bsf_product_themes = (isset($brainstrom_products['themes'])) ? $brainstrom_products['themes'] : array();
 		endif;
-		
+
 		$mix = array_merge($bsf_product_plugins, $bsf_product_themes);
-		
+
 		$status = (isset($product['status'])) ? $product['status'] : '';
 		$name = (isset($product['bundled']) && ($product['bundled'])) ? $product['name'] : $product['product_name'];
 		$free = (isset($product['is_product_free']) && ($product['is_product_free'] == true || $product['is_product_free'] == 'true')) ? $product['is_product_free'] : 'false';
-		
+
 		$id = $product['id'];
 		$original_id = $id;
-		
+
 		$not_registered_msg = 'Activate your licence for one click update.';
 
 		if($product['bundled'])
@@ -230,34 +244,27 @@ if(!function_exists('get_bsf_product_upgrade_link')) {
 			}
 			$not_registered_msg = 'This is bundled with '.$product_name.', Activate '.$product_name.'\'s licence for one click update.';
 		}
-		
-		if(!$free || $free === 'false') {
-			
-			if($status === 'registered')
-			{
-				$request = 'admin.php?page=bsf-registration&action=upgrade&id='.$original_id;
-				if($product['bundled'])
-					$request .= '&bundled='.$id;
-				if(is_multisite())
-					$link = '<a href="'.wp_nonce_url( network_admin_url($request)).'">'.__('Update '.$name.'.', 'bsf').'</a>';
-				else
-					$link = '<a href="'.wp_nonce_url( admin_url($request)).'">'.__('Update '.$name.'.', 'bsf').'</a>';
-			}
-			else
-			{
-				if(is_multisite())
-					$link = '<a href="'.wp_nonce_url( network_admin_url('admin.php?page=bsf-registration&id='.$id)).'">'.__($not_registered_msg, 'bsf').'</a>';
-				else
-					$link = '<a href="'.wp_nonce_url( admin_url('admin.php?page=bsf-registration&id='.$id)).'">'.__($not_registered_msg, 'bsf').'</a>';
-			}
-		}
-		else {
+
+		if($status === 'registered')
+		{
 			$request = 'admin.php?page=bsf-registration&action=upgrade&id='.$original_id;
-			if(is_multisite())
-				$link = '<a href="'.wp_nonce_url( network_admin_url($request)).'">'.__('Update '.$name.'.', 'bsf').'</a>';
-			else
-				$link = '<a href="'.wp_nonce_url( admin_url($request)).'">'.__('Update '.$name.'.', 'bsf').'</a>';
+			if($product['bundled'])
+				$request .= '&bundled='.$id;
+			if(is_multisite()) {
+				$link = '<a href="'.wp_nonce_url( network_admin_url($request)).'" data-pid="'.$original_id.'" data-bundled="'.$product['bundled'].'" data-bid="'.$id.'" class="bsf-update-product-button">'.__('Update '.$name.'.', 'bsf').'</a><span class="spinner bsf-update-spinner"></span>';
+			}
+			else {
+				$link = '<a href="'.wp_nonce_url( admin_url($request)).'" data-pid="'.$original_id.'" data-bundled="'.$product['bundled'].'" data-bid="'.$id.'" class="bsf-update-product-button">'.__('Update '.$name.'.', 'bsf').'</a><span class="spinner bsf-update-spinner"></span>';
+			}
 		}
+		else
+		{
+			if(is_multisite())
+				$link = '<a href="'.wp_nonce_url( network_admin_url('admin.php?page=bsf-registration&id='.$id)).'">'.__($not_registered_msg, 'bsf').'</a>';
+			else
+				$link = '<a href="'.wp_nonce_url( admin_url('admin.php?page=bsf-registration&id='.$id)).'">'.__($not_registered_msg, 'bsf').'</a>';
+		}
+
 		return $link;
 	}
 }
@@ -268,14 +275,14 @@ if(!function_exists('list_bsf_products_updates')) {
 		$brainstrom_bundled_products = (get_option('brainstrom_bundled_products')) ? get_option('brainstrom_bundled_products') : array();
 
 		$mix_products = $update_ready = $bsf_product_plugins = $bsf_product_themes = $temp_bundled = array();
-	
+
 		if(!empty($brainstrom_products)) :
 			$bsf_product_plugins = (isset($brainstrom_products['plugins'])) ? $brainstrom_products['plugins'] : array();
 			$bsf_product_themes = (isset($brainstrom_products['themes'])) ? $brainstrom_products['themes'] : array();
 		endif;
-		
+
 		$mix_products = array_merge($bsf_product_plugins, $bsf_product_themes);
-		
+
 		foreach($mix_products as $product)
 		{
 			$is_bundled = false;
@@ -290,7 +297,7 @@ if(!function_exists('list_bsf_products_updates')) {
 					}
 				}
 			}
-			
+
 			if($is_bundled)
 			{
 				//echo '['.$bundled_key.']';
@@ -306,7 +313,7 @@ if(!function_exists('list_bsf_products_updates')) {
 				$template = (isset($product['template'])) ? $product['template'] : '';
 				$type = (isset($product['type'])) ? $product['type'] : '';
 			}
-			
+
 			if($type === 'theme')
 			{
 				$product_abs_path = WP_CONTENT_DIR.'/themes/'.$template;
@@ -319,7 +326,7 @@ if(!function_exists('list_bsf_products_updates')) {
 				if(!is_file($product_abs_path))
 					continue;
 			}
-				
+
 			if(version_compare($remote, $version, '>')):
 				if($is_bundled)
 				{
@@ -335,16 +342,16 @@ if(!function_exists('list_bsf_products_updates')) {
 				}
 			endif;
 		}
-		
+
 		foreach($brainstrom_bundled_products as $bkey => $bp)
 		{
 			$plugin_abs_path = WP_PLUGIN_DIR.'/'.$bp->init;
-			
+
 			if(!is_file($plugin_abs_path))
 				continue;
 			if(!isset($bp->remote))
 				continue;
-				
+
 			$temp = array();
 			if(!in_array($bp->id, $temp_bundled)) {
 				if(version_compare($bp->remote, $bp->version, '>')):
@@ -354,11 +361,11 @@ if(!function_exists('list_bsf_products_updates')) {
 				endif;
 			}
 		}
-		
+
 		//die();
-				
+
 		echo '<h3 id="brainstormforce-products">Brainstorm Force - ' . __( 'Products', 'bsf' ) . '</h3>';
-		
+
 		if(!empty($update_ready)) :
 			echo '<p>'. __( 'The following plugins from Brainstorm Force have new versions available.', 'bsf' ).'</p>';
 			?>
@@ -381,9 +388,9 @@ if(!function_exists('list_bsf_products_updates')) {
                 </tfoot>
                 <tbody class="plugins">
 					<?php
-                    foreach($update_ready as $product) :
+                    foreach($update_ready as $key => $product) :
 						$is_bundled = $product['bundled'];
-						
+
 						if($is_bundled)
 						{
 							if(!isset($product['init']))
@@ -400,19 +407,69 @@ if(!function_exists('list_bsf_products_updates')) {
 						}
                     $upgradeLink = get_bsf_product_upgrade_link($product);
                     ?>
-                        
-                        <tr class='active'>
-                            <td class='plugin-title'><strong><?php echo ($product['bundled']) ? $product['name'] : $product['product_name'] ?></strong><?php _e( 'You have version '.$product['version'].' installed. Update to '.$product['remote'], 'bsf' );?></td>
+
+                        <tr class='active' id="bsf-row-<?php echo $key ?>">
+                            <td class='plugin-title'><strong><?php echo ($product['bundled']) ? $product['name'] : $product['product_name'] ?></strong>
+                            	<span><?php _e( 'You have version '.$product['version'].' installed. Update to '.$product['remote'], 'bsf' );?></span></td>
                             <td style='vertical-align:middle'><strong><?php echo __($product['version'], 'bsf'); ?></strong></td>
                             <td style='vertical-align:middle'><strong><?php echo __($product['remote'], 'bsf'); ?></strong></td>
                             <td style='vertical-align:middle'><?php echo $upgradeLink; ?></td>
                       	</tr>
-                            
+
                     <?php
                     endforeach;
 					?>
                 </tbody>
             </table>
+            <?php if(!isset($_GET['noajax'])) : ?>
+            <script type="text/javascript">
+            (function($){
+            	$(document).ready(function(){
+            		$('.bsf-update-product-button').click(function(e){
+            			e.preventDefault();
+            			var $tr = $(this).parents('tr:first');
+            			var product_id = $(this).attr('data-pid');
+            			var bundled_id = $(this).attr('data-bid');
+			            var action = 'bsf_upgrade';
+			            var bundled = $(this).attr('data-bundled');
+
+			            var is_product_upgraded = false;
+
+			            $tr.addClass('bsf-product-updating');
+
+			            $tr.find('.bsf-update-spinner').addClass('show');
+
+			            var data = {
+			                'action': action,
+			                'product_id': product_id,
+			                'bundled' : bundled,
+			                'bundled_id' : bundled_id
+			            };
+			            // We can also pass the url value separately from ajaxurl for front end AJAX implementations
+			            jQuery.post(ajaxurl, data, function(response) {
+			                var plugin_status = response.split('|');
+
+			                $.each(plugin_status, function(i,res){
+			                    if(res === 'bsf-product-upgraded') {
+			                        is_product_upgraded = true;
+			                    }
+			                });
+			                if(is_product_upgraded) {
+			                    $tr.addClass('bsf-product-upgraded').removeClass('active');
+			                    var remote_version = $tr.find('td:nth-child(3)').html();
+			                    $tr.find('td:nth-child(4)').html('Updated successfully! <i class="dashicons dashicons-yes"></i>');
+			                    $tr.find('td:nth-child(2)').html(remote_version);
+			                    $tr.find('td:nth-child(1)').find('span').remove();
+			                }
+			                else {
+			                	$tr.find('td:nth-child(4)').html(response);
+			                }
+			            });
+            		});
+            	});
+            })(jQuery);
+            </script>
+        	<?php endif; ?>
            	<?php
 		else :
 			echo '<p>' . __( 'Your plugins from Brainstorm Force are all up to date.', 'bsf' ) . '</p>';

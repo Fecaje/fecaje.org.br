@@ -2,8 +2,8 @@
 /*
 * Add-on Name: Creatve Link for Visual Composer
 * Add-on URI: http://dev.brainstormforce.com
-*/ 
-if(!class_exists('AIO_creative_link')) 
+*/
+if(!class_exists('AIO_creative_link'))
 {
 	class AIO_creative_link
 
@@ -13,7 +13,7 @@ if(!class_exists('AIO_creative_link'))
 			add_shortcode('ult_createlink',array($this,'ult_createlink_shortcode'));
 			add_action('init',array($this,'ultimate_createlink'));
 			add_action( 'wp_enqueue_scripts', array( $this, 'creative_link_scripts'), 1 );
-			//add_action( 'admin_enqueue_scripts', array( $this, 'link_backend_scripts') );	
+			//add_action( 'admin_enqueue_scripts', array( $this, 'link_backend_scripts') );
 		}
 
 		//enque script
@@ -34,28 +34,28 @@ if(!class_exists('AIO_creative_link'))
 		}
 		/*function link_backend_scripts(){
 			wp_enqueue_script("ult_jquery_creative_link",plugins_url("../admin/js/jquery_creative_link.js ",__FILE__),array('jquery'),ULTIMATE_VERSION);
-		
+
 		}*/
 
 		// Shortcode handler function for stats Icon
 		function ult_createlink_shortcode($atts)
 		{
-			
 
-	extract(shortcode_atts( array(	
+
+	extract(shortcode_atts( array(
 
 				'btn_link'			 => '',
 				'text_color'		 => '#333333',
 				'text_hovercolor' 	 => '#333333',
 				'background_color'   => '#ffffff',
-				'bghovercolor' 		 => '',				
+				'bghovercolor' 		 => '',
 				'font_family' 		 => '',
 				'heading_style' 	 => '',
 				'title_font_size'    => '',
 				'title_line_ht'		 => '',
 				'link_hover_style'	 =>'',
 				'border_style' 		 => 'solid',
-				'border_color' 		 => '#333333',			
+				'border_color' 		 => '#333333',
 				'border_hovercolor'  => '#333333',
 				'border_size' 		 => '1',
 				'el_class'  		 => '',
@@ -63,9 +63,9 @@ if(!class_exists('AIO_creative_link'))
 				'css'		         =>'',
 				'title'				 =>'',
 				'text_style'		 =>'',
-				
+
 			),$atts));
- 		
+
  		$href=$target=$text=$url= $alt_text="";
 		if($btn_link !== ''){
 				 $href = vc_build_link($btn_link);
@@ -100,7 +100,7 @@ $css_class ='';$title_style='';$secondtitle_style=$span_style='';
 /*--- hover effect for link-----*/
 
 $data_link='';
- if($link_hover_style==''){  
+ if($link_hover_style==''){
 		$data_link .='data-textcolor="'.$text_color.'"';
 		$data_link .='data-texthover="'.$text_hovercolor.'"';
 	}
@@ -162,32 +162,32 @@ if (function_exists('get_ultimate_font_family')) {
 		}
 		//$secondtitle_style .='font-family:'.$mhfont_family.';';
 	}
-	if (function_exists('get_ultimate_font_style')) {       
+	if (function_exists('get_ultimate_font_style')) {
 		         	//for font style
 		$colorstyle .= get_ultimate_font_style($heading_style);
 		//$secondtitle_style .=get_ultimate_font_style($heading_style);
 	}
 	if($title_font_size!=''){
-		$colorstyle .= 'font-size:'.$title_font_size.'px;'; 
+		$colorstyle .= 'font-size:'.$title_font_size.'px;';
 	}
 	//font-size
 	$title_style .= 'color:'.$text_color.';';//color
 
 	if($link_hover_style!='Style_2'){
 		if($title_line_ht!=''){
-			$colorstyle .= 'line-height:'.$title_line_ht.'px;';	
+			$colorstyle .= 'line-height:'.$title_line_ht.'px;';
 			//$colorstyle .='color:'.$text_color.';';
 		}
 			//font-line-height
     }
     else{
     	if($title_line_ht!=''){
-			$colorstyle .= 'line-height:'.$title_line_ht.'px;';	
+			$colorstyle .= 'line-height:'.$title_line_ht.'px;';
 		}		//font-line-height
     }
-    
+
 	//$secondtitle_style .= 'font-size:'.$title_font_size.'px;';			//font-size for backend title
-	//$secondtitle_style .= 'line-height:'.$title_line_ht.'px;';			
+	//$secondtitle_style .= 'line-height:'.$title_line_ht.'px;';
 
 
 
@@ -241,7 +241,7 @@ $after .='<span class="ult_link_btm4 " style="'.$borderstyle.'"></span>';
 else if($link_hover_style=='Style_6'){               //style6
 $class .='ult_cl_link_6';
 //$id .='ult_cl_link_6';//
-$colorstyle .='color:'.$text_hovercolor.';'; 
+$colorstyle .='color:'.$text_hovercolor.';';
 if($title_font_size!=''){
 $colorstyle .='font-size:'.$title_font_size.'px;';
 }
@@ -323,7 +323,7 @@ if($border_style!=''){
 $span_style1='';
 $span_style1 .= 'background:'.$bghovercolor.';';
 }
-else if($link_hover_style=='Style_11'){  
+else if($link_hover_style=='Style_11'){
  //style11
 $style11_css_class='';
 $style11_css_class=$css_class;
@@ -336,7 +336,7 @@ $span_style1 .= 'background:'.$bghovercolor.';';
 $span_style1 .= 'color:'.$text_hovercolor.';';
 //$span_style1 .= $secondtitle_style;
 
-//padding 
+//padding
    $ult_style2css=$css_class;
 	$css_class='';
 	$domain = strstr($css, 'padding');
@@ -352,7 +352,7 @@ $text=$text;
 if($link_hover_style=='Style_2'){
 	$ult_style2css=$css_class;
 	$css_class='';
-	
+
 }
 	$output='';
 
@@ -380,7 +380,7 @@ if($link_hover_style=='Style_2'){
 							</span>
 							<span style="'.$title_style.';">'.$text.'</span>
 						</span>
-						
+
 					</a>
 				</span>
 			</span>';
@@ -401,10 +401,10 @@ if($link_hover_style=='Style_2'){
 					array(
 					   "name" => __("Creative Link"),
 					   "base" => "ult_createlink",
-					   "icon"=>plugins_url("../admin/img/creative-link.png",__FILE__),
+					   "icon"=>"uvc_creative_link",
 					   "category" => __("Ultimate VC Addons","ultimate_vc"),
 					   "description" => __("Add a custom link.","ultimate_vc"),
-					   "params" => array(							
+					   "params" => array(
 							// Play with icon selector
 					   		array(
 								"type" => "textfield",
@@ -425,10 +425,10 @@ if($link_hover_style=='Style_2'){
 								//"group" => "Title Setting",
 
 							),
-							
-							
+
+
 							/*---typography-------*/
-	
+
 							array(
 									"type" => "ult_param_heading",
 									"param_name" => "bt1typo-setting",
@@ -437,7 +437,7 @@ if($link_hover_style=='Style_2'){
 									"class" => "",
 									"group" => "Typography ",
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
-									
+
 								),
 
 							array(
@@ -446,15 +446,15 @@ if($link_hover_style=='Style_2'){
 								"param_name" => "font_family",
 								"description" => __("Select the font of your choice. ","ultimate_vc").", ".__("you can","ultimate_vc")." <a href='admin.php?page=ultimate-font-manager' target='_blank'>".__("add new in the collection here","ultimate_vc")."</a>.",
 								"group" => "Typography ",
-								),	
+								),
 
 							array(
 								"type" => "ultimate_google_fonts_style",
 								"heading" 		=>	__("Font Style", "ultimate_vc"),
 								"param_name"	=>	"heading_style",
-								
+
 								"group" => "Typography ",
-							),	
+							),
 							array(
 								"type" => "number",
 								"param_name" => "title_font_size",
@@ -463,7 +463,7 @@ if($link_hover_style=='Style_2'){
 								"suffix" => "px",
 								"group" => "Typography ",
 							),
-							
+
 							array(
 								"type" => "number",
 								"param_name" => "title_line_ht",
@@ -471,7 +471,7 @@ if($link_hover_style=='Style_2'){
 								"value" => "",
 								"suffix" => "px",
 								"group" => "Typography ",
-								
+
 							),
 							/*-----------general------------*/
 							array(
@@ -495,7 +495,7 @@ if($link_hover_style=='Style_2'){
 									"Style 10" => "Style_11",
 								),
 								"description" => __("Select the Hover style for Link.","ultimate_vc"),
-								
+
 							),
 							array(
 									"type" => "ult_param_heading",
@@ -511,8 +511,8 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Color", "ultimate_vc"),
 								"param_name" => "text_color",
 								"value" => "#333333",
-								"description" => __("Select text color for Link.", "ultimate_vc"),	
-															
+								"description" => __("Select text color for Link.", "ultimate_vc"),
+
 							),
 							/*array(
 								"type" => "chk-switch",
@@ -536,9 +536,9 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Hover Color", "ultimate_vc"),
 								"param_name" => "text_hovercolor",
 								"value" => "#333333",
-								"description" => __("Select text hover color for Link.", "ultimate_vc"),	
+								"description" => __("Select text hover color for Link.", "ultimate_vc"),
 								//"dependency" => Array("element" => "link_hover_style","not_empty" => true),
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -546,7 +546,7 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Background Color", "ultimate_vc"),
 								"param_name" => "background_color",
 								"value" => "#ffffff",
-								"description" => __("Select Background Color for link.", "ultimate_vc"),	
+								"description" => __("Select Background Color for link.", "ultimate_vc"),
 								//"group" => "Title Setting",
 								"dependency" => Array("element" => "link_hover_style","value" => array("Style_2","Style_10","Style_11")),
 							),
@@ -556,9 +556,9 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Background Hover Color", "ultimate_vc"),
 								"param_name" => "bghovercolor",
 								"value" => "",
-								"description" => __("Select background hover color for link.", "ultimate_vc"),	
+								"description" => __("Select background hover color for link.", "ultimate_vc"),
 								"dependency" => Array("element" => "link_hover_style","value" => array("Style_2","Style_10","Style_11")),
-								
+
 							),
 							array(
 								"type" => "dropdown",
@@ -573,11 +573,11 @@ if($link_hover_style=='Style_2'){
 									"Double" => "double",
 									"Inset" => "inset",
 									"Outset" => "outset",
-									
+
 								),
 								"description" => __("Select the border style for link.","ultimate_vc"),
 								"dependency" => Array("element" => "link_hover_style","value" => array("Style_3","Style_4","Style_5","Style_7","Style_8","Style_9","Style_10")),
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -585,10 +585,10 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Border Color", "ultimate_vc"),
 								"param_name" => "border_color",
 								"value" => "#333333",
-								"description" => __("Select border color for link.", "ultimate_vc"),	
+								"description" => __("Select border color for link.", "ultimate_vc"),
 								//"dependency" => Array("element" => "border_style", "not_empty" => true),
 								"dependency" => Array("element" => "border_style", "value" => array("solid","dashed","dotted","double","inset","outset")),
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -596,11 +596,11 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Border HoverColor", "ultimate_vc"),
 								"param_name" => "border_hovercolor",
 								"value" => "#333333",
-								"description" => __("Select border hover color for link.", "ultimate_vc"),	
+								"description" => __("Select border hover color for link.", "ultimate_vc"),
 								"dependency" => Array(
 									"element"=>"link_hover_style","value" => array("Style_8"),
 									/*"element" => "border_style",  "not_empty" => true*/ ),
-								
+
 							),
 							array(
 								"type" => "number",
@@ -612,9 +612,9 @@ if($link_hover_style=='Style_2'){
 								"max" => 10,
 								"suffix" => "px",
 								"description" => __("Thickness of the border.", "ultimate_vc"),
-								//"dependency" => Array("element" => "border_style", "not_empty" => true),	
+								//"dependency" => Array("element" => "border_style", "not_empty" => true),
 								"dependency" => Array("element" => "border_style", "value" => array("solid","dashed","dotted","double","inset","outset")),
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -622,7 +622,7 @@ if($link_hover_style=='Style_2'){
 								"heading" => __("Link Dot Color", "ultimate_vc"),
 								"param_name" => "dot_color",
 								"value" => "#333333",
-								"description" => __("Select color for dots.", "ultimate_vc"),	
+								"description" => __("Select color for dots.", "ultimate_vc"),
 								"dependency" => Array("element"=>"link_hover_style","value" => array("Style_6")),
 							),
 							array(
@@ -634,7 +634,7 @@ if($link_hover_style=='Style_2'){
 									"Center"=> " ",
 									"Left"=> "left",
 									"Right" => "right",
-																	
+
 								),
 								"description" => __("Select the text align for link.","ultimate_vc"),
 								//"group" => "Typography ",
@@ -652,19 +652,19 @@ if($link_hover_style=='Style_2'){
 					            'heading' => __( 'Css', 'ultimate_vc' ),
 					            'param_name' => 'css',
 					            'group' => __( 'Design ', 'ultimate_vc' ),
-					            'edit_field_class' => 'vc_col-sm-12 vc_column no-vc-background no-vc-border',
+					            'edit_field_class' => 'vc_col-sm-12 vc_column no-vc-background no-vc-border creative_link_css_editor',
 					        ),
 						),
 					)
 				);
 			}
 		}
-		
+
 	}
 }
 if(class_exists('AIO_creative_link'))
 {
-	
+
 $AIO_creative_link = new AIO_creative_link;
 
 }

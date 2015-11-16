@@ -1,5 +1,7 @@
 <?php
-require_once vc_path_dir( 'SHORTCODES_DIR', 'vc-gitem-animated-block.php' );
+
+VcShortcodeAutoloader::getInstance()->includeClass( 'WPBakeryShortCode_VC_Gitem_Animated_Block' );
+
 global $vc_column_width_list;
 global $vc_add_css_animation;
 global $vc_gitem_add_link_param;
@@ -24,7 +26,7 @@ $zone_params = array(
 		'param_name' => 'url',
 		'dependency' => array(
 			'element' => 'link',
-			'value' => array( 'custom' )
+			'value' => array( 'custom' ),
 		),
 		'description' => __( 'Add custom link.', 'js_composer' ),
 	),
@@ -39,8 +41,7 @@ $zone_params = array(
 		'type' => 'css_editor',
 		'heading' => __( 'CSS box', 'js_composer' ),
 		'param_name' => 'css',
-		// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-		'group' => __( 'Design Options', 'js_composer' )
+		'group' => __( 'Design Options', 'js_composer' ),
 	),
 	array(
 		'type' => 'textfield',
@@ -57,31 +58,15 @@ $post_data_params = array(
 		'param_name' => 'url',
 		'dependency' => array(
 			'element' => 'link',
-			'value' => array( 'custom' )
+			'value' => array( 'custom' ),
 		),
 		'description' => __( 'Add custom link.', 'js_composer' ),
 	),
-	/*
-	array(
-		'type'        => 'textarea',
-		'heading'     => __( 'Text', 'js_composer' ),
-		'param_name'  => 'text',
-		'admin_label' => true,
-		'value'       => __( 'This is custom heading element with Google Fonts', 'js_composer' ),
-		'description' => __( 'Enter your content. If you are using non-latin characters be sure to activate them under Settings/Visual Composer/General Settings.', 'js_composer' ),
-		'dependency'  => array(
-			'element' => 'data_source',
-			'value'   => array( '_custom_' ),
-			//'callback' => 'vc_grid_include_dependency_callback',
-		),
-	),
-	*/
 	array(
 		'type' => 'css_editor',
 		'heading' => __( 'CSS box', 'js_composer' ),
 		'param_name' => 'css',
-		// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-		'group' => __( 'Design Options', 'js_composer' )
+		'group' => __( 'Design Options', 'js_composer' ),
 	),
 );
 $custom_fonts_params = array(
@@ -93,17 +78,11 @@ $custom_fonts_params = array(
 			'fields' => array(
 				'tag' => 'div', // default value h2
 				'text_align',
-				//'font_style_italic'
-				//'font_style_bold'
-				//'font_family'
-
 				'tag_description' => __( 'Select element tag.', 'js_composer' ),
 				'text_align_description' => __( 'Select text alignment.', 'js_composer' ),
 				'font_size_description' => __( 'Enter font size.', 'js_composer' ),
 				'line_height_description' => __( 'Enter line height.', 'js_composer' ),
 				'color_description' => __( 'Select color for your element.', 'js_composer' ),
-				//'font_style_description' => __('Put your description here','js_composer'),
-				//'font_family_description' => __('Put your description here','js_composer'),
 			),
 		),
 	),
@@ -123,23 +102,17 @@ $custom_fonts_params = array(
 				'font_size',
 				'line_height',
 				'color',
-				//'font_style_italic'
-				//'font_style_bold'
-				//'font_family'
-
 				'tag_description' => __( 'Select element tag.', 'js_composer' ),
 				'text_align_description' => __( 'Select text alignment.', 'js_composer' ),
 				'font_size_description' => __( 'Enter font size.', 'js_composer' ),
 				'line_height_description' => __( 'Enter line height.', 'js_composer' ),
 				'color_description' => __( 'Select color for your element.', 'js_composer' ),
-				//'font_style_description' => __('Put your description here','js_composer'),
-				//'font_family_description' => __('Put your description here','js_composer'),
 			),
 		),
 		'group' => __( 'Custom fonts', 'js_composer' ),
 		'dependency' => array(
 			'element' => 'use_custom_fonts',
-			'value' => array( 'yes' )
+			'value' => array( 'yes' ),
 		),
 	),
 	array(
@@ -151,7 +124,7 @@ $custom_fonts_params = array(
 		'group' => __( 'Custom fonts', 'js_composer' ),
 		'dependency' => array(
 			'element' => 'use_custom_fonts',
-			'value' => array( 'yes' )
+			'value' => array( 'yes' ),
 		),
 	),
 	array(
@@ -160,18 +133,12 @@ $custom_fonts_params = array(
 		'value' => '',
 		// Not recommended, this will override 'settings'. 'font_family:'.rawurlencode('Exo:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic').'|font_style:'.rawurlencode('900 bold italic:900:italic'),
 		'settings' => array(
-			//'no_font_style' // Method 1: To disable font style
-			//'no_font_style'=>true // Method 2: To disable font style
 			'fields' => array(
-				//'font_family' => 'Abril Fatface:regular',
-				//'Exo:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic',// Default font family and all available styles to fetch
-				//'font_style' => '400 regular:400:normal',
 				// Default font style. Name:weight:style, example: "800 bold regular:800:normal"
 				'font_family_description' => __( 'Select font family.', 'js_composer' ),
-				'font_style_description' => __( 'Select font styling.', 'js_composer' )
-			)
+				'font_style_description' => __( 'Select font styling.', 'js_composer' ),
+			),
 		),
-		// 'description' => __( '', 'js_composer' ),
 		'group' => __( 'Custom fonts', 'js_composer' ),
 		'dependency' => array(
 			'element' => 'use_theme_fonts',
@@ -194,7 +161,6 @@ $list = array(
 				'type' => 'css_editor',
 				'heading' => __( 'CSS box', 'js_composer' ),
 				'param_name' => 'css',
-				// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
 			),
 			array(
 				'type' => 'textfield',
@@ -258,12 +224,12 @@ $list = array(
 				'heading' => __( 'Height mode', 'js_composer' ),
 				'param_name' => 'height_mode',
 				'value' => array(
-					__( '1:1', 'js_composer' ) => '1-1',
+					'1:1' => '1-1',
 					__( 'Original', 'js_composer' ) => 'original',
-					__( '4:3', 'js_composer' ) => '4-3',
-					__( '3:4', 'js_composer' ) => '3-4',
-					__( '16:9', 'js_composer' ) => '16-9',
-					__( '9:16', 'js_composer' ) => '9-16',
+					'4:3' => '4-3',
+					'3:4' => '3-4',
+					'16:9' => '16-9',
+					'9:16' => '9-16',
 					__( 'Custom', 'js_composer' ) => 'custom',
 				),
 				'description' => __( 'Sizing proportions for height and width. Select "Original" to scale image without cropping.', 'js_composer' ),
@@ -274,7 +240,7 @@ $list = array(
 				'param_name' => 'height',
 				'dependency' => array(
 					'element' => 'height_mode',
-					'value' => array( 'custom' )
+					'value' => array( 'custom' ),
 				),
 				'description' => __( 'Enter custom height.', 'js_composer' ),
 			),
@@ -311,8 +277,6 @@ $list = array(
 				'type' => 'css_editor',
 				'heading' => __( 'CSS box', 'js_composer' ),
 				'param_name' => 'css',
-				// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-				// 'group'      => __( 'Design Options', 'js_composer' )
 			),
 			array(
 				'type' => 'textfield',
@@ -329,26 +293,13 @@ $list = array(
 		'content_element' => false,
 		'is_container' => true,
 		'icon' => 'icon-wpb-row',
+		'weight' => 1000,
 		'show_settings_on_create' => false,
 		'controls' => array( 'layout', 'delete' ),
 		'allowed_container_element' => 'vc_gitem_col',
 		'category' => __( 'Content', 'js_composer' ),
 		'description' => __( 'Place content elements inside the row', 'js_composer' ),
 		'params' => array(
-			/*
-			array(
-				'type' => 'dropdown',
-				'heading' => __( 'Position', 'js_composer' ),
-				'param_name' => 'position',
-				'value' => array(
-					__( 'Top', 'js_composer' ) => 'top',
-					__( 'Middle', 'js_composer' ) => 'center',
-					__( 'Bottom', 'js_composer' ) => 'bottom',
-					__( 'Full', 'js_composer' ) => 'full',
-				),
-				'description' => __( '', 'js_composer' ),
-			),
-			*/
 			array(
 				'type' => 'textfield',
 				'heading' => __( 'Extra class name', 'js_composer' ),
@@ -362,10 +313,13 @@ $list = array(
 	'vc_gitem_col' => array(
 		'name' => __( 'Column', 'js_composer' ),
 		'base' => 'vc_gitem_col',
+		'icon' => 'icon-wpb-row',
+		'weight' => 1000,
 		'is_container' => true,
 		'allowed_container_element' => false,
 		'content_element' => false,
 		'controls' => array( 'edit' ),
+		'description' => __( 'Place content elements inside the column', 'js_composer' ),
 		'params' => array(
 			array(
 				'type' => 'dropdown',
@@ -373,7 +327,7 @@ $list = array(
 				'param_name' => 'width',
 				'value' => $vc_column_width_list,
 				'description' => __( 'Select column width.', 'js_composer' ),
-				'std' => '1/1'
+				'std' => '1/1',
 			),
 			array(
 				'type' => 'checkbox',
@@ -381,14 +335,12 @@ $list = array(
 				'param_name' => 'featured_image',
 				'value' => array( __( 'Yes', 'js_composer' ) => 'yes' ),
 				'description' => __( 'Note: Featured image overwrites background image and color from "Design Options".', 'js_composer' ),
-				// 'group' => __( 'Design Options', 'js_composer' )
 			),
 			array(
 				'type' => 'css_editor',
 				'heading' => __( 'CSS box', 'js_composer' ),
 				'param_name' => 'css',
-				// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-				'group' => __( 'Design Options', 'js_composer' )
+				'group' => __( 'Design Options', 'js_composer' ),
 			),
 			array(
 				'type' => 'textfield',
@@ -396,24 +348,11 @@ $list = array(
 				'param_name' => 'el_class',
 				'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
 			),
-			/*
-			array(
-				'type'        => 'dropdown',
-				'heading'     => __( 'Align', 'js_composer' ),
-				'param_name'  => 'align',
-				'value'       => array(
-					__( 'Left', 'js_composer' )   => 'left',
-					__( 'Center', 'js_composer' ) => 'center',
-					__( 'Right', 'js_composer' )  => 'right',
-				),
-				'description' => __( '', 'js_composer' ),
-			)
-			*/
 		),
 		'js_view' => 'VcGitemColView',
 		'post_type' => Vc_Grid_Item_Editor::postType(),
 	),
-	'vc_gitem_post_data' => array(
+	/*'vc_gitem_post_data' => array(
 		'name' => __( 'Post data', 'js_composer' ),
 		'base' => 'vc_gitem_post_data',
 		'content_element' => false,
@@ -434,7 +373,7 @@ $list = array(
 			),
 		) ),
 		'post_type' => Vc_Grid_Item_Editor::postType(),
-	),
+	),*/
 	'vc_gitem_post_title' => array(
 		'name' => __( 'Post Title', 'js_composer' ),
 		'base' => 'vc_gitem_post_title',
@@ -481,7 +420,7 @@ $list = array(
 				'param_name' => 'url',
 				'dependency' => array(
 					'element' => 'link',
-					'value' => array( 'custom' )
+					'value' => array( 'custom' ),
 				),
 				'description' => __( 'Add custom link.', 'js_composer' ),
 			),
@@ -489,7 +428,7 @@ $list = array(
 				'type' => 'textfield',
 				'heading' => __( 'Image size', 'js_composer' ),
 				'param_name' => 'img_size',
-				'description' => __( 'Enter image size (Example: "thumbnail", "medium", "large", "full" or other sizes defined by theme). Alternatively enter size in pixels (Example: 200x100 (Width x Height)). Leave parameter empty to use "thumbnail" by default.', 'js_composer' )
+				'description' => __( 'Enter image size (Example: "thumbnail", "medium", "large", "full" or other sizes defined by theme). Alternatively enter size in pixels (Example: 200x100 (Width x Height)). Leave parameter empty to use "thumbnail" by default.', 'js_composer' ),
 			),
 			array(
 				'type' => 'dropdown',
@@ -498,16 +437,16 @@ $list = array(
 				'value' => array(
 					__( 'Left', 'js_composer' ) => '',
 					__( 'Right', 'js_composer' ) => 'right',
-					__( 'Center', 'js_composer' ) => 'center'
+					__( 'Center', 'js_composer' ) => 'center',
 				),
-				'description' => __( 'Select image alignment.', 'js_composer' )
+				'description' => __( 'Select image alignment.', 'js_composer' ),
 			),
 			array(
 				'type' => 'dropdown',
 				'heading' => __( 'Image style', 'js_composer' ),
 				'param_name' => 'style',
 				'value' => getVcShared( 'single image styles' ),
-				'description' => __( 'Select image display style.', 'js_comopser' )
+				'description' => __( 'Select image display style.', 'js_composer' ),
 			),
 			array(
 				'type' => 'dropdown',
@@ -521,26 +460,25 @@ $list = array(
 						'vc_box_border',
 						'vc_box_border_circle',
 						'vc_box_outline',
-						'vc_box_outline_circle'
-					)
+						'vc_box_outline_circle',
+					),
 				),
 				'description' => __( 'Border color.', 'js_composer' ),
-				'param_holder_class' => 'vc_colored-dropdown'
+				'param_holder_class' => 'vc_colored-dropdown',
 			),
 			$vc_add_css_animation,
 			array(
 				'type' => 'textfield',
 				'heading' => __( 'Extra class name', 'js_composer' ),
 				'param_name' => 'el_class',
-				'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' )
+				'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
 			),
 			array(
 				'type' => 'css_editor',
 				'heading' => __( 'CSS box', 'js_composer' ),
 				'param_name' => 'css',
-				// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-				'group' => __( 'Design Options', 'js_composer' )
-			)
+				'group' => __( 'Design Options', 'js_composer' ),
+			),
 		),
 		'post_type' => Vc_Grid_Item_Editor::postType(),
 	),
@@ -635,21 +573,46 @@ $list['vc_single_image'] = array(
 			'type' => 'textfield',
 			'heading' => __( 'Widget title', 'js_composer' ),
 			'param_name' => 'title',
-			'description' => __( 'Enter text used as widget title (Note: located above content element).', 'js_composer' )
+			'description' => __( 'Enter text used as widget title (Note: located above content element).', 'js_composer' ),
+		),
+		array(
+			'type' => 'dropdown',
+			'heading' => __( 'Image source', 'js_composer' ),
+			'param_name' => 'source',
+			'value' => array(
+				__( 'Media library', 'js_composer' ) => 'media_library',
+				__( 'External link', 'js_composer' ) => 'external_link',
+			),
+			'std' => 'media_library',
+			'description' => __( 'Select image source.', 'js_composer' ),
 		),
 		array(
 			'type' => 'attach_image',
 			'heading' => __( 'Image', 'js_composer' ),
 			'param_name' => 'image',
 			'value' => '',
-			'description' => __( 'Select image from media library.', 'js_composer' )
+			'description' => __( 'Select image from media library.', 'js_composer' ),
+			'dependency' => array(
+				'element' => 'source',
+				'value' => 'media_library',
+			),
+		),
+		array(
+			'type' => 'textfield',
+			'heading' => __( 'External link', 'js_composer' ),
+			'param_name' => 'custom_src',
+			'description' => __( 'Select external link.', 'js_composer' ),
+			'dependency' => array(
+				'element' => 'source',
+				'value' => 'external_link',
+			),
 		),
 		$vc_add_css_animation,
 		array(
 			'type' => 'textfield',
 			'heading' => __( 'Image size', 'js_composer' ),
 			'param_name' => 'img_size',
-			'description' => __( 'Enter image size (Example: "thumbnail", "medium", "large", "full" or other sizes defined by theme). Alternatively enter size in pixels (Example: 200x100 (Width x Height)). Leave parameter empty to use "thumbnail" by default.', 'js_composer' )
+			'description' => __( 'Enter image size (Example: "thumbnail", "medium", "large", "full" or other sizes defined by theme). Alternatively enter size in pixels (Example: 200x100 (Width x Height)). Leave parameter empty to use "thumbnail" by default.', 'js_composer' ),
 		),
 		array(
 			'type' => 'dropdown',
@@ -658,16 +621,16 @@ $list['vc_single_image'] = array(
 			'value' => array(
 				__( 'Left', 'js_composer' ) => '',
 				__( 'Right', 'js_composer' ) => 'right',
-				__( 'Center', 'js_composer' ) => 'center'
+				__( 'Center', 'js_composer' ) => 'center',
 			),
-			'description' => __( 'Select image alignment.', 'js_composer' )
+			'description' => __( 'Select image alignment.', 'js_composer' ),
 		),
 		array(
 			'type' => 'dropdown',
 			'heading' => __( 'Image style', 'js_composer' ),
 			'param_name' => 'style',
 			'value' => getVcShared( 'single image styles' ),
-			'description' => __( 'Select image display style.', 'js_comopser' )
+			'description' => __( 'Select image display style.', 'js_composer' ),
 		),
 		array(
 			'type' => 'dropdown',
@@ -677,24 +640,23 @@ $list['vc_single_image'] = array(
 			'std' => 'grey',
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'vc_box_border', 'vc_box_border_circle', 'vc_box_outline', 'vc_box_outline_circle' )
+				'value' => array( 'vc_box_border', 'vc_box_border_circle', 'vc_box_outline', 'vc_box_outline_circle' ),
 			),
 			'description' => __( 'Border color.', 'js_composer' ),
-			'param_holder_class' => 'vc_colored-dropdown'
+			'param_holder_class' => 'vc_colored-dropdown',
 		),
 		array(
 			'type' => 'textfield',
 			'heading' => __( 'Extra class name', 'js_composer' ),
 			'param_name' => 'el_class',
-			'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' )
+			'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
 		),
 		array(
 			'type' => 'css_editor',
 			'heading' => __( 'CSS box', 'js_composer' ),
 			'param_name' => 'css',
-			// 'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-			'group' => __( 'Design Options', 'js_composer' )
-		)
+			'group' => __( 'Design Options', 'js_composer' ),
+		),
 	),
 	'post_type' => Vc_Grid_Item_Editor::postType(),
 );
@@ -714,7 +676,18 @@ $shortcode_vc_custom_heading = WPBMap::getShortCode( 'vc_custom_heading' );
 if ( is_array( $shortcode_vc_custom_heading ) && isset( $shortcode_vc_custom_heading['base'] ) ) {
 	$list['vc_custom_heading'] = $shortcode_vc_custom_heading;
 	$list['vc_custom_heading']['post_type'] = Vc_Grid_Item_Editor::postType();
-	unset( $list['vc_custom_heading']['params'][1] );
+
+	$remove = array( 'link', 'source' );
+	foreach ( $list['vc_custom_heading']['params'] as $k => $v ) {
+		if ( in_array( $v['param_name'], $remove ) ) {
+			unset( $list['vc_custom_heading']['params'][ $k ] );
+		}
+
+		// text depends on source. remove dependency so text is always saved
+		if ( 'text' === $v['param_name'] ) {
+			unset( $list['vc_custom_heading']['params'][ $k ]['dependency'] );
+		}
+	}
 }
 $shortcode_vc_empty_space = WPBMap::getShortCode( 'vc_empty_space' );
 if ( is_array( $shortcode_vc_empty_space ) && isset( $shortcode_vc_empty_space['base'] ) ) {
@@ -734,7 +707,7 @@ foreach ( array( 'vc_icon', 'vc_button2', 'vc_btn', 'vc_custom_heading', 'vc_sin
 				'param_name' => 'url',
 				'dependency' => array(
 					'element' => 'link',
-					'value' => array( 'custom' )
+					'value' => array( 'custom' ),
 				),
 				'description' => __( 'Add custom link.', 'js_composer' ),
 			);
@@ -745,7 +718,7 @@ foreach ( array( 'vc_icon', 'vc_button2', 'vc_btn', 'vc_custom_heading', 'vc_sin
 				'param_name' => 'url',
 				'dependency' => array(
 					'element' => 'link',
-					'value' => array( 'custom' )
+					'value' => array( 'custom' ),
 				),
 				'description' => __( 'Add custom link.', 'js_composer' ),
 			) );

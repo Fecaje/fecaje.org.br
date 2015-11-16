@@ -4,7 +4,7 @@
 * Add-on URI: http://dev.brainstormforce.com
 */
 //error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-if(!class_exists('AIO_Dual_Button')) 
+if(!class_exists('AIO_Dual_Button'))
 {
 	class AIO_Dual_Button
 	{
@@ -13,7 +13,7 @@ if(!class_exists('AIO_Dual_Button'))
 			add_shortcode('ult_dualbutton',array($this,'ultimate_dualbtn_shortcode'));
 			add_action('init',array($this,'ultimate_dual_button'));
 			add_action( 'wp_enqueue_scripts', array( $this, 'dualbutton_scripts') );
-			add_action( 'admin_enqueue_scripts', array( $this, 'dualbutton_backend_scripts') );		
+			add_action( 'admin_enqueue_scripts', array( $this, 'dualbutton_backend_scripts') );
 		}
 		function dualbutton_backend_scripts($hook){
 			if($hook == "post.php" || $hook == "post-new.php"){
@@ -40,7 +40,7 @@ if(!class_exists('AIO_Dual_Button'))
 			}
 			wp_register_style( 'ult-dualbutton', plugins_url($css_path.'dual-button'.$ext.'.css', __FILE__) );
 			wp_register_script("jquery.dualbtn",plugins_url($js_path."dual-button".$ext.".js",__FILE__),array('jquery'),ULTIMATE_VERSION);
-			
+
 			if(isset($_SERVER['HTTP_REFERER'])){
 				$params = parse_url($_SERVER['HTTP_REFERER']);
 			$vc_is_inline = false;
@@ -55,38 +55,38 @@ if(!class_exists('AIO_Dual_Button'))
 					wp_enqueue_script("jquery.dualbtn",plugins_url($js_path."dual-button".$ext.".js",__FILE__),array('jquery'),ULTIMATE_VERSION);
 				}
 			}
-		
 
-				
+
+
 			}
 
-		
+
 
 		// Shortcode handler function for stats Icon
 		function ultimate_dualbtn_shortcode($atts)
 		{
-			
+
 $button1_text= $icon_type = $icon = $icon_img = $img_width = $icon_size = $icon_color = $icon_hover_color = $icon_style = $icon_color_bg ='';
 $icon_border_style= $icon_color_border = $icon_border_size = $icon_border_radius = $icon_border_spacing = $icon_link = $icon_align = $btn1_background_color = $btn1_bghovercolor = $btn2_font_family = $btn2_heading_style = $btn1_text_color = $btn1_text_hovercolor = '';
-$button2_text = $btn_icon_type = $btn_icon = $btn_icon_img = $btn_img_width = $btn_icon_size = 
-$btn_icon_color = $btn_icon_style = $btn_icon_color_bg = $btn_icon_border_style = $btn_icon_color_border = 
-$btn_icon_border_size = $btn_icon_border_radius = $btn_icon_border_spacing =  $btn_icon_link = $btn2_icon_align = 
-$btn2_background_color = $btn2_bghovercolor = $btn2_font_family = $btn2_heading_style = $btn2_text_color = 
+$button2_text = $btn_icon_type = $btn_icon = $btn_icon_img = $btn_img_width = $btn_icon_size =
+$btn_icon_color = $btn_icon_style = $btn_icon_color_bg = $btn_icon_border_style = $btn_icon_color_border =
+$btn_icon_border_size = $btn_icon_border_radius = $btn_icon_border_spacing =  $btn_icon_link = $btn2_icon_align =
+$btn2_background_color = $btn2_bghovercolor = $btn2_font_family = $btn2_heading_style = $btn2_text_color =
 $btn2_text_hovercolor='';
 $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divider_icon = $divider_icon_img = $btn_border_style = $btn_color_border = $btn_border_size = $btn_border_radius = $btn_hover_style = $title_font_size = $title_line_ht = $el_class = '';
 
-	extract(shortcode_atts( array(	
+	extract(shortcode_atts( array(
 
-			/*--------btn1-----------*/			
+			/*--------btn1-----------*/
 				'button1_text' => '',
 				'icon_type' => 'selector',
 				'icon' => '',
 				'icon_img' => '',
-				'img_width' => '',				
+				'img_width' => '',
 				'icon_size' => '32',
 				'icon_color' => '#333333',
 				'icon_hover_color' =>'#333333',
-				'icon_style' => 'none',			
+				'icon_style' => 'none',
 				'icon_color_bg' => '#ffffff',
 				'icon_border_style' => '',
 				'icon_color_border' => '#333333',
@@ -104,18 +104,18 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 				'icon_color_hoverbg'=>'#ecf0f1',
 				'icon_color_hoverborder'=>'#333333',
 				'btn1_padding'=>'',
-				
+
 				/*--------btn2-----------*/
 				'button2_text' => '',
 				'btn_icon_type' => 'selector',
 				'btn_icon' => '',
 				'btn_icon_img' => '',
-				'btn_img_width' => '48',				
+				'btn_img_width' => '48',
 				'btn_icon_size' => '32',
 				'btn_icon_color' => '#333333',
 				'btn_iconhover_color'=>'#333333',
 				'btn_icon_style' => 'none',
-				'btn_icon_color_bg' => '#ffffff',			
+				'btn_icon_color_bg' => '#ffffff',
 				'icon_color_bg' => '#ffffff',
 				'btn_icon_border_style' => '',
 				'btn_icon_color_border' => '#333333',
@@ -140,19 +140,19 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 				'divider_text' => 'or',
 				'divider_text_color' => '#ffffff',
 				'divider_bg_color' => '#333333',
-				'divider_icon' => '',				
+				'divider_icon' => '',
 				'divider_icon_img' => '',
 				'divider_border_radius'=>'',
 				'divider_border_size'=>'1',
 				'divider_color_border'=>'#e7e7e7',
 				'divider_border_style'=>'',
-				
+
 				/*--------general-----------*/
 
 				'btn_border_style' => '',
 				'btn_color_border'=>'#333333',
 				'btn_border_size' => '1',
-				'btn_border_radius' => '',			
+				'btn_border_radius' => '',
 				'btn_hover_style' => 'Style 1',
 				'title_font_size' => '15',
 				'title_line_ht' => '15',
@@ -162,10 +162,10 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 				'dual_resp' =>'on',
 
 				//'btn_resp_width'=>'',
-				//'btn_color_hoverborder'=>' ', 
+				//'btn_color_hoverborder'=>' ',
 
 			),$atts));
-			
+
 			$extraclass=$el_class;
 			$el_class1=$css_trans=$button2_bstyle=$button1_bstyle=$target1=$url1=$btn_color_hoverborder='';
 			$iconoutput= $style = $link_sufix = $link_prefix = $target = $href = $icon_align_style = '';
@@ -182,7 +182,7 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 				//echo $url1;
 			}
 			else{
-				$url1="javascript:void(0);";	
+				$url1="javascript:void(0);";
 			}
 
 			if($icon_type == 'custom'){
@@ -212,7 +212,7 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 						//$style .= 'display:inline-block;';
 					}
 					$iconoutput .= "\n".'<span class="aio-icon-img '.$el_class.' '.'btn1icon " style="font-size:'.$img_width.'px;'.$style.'" '.$css_trans.'>';
-					$iconoutput .= "\n\t".'<img class="img-icon dual_img" alt="'.$alt.'" src="'.$img.'" />';	
+					$iconoutput .= "\n\t".'<img class="img-icon dual_img" alt="'.$alt.'" src="'.$img.'" />';
 					$iconoutput .= "\n".'</span>';
 				}
 				if(!empty($img)){
@@ -222,7 +222,7 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 			    	$iconoutput = '';
 			    }
 
-			} 
+			}
 		}else {
 			if($icon!=='')
 			{
@@ -247,8 +247,8 @@ $divider_style = $divider_text = $divider_text_color = $divider_bg_color = $divi
 					$style .= 'display:inline-block;';
 				}
 				if($icon !== ""){
-					$iconoutput .= "\n".'<span class="aio-icon btn1icon '.$icon_style.' '.$el_class.'" '.$css_trans.' style="'.$style.'">';				
-					$iconoutput .= "\n\t".'<i class="'.$icon.'" ></i>';	
+					$iconoutput .= "\n".'<span class="aio-icon btn1icon '.$icon_style.' '.$el_class.'" '.$css_trans.' style="'.$style.'">';
+					$iconoutput .= "\n\t".'<i class="'.$icon.'" ></i>';
 					$iconoutput .= "\n".'</span>';
 				}
 				if($icon !== "" && $icon!=="none"){
@@ -278,7 +278,7 @@ $style2=$href1 =$target2=$img2=$alt1 =$iconoutput2=$url2='';
 						if($url2==''){
 							$url2="javascript:void(0);";
 						}
-					} 
+					}
 					else{
 				$url2="javascript:void(0);";
 			}
@@ -291,7 +291,7 @@ if($btn_icon_type == 'custom'){
 						$style2 .= 'background:'.$btn_icon_color_bg.';';
 					//$style2 .= 'background:transperent;';
 				}
-				
+
 				if($btn_icon_style == 'square'){
 					$el_class1.= ' uavc-square ';
 				}
@@ -310,7 +310,7 @@ if($btn_icon_type == 'custom'){
 						//$style .= 'display:inline-block;';
 					}
 					$iconoutput2 .= "\n".'<span class="aio-icon-img '.$el_class1.' btn1icon" style="font-size:'.$btn_img_width.'px;'.$style2.'" '.$css_trans.'>';
-					$iconoutput2 .= "\n\t".'<img class="img-icon dual_img" alt="'.$alt2.'" src="'.$img2.'" />';	
+					$iconoutput2 .= "\n\t".'<img class="img-icon dual_img" alt="'.$alt2.'" src="'.$img2.'" />';
 					$iconoutput2 .= "\n".'</span>';
 				}
 				if(!empty($img2)){
@@ -339,13 +339,13 @@ if($btn_icon_type == 'custom'){
 				if($btn_icon_size !== ''){
 					$style2 .='font-size:'.$btn_icon_size.'px;';
 				}
-					
+
 				if($btn2_icon_align !== 'left'){
 					$style2 .= 'display:inline-block;';
 				}
 				if($btn_icon !== ""){
-					$iconoutput2 .= "\n".'<span class="aio-icon btn1icon '.$btn_icon_style.' '.$el_class1.'" '.$css_trans.' style="'.$style2.'">';				
-					$iconoutput2 .= "\n\t".'<i class="'.$btn_icon.'" ></i>';	
+					$iconoutput2 .= "\n".'<span class="aio-icon btn1icon '.$btn_icon_style.' '.$el_class1.'" '.$css_trans.' style="'.$style2.'">';
+					$iconoutput2 .= "\n\t".'<i class="'.$btn_icon.'" ></i>';
 					$iconoutput2 .= "\n".'</span>';
 				}
 				if($btn_icon !== "" && $btn_icon!=="none"){
@@ -368,15 +368,15 @@ if($btn_hover_style=='Style 1'){
 }
 if($btn_hover_style==''){
 	$hoverstyle='ult-dual-btn';
-	
+
 }
 if($btn_hover_style=='Style 2'){
 	$hoverstyle='ult-dual-btn3';
-	
+
 }
 if($btn_hover_style=='Style 3'){
 	$hoverstyle='ult-dual-btn4';
-	
+
 }
 
 /*--------css for title1------------*/
@@ -494,7 +494,7 @@ foreach ($mainarr as $key => $value) {
 	$sub=explode(":",$value);
 	$sub[1]=str_replace("px","",$sub[1]);
 	$subarr[$sub[0]]=$sub[1];
-   
+
 	}
 
 foreach ($subarr as $key => $value) {
@@ -598,7 +598,7 @@ if($iconoutput2==''){
 			{
 			$subop .='<a href = "'.$url1.'" '.$target.' class="ult_ivan_button   round-square  with-icon icon-after with-text place-template ult_dual1" style=" '.$icon1_lineht2.';margin-right:px;'.$size.';'.$btncolor_style.$button1_bstyle.'; '.$btnmain_style.';">
 			<span class="ult-dual-btn-1 ' .$btn_hover_style. '" style=""  '.$btn_hover.'>
-			
+
 			<span class="text-btn ult-dual-button-title title_left" style="'.$title1_style.'">'.$button1_text.'</span>
 			<span class="icon-simple icon-right1 ult_btn1span '.$is_no_icon_first.'"  style="'.$icnsize1.';'.$emptyicon.' ">'.$iconoutput.'</span
 			</span>
@@ -610,11 +610,11 @@ if($iconoutput2==''){
 			<span class="ult-dual-btn-1 ' .$btn_hover_style. '" style=""  '.$btn_hover.'>
 			<span class="icon-simple icon-left1 ult_btn1span '.$is_no_icon_first.'"  style="'.$icnsize1.';'.$emptyicon.' ">'.$iconoutput.'</span>
 			<span class="text-btn ult-dual-button-title" style="'.$title1_style.'">'.$button1_text.'</span>
-				
+
 			</span>
 			</a>';
 			}
-		
+
 
 		$subop .='<span class="middle-text" style="'.$text_style.'">
 			<span class="middle-inner"  >'.$text.'</span>
@@ -629,7 +629,7 @@ if($iconoutput2==''){
 			$subop .='<a href = "'.$url2.'" '.$target1.' class="ult_ivan_button   round-square  with-icon icon-after with-text place-template ult_dual2"  style="'.$icon2_lineht2.';'.$btncolor1_style.$button2_bstyle.';margin-left:px;'.$size.';'.$btnmain_style.'">
 			<span class="ult-dual-btn-2 ' .$btn_hover_style. '"  '.$btn2_hover.'>
 			<span class="text-btn ult-dual-button-title" style="'.$title2_style.'">'.$button2_text.'</span>
-           
+
 			<span class="icon-simple icon-right2 ult_btn1span '.$is_no_icon.'"  style="'.$icnsize2.';'.$emptyicon1.' ">'.$iconoutput2.'</span>
 			</span>
 			</a>';
@@ -642,7 +642,7 @@ if($iconoutput2==''){
 			<span class="icon-simple icon-left2 ult_btn1span '.$is_no_icon.'"  style="'.$icnsize2.';'.$emptyicon1.' ">'.$iconoutput2.'</span>
 			<span class="text-btn ult-dual-button-title title_right" style="'.$title2_style.'">'.$button2_text.'</span>
 
-			
+
 			</span>
 			</a>';
 
@@ -651,7 +651,7 @@ if($iconoutput2==''){
 			</div>
 			</div>';
 
-		return 	$subop ;	
+		return 	$subop ;
 
 
 
@@ -665,12 +665,13 @@ if($iconoutput2==''){
 					array(
 					   "name" => __("Dual Button"),
 					   "base" => "ult_dualbutton",
-					   "icon"=>plugins_url("../admin/img/dual_button.png",__FILE__),
+					   "icon"=> "uvc_dual_button",
+					   "class" => "uvc_dual_button",
 					   "category" => __("Ultimate VC Addons","ultimate_vc"),
 					  // "front_enqueue_js" => array(plugins_url("../assets/min-js/dual_button.min.js",__FILE__),array('jquery'),ULTIMATE_VERSION),
 					  // "front_enqueue_js" =>  preg_replace( '/\s/', '%20', plugins_url( '../admin/js/dualbtnfront.js', __FILE__ ) ),
 					   "description" => __("Add a dual button and give some custom style.","ultimate_vc"),
-					   "params" => array(							
+					   "params" => array(
 							// Play with icon selector
 					   	/*-----------general------------*/
 							array(
@@ -683,10 +684,10 @@ if($iconoutput2==''){
 									"Style 2" => "Style 2",
 									/*"Style 3" => "Style 3",*/
 									"None"=> " ",
-									
+
 								),
 								"description" => __("Select the Hover style for Button.","ultimate_vc"),
-								
+
 							),
 							array(
 								"type" => "number",
@@ -696,7 +697,7 @@ if($iconoutput2==''){
 								"suffix" => "px",
 								'edit_field_class' => 'vc_column vc_col-sm-4',
 							),
-							
+
 							array(
 								"type" => "number",
 								"param_name" => "title_line_ht",
@@ -704,20 +705,20 @@ if($iconoutput2==''){
 								"value" => "",
 								"suffix" => "px",
 								'edit_field_class' => 'vc_column vc_col-sm-4',
-								
+
 							),
 							array(
 								"type" => "number",
 								"class" => "",
 								"heading" => __("Border Radius", "ultimate_vc"),
 								"param_name" => "btn_border_radius",
-								
+
 								"min" => 1,
 								"max" => 50,
 								"suffix" => "px",
 								 //"dependency" => Array("element" => "btn_border_style", "not_empty" => true),
 								 'edit_field_class' => 'vc_column vc_col-sm-4',
-								
+
 							),
 							array(
 								"type" => "dropdown",
@@ -735,8 +736,8 @@ if($iconoutput2==''){
 								),
 								"description" => __("Select the border style for Button.","ultimate_vc"),
 								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),
-								
-								
+
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -744,11 +745,11 @@ if($iconoutput2==''){
 								"heading" => __("Border Color", "ultimate_vc"),
 								"param_name" => "btn_color_border",
 								"value" => "",
-								"description" => __("Select border color for button.", "ultimate_vc"),	
+								"description" => __("Select border color for button.", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_border_style", "not_empty" => true),
 								'edit_field_class' => 'vc_column vc_col-sm-6',
 							),
-							
+
 							array(
 								"type" => "number",
 								"class" => "",
@@ -759,7 +760,7 @@ if($iconoutput2==''){
 								"max" => 10,
 								"suffix" => "px",
 								"description" => __("Thickness of the border.", "ultimate_vc"),
-								"dependency" => Array("element" => "btn_border_style", "not_empty" => true),	
+								"dependency" => Array("element" => "btn_border_style", "not_empty" => true),
 								'edit_field_class' => 'vc_column vc_col-sm-6',
 							),
 							array(
@@ -772,7 +773,7 @@ if($iconoutput2==''){
 								"suffix" => "px",
 								 //"dependency" => Array("element" => "btn_border_style", "not_empty" => true),
 								 'edit_field_class' => 'vc_column vc_col-sm-6',
-								
+
 							),
 							array(
 								"type" => "dropdown",
@@ -783,10 +784,10 @@ if($iconoutput2==''){
 									"center"=> "",
 									"left"=> "left",
 									"right" => "right",
-									
+
 								),
 								'edit_field_class' => 'vc_column vc_col-sm-6',
-								
+
 							),
 							array(
 									"type" => "ult_switch",
@@ -806,7 +807,7 @@ if($iconoutput2==''){
 									/*"description" => __("", "smile"),*/
 									"description" => __("Enable Responsive Mod or not", 'ultimate_vc'),
 								),
-							
+
 							array(
 								"type" => "textfield",
 								"class" => "",
@@ -853,9 +854,9 @@ if($iconoutput2==''){
 								"heading" => __("Background Color", "ultimate_vc"),
 								"param_name" => "btn1_background_color",
 								"value" => "",
-								"description" => __("Select Background Color for Button.", "ultimate_vc"),	
+								"description" => __("Select Background Color for Button.", "ultimate_vc"),
 								"group" => "Button1",
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -863,13 +864,13 @@ if($iconoutput2==''){
 								"heading" => __("Background Hover Color", "ultimate_vc"),
 								"param_name" => "btn1_bghovercolor",
 								"value" => "",
-								"description" => __("Select background hover color for Button.", "ultimate_vc"),	
+								"description" => __("Select background hover color for Button.", "ultimate_vc"),
 								/*"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),*/
 								"dependency" => Array("element" => "btn_hover_style", "value" => array("Style 1","Style 2","Style 3")),
 								"group" => "Button1",
-								
+
 							),
-							
+
 					   		array(
 									"type" => "ult_param_heading",
 									"param_name" => "btn1_icon_setting",
@@ -946,7 +947,7 @@ if($iconoutput2==''){
 								"param_name" => "icon_color",
 								"value" => "",
 								"description" => __("Icon Color!", "ultimate_vc"),
-								"dependency" => Array("element" => "icon_type","value" => array("selector")),						
+								"dependency" => Array("element" => "icon_type","value" => array("selector")),
 								"group" => "Button1",
 							),
 							array(
@@ -957,7 +958,7 @@ if($iconoutput2==''){
 								"value" => "",
 								"description" => __("Icon hover color !", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_type","value" => array("selector"),
-													/*"element" => "btn_hover_style", "not_empty" => true*/),						
+													/*"element" => "btn_hover_style", "not_empty" => true*/),
 								"group" => "Button1",
 							),
 							array(
@@ -980,7 +981,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Background Color ", "ultimate_vc"),
 								"param_name" => "icon_color_bg",
 								"value" => "",
-								"description" => __("Select background color for icon.", "ultimate_vc"),	
+								"description" => __("Select background color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_style", "value" => array("circle","square","advanced")),
 								"group" => "Button1",
 							),
@@ -990,7 +991,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Background Hover Color ", "ultimate_vc"),
 								"param_name" => "icon_color_hoverbg",
 								"value" => "",
-								"description" => __("Select background hover color for icon.", "ultimate_vc"),	
+								"description" => __("Select background hover color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_style", "value" => array("circle","square","advanced")
 									),
 								"group" => "Button1",
@@ -1019,7 +1020,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Border Color", "ultimate_vc"),
 								"param_name" => "icon_color_border",
 								"value" => "",
-								"description" => __("Select border color for icon.", "ultimate_vc"),	
+								"description" => __("Select border color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 								"group" => "Button1",
 							),
@@ -1029,7 +1030,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Border Hover Color", "ultimate_vc"),
 								"param_name" => "icon_color_hoverborder",
 								"value" => "",
-								"description" => __("Select border hover color for icon.", "ultimate_vc"),	
+								"description" => __("Select border hover color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 								"group" => "Button1",
 							),
@@ -1071,9 +1072,9 @@ if($iconoutput2==''){
 								"description" => __("Spacing from center of the icon till the boundary of border / background", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 								"group" => "Button1",
-								
+
 							),
-							
+
 							array(
 								"type" => "dropdown",
 								"class" => "",
@@ -1096,11 +1097,11 @@ if($iconoutput2==''){
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
 								),
 */
-							
 
-							
-					
-							 
+
+
+
+
 
 
 
@@ -1143,9 +1144,9 @@ if($iconoutput2==''){
 								"heading" => __("Background Color", "ultimate_vc"),
 								"param_name" => "btn2_background_color",
 								"value" => "",
-								"description" => __("Select Background Color for Button.", "ultimate_vc"),	
+								"description" => __("Select Background Color for Button.", "ultimate_vc"),
 								"group" => "Button2",
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -1154,12 +1155,12 @@ if($iconoutput2==''){
 								"param_name" => "btn2_bghovercolor",
 								"value" => "",
 								"description" => __("Select background hover color for Button.", "ultimate_vc"),
-								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),	
+								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),
 								"dependency" => Array("element" => "btn_hover_style", "value" => array("Style 1","Style 2","Style 3")),
 								"group" => "Button2",
-								
+
 							),
-							
+
 							array(
 									"type" => "ult_param_heading",
 									"param_name" => "btn1_icon_setting",
@@ -1235,7 +1236,7 @@ if($iconoutput2==''){
 								"param_name" => "btn_icon_color",
 								"value" => "",
 								"description" => __("Icon Color!", "ultimate_vc"),
-								"dependency" => Array("element" => "btn_icon_type","value" => array("selector")),						
+								"dependency" => Array("element" => "btn_icon_type","value" => array("selector")),
 								"group" => "Button2",
 							),
 							array(
@@ -1245,7 +1246,7 @@ if($iconoutput2==''){
 								"param_name" => "btn_iconhover_color",
 								"value" => "",
 								"description" => __("Icon hover color!", "ultimate_vc"),
-								"dependency" => Array("element" => "btn_icon_type","value" => array("selector")),						
+								"dependency" => Array("element" => "btn_icon_type","value" => array("selector")),
 								"group" => "Button2",
 							),
 							array(
@@ -1268,7 +1269,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Background Color", "ultimate_vc"),
 								"param_name" => "btn_icon_color_bg",
 								"value" => "",
-								"description" => __("Select background color for icon.", "ultimate_vc"),	
+								"description" => __("Select background color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_icon_style", "value" => array("circle","square","advanced")),
 								"group" => "Button2",
 							),
@@ -1278,7 +1279,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Background hover Color", "ultimate_vc"),
 								"param_name" => "btn_icon_color_hoverbg",
 								"value" => "",
-								"description" => __("Select background hover color for icon.", "ultimate_vc"),	
+								"description" => __("Select background hover color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_icon_style", "value" => array("circle","square","advanced")
 									  				  ),
 								"group" => "Button2",
@@ -1307,7 +1308,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Border Color", "ultimate_vc"),
 								"param_name" => "btn_icon_color_border",
 								"value" => "",
-								"description" => __("Select border color for icon.", "ultimate_vc"),	
+								"description" => __("Select border color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_icon_border_style", "not_empty" => true),
 								"group" => "Button2",
 							),
@@ -1317,7 +1318,7 @@ if($iconoutput2==''){
 								"heading" => __("Icon or Image Border Hover Color", "ultimate_vc"),
 								"param_name" => "btn_icon_color_hoverborder",
 								"value" => "",
-								"description" => __("Select border color for icon.", "ultimate_vc"),	
+								"description" => __("Select border color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_icon_border_style", "not_empty" => true
 														),
 								"group" => "Button2",
@@ -1360,9 +1361,9 @@ if($iconoutput2==''){
 								"description" => __("Spacing from center of the icon till the boundary of border / background", "ultimate_vc"),
 								"dependency" => Array("element" => "btn_icon_border_style", "not_empty" => true),
 								"group" => "Button2",
-								
+
 							),
-							
+
 							array(
 								"type" => "dropdown",
 								"class" => "",
@@ -1372,7 +1373,7 @@ if($iconoutput2==''){
 									//"Center"	=>	"center",
 									"Right"		=>	"",
 									"Left"		=>	"left",
-									
+
 								),
 								"group" => "Button2",
 							),
@@ -1389,7 +1390,7 @@ if($iconoutput2==''){
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
 								),*/
 /**/
-							
+
 
 									/*--------divider---------------*/
 							array(
@@ -1420,7 +1421,7 @@ if($iconoutput2==''){
 								"heading" => __("Text/Icon Color", "ultimate_vc"),
 								"param_name" => "divider_text_color",
 								"value" => "",
-								"description" => __("Select  color for divider text/icon.", "ultimate_vc"),	
+								"description" => __("Select  color for divider text/icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "divider_style", "value" => array("text","icon")),
 								"group" => "Divider",
 							),
@@ -1430,11 +1431,11 @@ if($iconoutput2==''){
 								"heading" => __("Background Color", "ultimate_vc"),
 								"param_name" => "divider_bg_color",
 								"value" => "",
-								"description" => __("Select border color for Icon/Text/Image.", "ultimate_vc"),	
+								"description" => __("Select border color for Icon/Text/Image.", "ultimate_vc"),
 								"dependency" => Array("element" => "divider_style", "not_empty" => true),
 								"group" => "Divider",
 							),
-							
+
 							array(
 								"type" => "icon_manager",
 								"class" => "",
@@ -1473,7 +1474,7 @@ if($iconoutput2==''){
 								"description" => __("Select the border style for Button.","ultimate_vc"),
 								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),
 								"group" => "Divider",
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -1481,12 +1482,12 @@ if($iconoutput2==''){
 								"heading" => __("Border Color", "ultimate_vc"),
 								"param_name" => "divider_color_border",
 								"value" => "",
-								"description" => __("Select border color for divider.", "ultimate_vc"),	
+								"description" => __("Select border color for divider.", "ultimate_vc"),
 								"dependency" => Array("element" => "divider_border_style", "not_empty" => true),
 								//'edit_field_class' => 'vc_column vc_col-sm-4',
 								"group" => "Divider",
 							),
-							
+
 							array(
 								"type" => "number",
 								"class" => "",
@@ -1497,24 +1498,24 @@ if($iconoutput2==''){
 								"max" => 10,
 								"suffix" => "px",
 								"description" => __("Thickness of the border.", "ultimate_vc"),
-								"dependency" => Array("element" => "divider_border_style", "not_empty" => true),	
+								"dependency" => Array("element" => "divider_border_style", "not_empty" => true),
 								//'edit_field_class' => 'vc_column vc_col-sm-4',
 								"group" => "Divider",
 							),
-							
+
 								array(
 								"type" => "number",
 								"class" => "",
 								"heading" => __("Border Radius", "ultimate_vc"),
 								"param_name" => "divider_border_radius",
-								
+
 								"min" => 1,
 								"max" => 50,
 								"suffix" => "px",
 								 "dependency" => Array("element" => "divider_border_style", "not_empty" => true),
 								// 'edit_field_class' => 'vc_column vc_col-sm-4',
 								 "group" => "Divider",
-								
+
 							),
 							/*--- typgraphy--*/
 
@@ -1536,24 +1537,24 @@ if($iconoutput2==''){
 								"param_name" => "btn1_font_family",
 								"description" => __("Select the font of your choice. ","ultimate_vc").", ".__("you can","ultimate_vc")." <a href='admin.php?page=ultimate-font-manager' target='_blank'>".__("add new in the collection here","ultimate_vc")."</a>.",
 								"group" => "Typography",
-								),	
+								),
 
 							array(
 								"type" => "ultimate_google_fonts_style",
 								"heading" 		=>	__("Font Style", "ultimate_vc"),
 								"param_name"	=>	"btn1_heading_style",
-								
+
 								"group" => "Typography",
-							),	
+							),
 							array(
 								"type" => "colorpicker",
 								"class" => "",
 								"heading" => __("Text Color", "ultimate_vc"),
 								"param_name" => "btn1_text_color",
 								"value" => "",
-								"description" => __("Select text color for icon.", "ultimate_vc"),	
+								"description" => __("Select text color for icon.", "ultimate_vc"),
 								"group" => "Typography",
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -1561,11 +1562,11 @@ if($iconoutput2==''){
 								"heading" => __("Text Hover Color", "ultimate_vc"),
 								"param_name" => "btn1_text_hovercolor",
 								"value" => "",
-								"description" => __("Select text hover color for icon.", "ultimate_vc"),	
+								"description" => __("Select text hover color for icon.", "ultimate_vc"),
 								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),
 								"dependency" => Array("element" => "btn_hover_style", "value" => array("Style 1","Style 2","Style 3")),
 								"group" => "Typography",
-								
+
 							),
 
 							array(
@@ -1577,31 +1578,31 @@ if($iconoutput2==''){
 									"group" => __("Typography","ultimate_vc"),
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
 								),
-							
+
 							array(
 								"type" => "ultimate_google_fonts",
 								"heading" => __("Title Font Family", "ultimate_vc"),
 								"param_name" => "btn2_font_family",
 								"description" => __("Select the font of your choice. ","ultimate_vc").", ".__("you can","ultimate_vc")." <a href='admin.php?page=ultimate-font-manager' target='_blank'>".__("add new in the collection here","ultimate_vc")."</a>.",
 								"group" => "Typography",
-								),	
+								),
 
 							array(
 								"type" => "ultimate_google_fonts_style",
 								"heading" 		=>	__("Font Style", "ultimate_vc"),
 								"param_name"	=>	"btn2_heading_style",
-								
+
 								"group" => "Typography",
-							),		
+							),
 							array(
 								"type" => "colorpicker",
 								"class" => "",
 								"heading" => __("Text Color", "ultimate_vc"),
 								"param_name" => "btn2_text_color",
 								"value" => "",
-								"description" => __("Select text color for icon.", "ultimate_vc"),	
+								"description" => __("Select text color for icon.", "ultimate_vc"),
 								"group" => "Typography",
-								
+
 							),
 							array(
 								"type" => "colorpicker",
@@ -1610,25 +1611,25 @@ if($iconoutput2==''){
 								"param_name" => "btn2_text_hovercolor",
 								"value" => "",
 								"description" => __("Select text hover color for icon.", "ultimate_vc"),
-								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),	
+								//"dependency" => Array("element" => "btn_hover_style", "not_empty" => true),
 								"dependency" => Array("element" => "btn_hover_style", "value" => array("Style 1","Style 2","Style 3")),
 								"group" => "Typography",
-								
+
 							),
-							
-							
+
+
 						),
 					)
 				);
 			}
 		}
-		
+
 	}
 }
 if(class_exists('AIO_Dual_Button'))
 {
 	$AIO_Dual_Button = new AIO_Dual_Button;
-	
+
 
 }
 if(class_exists('WPBakeryShortCode'))

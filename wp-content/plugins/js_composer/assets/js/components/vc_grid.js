@@ -37,7 +37,6 @@ var VcGrid, vcGridSettings = {
 		);
 		this.setSettings();
 		this.initStyle();
-		// this.initFilter();
 		this.initHover();
 		this.initZoneLink();
 	};
@@ -210,7 +209,8 @@ var VcGrid, vcGridSettings = {
 			vc_action: 'vc_get_vc_grid_data',
 			tag: this.settings.tag,
 			data: this.settings,
-			vc_post_id: this.$el.data( 'vcPostId' )
+			vc_post_id: this.$el.data( 'vcPostId' ),
+			_vcnonce: this.$el.data( 'vcPublicNonce' )
 		}, data );
 
 		$.ajax( {
@@ -229,7 +229,7 @@ var VcGrid, vcGridSettings = {
 			if ( ! data ) {
 				$this.data( 'vcGrid', (data = new VcGrid( this )) );
 			}
-			if ( typeof option == 'string' ) {
+			if ( 'string' === typeof(option) ) {
 				data[ option ]();
 			}
 		} );

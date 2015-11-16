@@ -73,7 +73,7 @@ class US_Layout {
 			wp_die( 'US_Layout can be inited only after the current post is obtained' );
 		}
 
-		if ( is_front_page() AND is_home() ) {
+		if ( is_home() ) {
 			// Default homepage blog listing
 			$this->sidebar_pos = us_get_option( 'blog_sidebar', 'right' );
 		} elseif ( is_archive() ) {
@@ -136,6 +136,8 @@ class US_Layout {
 			$this->titlebar = ( us_get_option( 'titlebar_content', 'all' ) == 'hide' ) ? 'none' : 'default';
 			if ( rwmb_meta( 'us_titlebar_content' ) == 'hide' ) {
 				$this->titlebar = 'none';
+			} elseif ( in_array( rwmb_meta( 'us_titlebar_content' ), array( 'captions', 'all', ) ) ) {
+				$this->titlebar = 'default';
 			}
 		}
 
@@ -165,10 +167,18 @@ class US_Layout {
 	public function body_classes() {
 
 		// TODO Dynamically prepare theme slug name
-		$classes = 'us-theme_' . strtolower( US_THEMENAME ) . '_' . str_replace( '.', '-', us_get_main_theme_version() );
+		$classes = 'us-theme_' . strtolower( US_THEMENAME ) . '_' . str_replace( '.', '-', US_THEMEVERSION );
 
 		if ( $this->header_layout == 'sided' AND $this->header_show != 'never' ) {
 			$classes .= ' header_aside';
+		}
+
+		if (us_get_option( 'links_underline' ) == TRUE) {
+			$classes .= ' links_underline';
+		}
+
+		if ( us_get_option( 'rounded_corners' ) !== NULL AND us_get_option( 'rounded_corners' ) == FALSE) {
+			$classes .= ' rounded_none';
 		}
 
 		return $classes;
@@ -184,9 +194,9 @@ class US_Layout {
 	public function body_styles( $with_attr = TRUE ) {
 		$styles = array();
 
-		$bg_image = us_get_option( 'body_bg_image' );
-		if ( $bg_image ) {
-			$styles['background-image'] = 'url(' . $bg_image . ')';
+		$bg_image_value = us_get_option( 'body_bg_image' );
+		if ( $bg_image_value AND ( $bg_image = usof_get_image_src( $bg_image_value ) ) ) {
+			$styles['background-image'] = 'url(' . $bg_image[0] . ')';
 			$styles['background-repeat'] = us_get_option( 'body_bg_image_repeat', 'repeat' );
 			$styles['background-position'] = us_get_option( 'body_bg_image_position', 'top center' );
 			$styles['background-attachment'] = us_get_option( 'body_bg_image_attachment', 'scroll' );

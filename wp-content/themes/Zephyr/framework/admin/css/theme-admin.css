@@ -1,0 +1,398 @@
+/* WP customizing
+   ========================================================================== */
+   
+/* Hide Size option in Media Gallery */
+.gallery-settings .setting.size {
+	display: none;
+	}
+	
+/* UpSolution icon for the WP menu item */
+.menu-icon-generic.toplevel_page_us-home .wp-menu-image {
+	background: url(../img/us-logo.png) no-repeat center 8px / 22px auto !important;
+	}
+	.menu-icon-generic.toplevel_page_us-home .wp-menu-image:before {
+		display: none;
+		}
+		
+	
+	
+/* Migration Messages
+   ========================================================================== */
+   
+.error.us-migration {
+	margin-top: 15px;
+	padding: 15px 30px 20px;
+	border: none;
+	background-color: #dd3d36;
+	color: #fff;
+	}
+.updated.us-migration {
+	margin-top: 15px;
+	padding: 15px 30px;
+	border: none;
+	background-color: #7ad03a;
+	color: #fff;
+	}
+	.error.us-migration h2 {
+		float: none !important;
+		color: #fff;
+		}
+	.error.us-migration a,
+	.updated.us-migration a {
+		color: #ffe14c;
+		}
+	.error.us-migration a:hover,
+	.updated.us-migration a:hover {
+		color: #333;
+		}
+	.error.us-migration .button {
+		font-size: 15px;
+		height: auto;
+		padding: 4px 20px;
+		color: #111;
+		}
+	
+	
+	
+/* About The Theme Page
+   ========================================================================== */
+   
+.us-header {
+	position: relative;
+	padding: 1px 0 30px 200px;
+	margin-bottom: 35px;
+	border-bottom: 1px solid #ddd;
+	background: url(../img/us-logo.png) no-repeat 0 18%;
+	background-size: 150px auto;
+	}
+	.us-header h1 {
+		margin-right: 0;
+		}
+	.us-header .about-text {
+		margin-right: 0;
+		}
+	.us-badge {
+		display: none;
+		position: absolute;
+		top: 10px;
+		right: 0;
+		font-size: 15px;
+		text-align: center;
+		font-weight: 600;
+		height: 40px;
+		width: 165px;
+		padding-top: 120px;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+		background: #fff;
+		color: #1abc9c;
+		}
+.us-body.about-wrap .us-cols {
+	margin-bottom: 35px;
+	}
+	.us-cols > .one-third {
+		float: left;
+		width: 29.3333%;
+		margin-left: 6%;
+		}
+	.us-cols > .one-third:first-child {
+		margin-left: 0;
+		}
+		.us-body.about-wrap .feature-section h4 {
+			font-size: 17px;
+			line-height: 26px;
+			margin: 0 0 15px;
+			}
+			.us-body.about-wrap .feature-section h4 i {
+				font-size: 28px;
+				margin-right: 15px;
+				color: #1abc9c;
+				}
+		.us-body.about-wrap .feature-section .button {
+			font-size: 14px;
+			height: auto;
+			padding: 4px 18px;
+			}
+		.us-feature-disabled {
+			display: inline-block;
+			vertical-align: top;
+			padding: 8px 18px;
+			border-radius: 3px;
+			background-color: rgba(0,0,0,0.05);
+			}
+			
+@media (max-width: 782px) {
+.us-body.about-wrap .us-cols {
+	margin-bottom: 0;
+	}
+.us-cols > .one-third {
+	float: none;
+	width: 100%;
+	margin-left: 0;
+	margin-bottom: 30px;
+	}
+}
+
+@media (max-width: 600px) {
+.us-header {
+	padding-left: 0;
+	background: none;
+	}
+}
+
+
+
+/* Theme Validation Page
+   ========================================================================== */
+   
+.us-validation h1 {
+	font-size: 2.8em;
+	font-weight: 400;
+	line-height: 1.2em;
+	text-align: center;
+	color: #333;
+	}
+.us-form.for_validation {
+	max-width: 700px;
+	margin: 0 auto;
+	text-align: center;
+	padding: 50px 50px 30px;
+	background-color: #fff;
+	border: 1px solid #e5e5e5;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+	}
+	.us-form-row {
+		margin-bottom: 20px;
+		}
+		.us-form-row-description {
+			font-size: 18px;
+			line-height: 1.5em;
+			color: #777;
+			}
+		.us-form-row-success {
+			font-size: 18px;
+			line-height: 1.5em;
+			color: #43a047;
+			}
+			.us-form-row-description .domain {
+				font-weight: 700;
+				color: #333;
+				}
+		.us-form.for_validation input[type="text"] {
+			font-size: 30px;
+			text-align: center;
+			padding: 10px 20px;
+			margin: 0;
+			width: 100%;
+			}
+		.us-form.for_validation input[type="text"]:disabled {
+			box-shadow: none;
+			border-color: transparent;
+			color: #43a047;
+			}
+		.us-form.for_validation .check_wrong input[type="text"] {
+			border-color: red;
+			}
+		.us-form.for_validation .check_wrong input[type="text"]:focus {
+			border-color: #5b9dd9;
+			}
+		.us-form.for_validation input[type="submit"] {
+			font-size: 18px;
+			height: auto;
+			padding: 8px 50px;
+			}
+		.us-form-row-state {
+			font-size: 15px;
+			margin-top: 5px;
+			color: red;
+			}
+			
+			
+			
+/* Demo Import Page
+   ========================================================================== */
+   
+.w-message {
+	text-align: center;
+	max-width: 500px;
+	padding: 40px !important;
+	margin: 20px auto !important;
+	box-shadow: none !important;
+	border: none !important;
+	background-color: #fff;
+	}
+	.w-message-title {
+		line-height: 1.3;
+		margin: 20px 0;
+		}
+	.w-message.error .w-message-title {
+		margin: 10px 0 20px;
+		color: #ff210d;
+		}
+	.w-message.success .w-message-title {
+		margin: 10px 0 20px;
+		color: #1abc9c;
+		}
+	.w-message.success .w-message-text {
+		font-size: 16px;
+		}
+
+/* Preloader */
+.g-preloader {
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	width: 50px;
+	height: 50px;
+	color: #1abc9c;
+	}
+	.g-preloader.type_1:before,
+	.g-preloader.type_1:after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 50%;
+		border: 4px solid;
+		}
+	.g-preloader.type_1:before {
+		opacity: 0.2;
+		}
+	.g-preloader.type_1:after {
+		border-top-color: transparent;
+		-webkit-animation: rotation 1s infinite cubic-bezier(.6,.3,.3,.6);
+				animation: rotation 1s infinite cubic-bezier(.6,.3,.3,.6);
+		}
+@-webkit-keyframes rotation {
+	0% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(360deg); }
+	}
+@keyframes rotation {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+	}
+
+.w-importer {
+	padding: 30px 50px 40px;
+	margin: 20px auto !important;
+	max-width: 1200px;
+	background-color: #fff;
+	}
+@media (max-width: 782px) {
+	.w-importer { margin: -10px 0 0 -10px !important; }
+	}
+@media (max-width: 568px) {
+	.w-importer { padding: 20px 20px 30px; }
+	}
+	.w-importer-title {
+		text-align: center;
+		line-height: 1.3;
+		margin: 5px 0 25px;
+		}
+	.w-importer-list {
+		overflow: hidden;
+		}
+		.w-importer-item {
+			float: left;
+			width: 33.3333%;
+			text-align: center;
+			position: relative;
+			-moz-box-sizing: border-box;
+				 box-sizing: border-box;
+			}
+		@media (max-width: 767px) {
+			.w-importer-item {
+				width: 100%;
+				}
+			}
+			.w-importer-item-radio {
+				position: absolute;
+				visibility: hidden;
+				}
+			.w-importer-item-title {
+				margin: 0;
+				padding: 5px 0 20px;
+				}
+			.w-importer-item-preview {
+				display: block;
+				padding: 20px 20px 65px;
+				border: 2px solid transparent;
+				transition: border 0.3s;
+				}
+			@media (max-width: 767px) {
+				.w-importer-item-preview {
+					padding-bottom: 75px;
+					}
+				}
+			.w-importer-item:hover .w-importer-item-preview {
+				border-color: #ddd;
+				}
+			.w-importer-item-radio:checked + .w-importer-item-preview {
+				border-color: #1abc9c;
+				}
+				.w-importer-item-radio:checked + .w-importer-item-preview:before {
+					displaY: block;
+					content: "\f147";
+					font: 36px/44px dashicons;
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 44px;
+					background-color: #1abc9c;
+					color: #fff;
+					}
+				.w-importer-item-radio:checked + .w-importer-item-preview h2 {
+					color: #1abc9c;
+					}
+				.w-importer-item-preview img {
+					display: block;
+					max-width: 100%;
+					margin: 0 auto;
+					}
+			.w-importer-item-btn {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 25px;
+				}
+	.w-importer-options{
+		margin-top: 30px;
+		}
+		.w-importer-option {
+			font-size: 14px;
+			padding: 8px 0;
+			}
+			.w-importer-option-title {
+				font-weight: 600;
+				}
+			input[disabled] + .w-importer-option-title {
+				color: #aaa;
+				}
+			.w-importer-option-desc {
+				opacity: 0.5;
+				}
+		.w-importer-error {
+			margin: 25px 0;
+			padding: 20px 20px 10px;
+			background: #FFD9D9;
+			color: #A24141;
+			}
+			.w-importer-error p {
+				margin: 0 0 10px;
+				}
+		.w-importer-note {
+			margin: 25px 0;
+			padding: 20px 20px 10px;
+			background: #DBF2FF;
+			color: #5e6a76;
+			}
+			.w-importer-note p {
+				margin: 0 0 10px;
+				}
+		.w-importer .button-primary.size_big {
+			font-size: 16px;
+			padding: 0 24px;
+			height: 42px;
+			}

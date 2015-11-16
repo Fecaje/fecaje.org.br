@@ -73,7 +73,7 @@ if(!class_exists("Ultimate_Headings")){
 
 							// Responsive Param
 							array(
-                          	  	"type" => "ultimate_responsive", 
+                          	  	"type" => "ultimate_responsive",
                           	  	"class" => "font-size",
                           	  	"heading" => __("Font size", 'ultimate_vc'),
                           	  	"param_name" => "main_heading_font_size",
@@ -94,7 +94,7 @@ if(!class_exists("Ultimate_Headings")){
 								"heading" => __("Font Color", "ultimate_vc"),
 								"param_name" => "main_heading_color",
 								"value" => "",
-								//"description" => __("Main heading color", "smile"),	
+								//"description" => __("Main heading color", "smile"),
 								//"dependency" => Array("element" => "main_heading", "not_empty" => true),
 								"group" => "Typography"
 							),
@@ -135,7 +135,7 @@ if(!class_exists("Ultimate_Headings")){
 							),
 							array(
 								"type" => "textarea_html",
-								"class" => "",
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
 								"heading" => __("Sub Heading (Optional)", "ultimate_vc"),
 								"param_name" => "content",
 								"value" => "",
@@ -203,7 +203,7 @@ if(!class_exists("Ultimate_Headings")){
 								"heading" => __("Font Color", "ultimate_vc"),
 								"param_name" => "sub_heading_color",
 								"value" => "",
-								//"description" => __("Sub heading color", "smile"),	
+								//"description" => __("Sub heading color", "smile"),
 								//"dependency" => Array("element" => "content", "not_empty" => true),
 								"group" => "Typography",
 							),
@@ -337,7 +337,7 @@ if(!class_exists("Ultimate_Headings")){
 								"heading" => __("Line Color", "ultimate_vc"),
 								"param_name" => "line_color",
 								"value" => "#333333",
-								//"description" => __("Select color for line.", "smile"),	
+								//"description" => __("Select color for line.", "smile"),
 								"dependency" => Array("element" => "spacer", "value" => array("line_with_icon","line_only")),
 							),
 							array(
@@ -380,7 +380,7 @@ if(!class_exists("Ultimate_Headings")){
 								"param_name" => "icon_color",
 								"value" => "",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"dependency" => Array("element" => "icon_type","value" => array("selector")),						
+								"dependency" => Array("element" => "icon_type","value" => array("selector")),
 							),
 							array(
 								"type" => "dropdown",
@@ -402,7 +402,7 @@ if(!class_exists("Ultimate_Headings")){
 								"heading" => __("Background Color", "ultimate_vc"),
 								"param_name" => "icon_color_bg",
 								"value" => "",
-								"description" => __("Select background color for icon.", "ultimate_vc"),	
+								"description" => __("Select background color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_style", "value" => array("circle","square","advanced")),
 							),
 							array(
@@ -428,7 +428,7 @@ if(!class_exists("Ultimate_Headings")){
 								"heading" => __("Border Color", "ultimate_vc"),
 								"param_name" => "icon_color_border",
 								"value" => "#333333",
-								"description" => __("Select border color for icon.", "ultimate_vc"),	
+								"description" => __("Select border color for icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 							),
 							array(
@@ -569,10 +569,10 @@ if(!class_exists("Ultimate_Headings")){
 				"el_class" => "",
 			),$atts));
 			$wrapper_class = $spacer;
-			
+
 			if($heading_tag == '')
 				$heading_tag = 'h2';
-			
+
 			/* ---- main heading styles ---- */
 			if($main_heading_font_family != '')
 			{
@@ -584,13 +584,13 @@ if(!class_exists("Ultimate_Headings")){
 			$main_heading_style_inline .= get_ultimate_font_style($main_heading_style);
 			//attach font size if set
 
-			//attach font color if set	
+			//attach font color if set
 			if($main_heading_color != '')
 				$main_heading_style_inline .= 'color:'.$main_heading_color.';';
 			//attach margins for main heading
 			if($main_heading_margin != '')
 				$main_heading_style_inline .= $main_heading_margin;
-				
+
 			/* ----- sub heading styles ----- */
 			if($sub_heading_font_family != '')
 			{
@@ -601,13 +601,13 @@ if(!class_exists("Ultimate_Headings")){
 			//sub heaing font style
 			$sub_heading_style_inline .= get_ultimate_font_style($sub_heading_style);
 
-			//attach font color if set	
+			//attach font color if set
 			if($sub_heading_color != '')
-				$sub_heading_style_inline .= 'color:'.$sub_heading_color.';';	
+				$sub_heading_style_inline .= 'color:'.$sub_heading_color.';';
 			//attach margins for sub heading
 			if($sub_heading_margin != '')
 				$sub_heading_style_inline .= $sub_heading_margin;
-				
+
 			if($spacer != '')
 				$wrapper_style .= $spacer_margin;
 			if($spacer == 'line_with_icon')
@@ -651,7 +651,7 @@ if(!class_exists("Ultimate_Headings")){
 					$siwidth = array($spacer_img_width, $spacer_img_width);
 				else
 					$siwidth = 'full';
-					
+
 				$spacer_inline = '';
 				//$icon_inline = wp_get_attachment_image( $spacer_img, $siwidth, false, array("class"=>"ultimate-headings-icon-image") );
 				$icon_inline = apply_filters('ult_get_img_single', $spacer_img, 'url');
@@ -660,7 +660,7 @@ if(!class_exists("Ultimate_Headings")){
 				$icon_inline = '<img src="'.$icon_inline.'" class="ultimate-headings-icon-image" style="'.$spacer_inline.'"/>';
 			}
 			//if spacer type is line with icon or only icon show icon or image respectively
-			if($spacer == 'line_with_icon' || $spacer == 'icon_only')	
+			if($spacer == 'line_with_icon' || $spacer == 'icon_only')
 			{
 				$icon_animation = '';
 				$icon_inline = do_shortcode('[just_icon icon_align="'.$alignment.'" icon_type="'.$icon_type.'" icon="'.$icon.'" icon_img="'.$icon_img.'" img_width="'.$img_width.'" icon_size="'.$icon_size.'" icon_color="'.$icon_color.'" icon_style="'.$icon_style.'" icon_color_bg="'.$icon_color_bg.'" icon_color_border="'.$icon_color_border.'"  icon_border_style="'.$icon_border_style.'" icon_border_size="'.$icon_border_size.'" icon_border_radius="'.$icon_border_radius.'" icon_border_spacing="'.$icon_border_spacing.'" icon_animation="'.$icon_animation.'"]');
@@ -677,7 +677,8 @@ if(!class_exists("Ultimate_Headings")){
 			}
 			else
 				$data = '';
-			$id = uniqid('ultimate-heading');
+			$micro = rand(0000,9999);
+			$id = uniqid('ultimate-heading-'.$micro);
 			$uid = 'uvc-'.rand(0000,9999);
 
 			// FIX: set old font size before implementing responsive param

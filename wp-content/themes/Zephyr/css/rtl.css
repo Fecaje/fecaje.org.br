@@ -103,7 +103,25 @@ input[type="radio"] {
 .l-titlebar.size_medium .g-nav {
 	float: left;
 	}
-	
+.l-titlebar .g-nav-item.to_next {
+	left: auto;
+	right: 0;
+	padding-left: 1px;
+	padding-right: 0;
+	}
+.l-titlebar .g-nav-item.to_next:before {
+	content: '\e647';
+	}
+.l-titlebar .g-nav-item.to_prev {
+	left: 0;
+	right: auto;
+	padding-left: 0;
+	padding-right: 1px;
+	}
+.l-titlebar .g-nav-item.to_prev:before {
+	content: '\e646';
+	}
+
 /* w-actionbox */
 .w-actionbox.controls_right {
 	text-align: right;
@@ -192,7 +210,7 @@ input[type="radio"] {
 	}
 .w-cart-link {
 	padding-left: 0;
-	padding-right: 15px;
+	padding-right: 13px;
 	}
 .w-cart-dropdown {
 	left: 0;
@@ -354,6 +372,10 @@ input[type="radio"] {
 .w-lang-list .w-lang-item {
 	padding-left: 12px;
 	}
+.w-lang-item-icon {
+	margin-left: 8px;
+	margin-right: 0;
+	}
 .w-lang-current .w-lang-item:before {
 	left: 10px;
 	right: auto;
@@ -456,13 +478,78 @@ input[type="radio"] {
 .l-subfooter.at_bottom .w-nav {
 	float: left;
 	}
-
+	
+/* w-progbar */   
+.w-progbar.style_1 .w-progbar-title-count {
+	text-align: left;
+	}
+.w-progbar.style_2 .w-progbar-title-text {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 5px;
+	margin-right: 0;
+	}
+.w-progbar.style_3 .w-progbar-title {
+	padding-left: 20px;
+	padding-right: 0;
+	}
+.w-progbar.style_3 .w-progbar-bar-count {
+	left: -25px;
+	right: auto;
+	}
+.w-progbar.style_4 .w-progbar-bar-count {
+	left: -23px;
+	right: auto;
+	}
+.w-progbar.style_5 .w-progbar-title-text {
+	padding-left: 20px;
+	padding-right: 0;
+	}
+.w-progbar.style_5 .w-progbar-title-count {
+	text-align: left;
+	}
+	
+/* w-portfolio */
+.w-portfolio-item {
+	float: right;
+	}
+	
 /* w-search */
+.w-search.layout_simple button {
+	left: 0;
+	right: auto;
+	text-align: left;
+	}
 .l-subheader .w-search {
 	float: left;
 	}
-.w-search-show {
-	text-align: left;
+.w-search-open {
+	margin-left: -15px;
+	margin-right: 0;
+	}
+	
+/* w-sharing */
+.w-sharing-count {
+	margin-left: 0;
+	margin-right: 4px;
+	}
+.w-sharing.type_simple .w-sharing-item {
+	border-width: 0 0 0 1px;
+	}
+.w-sharing.type_simple .w-sharing-item:first-child {
+	padding-left: 16px;
+	padding-right: 0;
+	}
+.w-sharing.type_simple .w-sharing-item:last-child {
+	padding-left: 0;
+	padding-right: 16px;
+	}
+.w-sharing.type_solid .w-sharing-item {
+	margin-left: 5px;
+	margin-right: 0;
+	}
+.w-sharing.type_solid .w-sharing-item:last-child {
+	margin-left: 0;
 	}
 	
 /* w-socials */

@@ -261,6 +261,7 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 		display: block;
 		position: relative;
 		border: none;
+		width: auto !important;
 		}
 	.woocommerce .shop_table.cart tr {
 		clear: both;

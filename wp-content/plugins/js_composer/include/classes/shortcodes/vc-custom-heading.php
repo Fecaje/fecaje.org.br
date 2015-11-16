@@ -11,7 +11,6 @@ class WPBakeryShortCode_VC_Custom_heading extends WPBakeryShortCode {
 	 * @var array
 	 */
 	protected $fields = array(
-		//key(read only) => 'value'(changeable)
 		'google_fonts' => 'google_fonts',
 		'font_container' => 'font_container',
 		'el_class' => 'el_class',
@@ -86,7 +85,7 @@ class WPBakeryShortCode_VC_Custom_heading extends WPBakeryShortCode {
 			'css' => $css,
 			'link' => ( 0 === strpos( $link, '|' ) ) ? false : $link,
 			'font_container_data' => $font_container_data,
-			'google_fonts_data' => $google_fonts_data
+			'google_fonts_data' => $google_fonts_data,
 		);
 	}
 
@@ -106,14 +105,14 @@ class WPBakeryShortCode_VC_Custom_heading extends WPBakeryShortCode {
 		$styles = array();
 		if ( ! empty( $font_container_data ) && isset( $font_container_data['values'] ) ) {
 			foreach ( $font_container_data['values'] as $key => $value ) {
-				if ( $key != 'tag' && strlen( $value ) > 0 ) {
+				if ( 'tag' !== $key && strlen( $value ) ) {
 					if ( preg_match( '/description/', $key ) ) {
 						continue;
 					}
-					if ( $key == 'font_size' || $key == 'line_height' ) {
+					if ( 'font_size' === $key || 'line_height' === $key ) {
 						$value = preg_replace( '/\s+/', '', $value );
 					}
-					if ( $key == 'font_size' ) {
+					if ( 'font_size' === $key ) {
 						$pattern = '/^(\d*(?:\.\d+)?)\s*(px|\%|in|cm|mm|em|rem|ex|pt|pc|vw|vh|vmin|vmax)?$/';
 						// allowed metrics: http://www.w3schools.com/cssref/css_units.asp
 						$regexr = preg_match( $pattern, $value, $matches );
@@ -129,10 +128,10 @@ class WPBakeryShortCode_VC_Custom_heading extends WPBakeryShortCode {
 		}
 		if ( ( ! isset( $atts['use_theme_fonts'] ) || 'yes' !== $atts['use_theme_fonts'] ) && ! empty( $google_fonts_data ) && isset( $google_fonts_data['values'], $google_fonts_data['values']['font_family'], $google_fonts_data['values']['font_style'] ) ) {
 			$google_fonts_family = explode( ':', $google_fonts_data['values']['font_family'] );
-			$styles[] = "font-family:" . $google_fonts_family[0];
+			$styles[] = 'font-family:' . $google_fonts_family[0];
 			$google_fonts_styles = explode( ':', $google_fonts_data['values']['font_style'] );
-			$styles[] = "font-weight:" . $google_fonts_styles[1];
-			$styles[] = "font-style:" . $google_fonts_styles[2];
+			$styles[] = 'font-weight:' . $google_fonts_styles[1];
+			$styles[] = 'font-style:' . $google_fonts_styles[2];
 		}
 
 		/**
@@ -149,7 +148,7 @@ class WPBakeryShortCode_VC_Custom_heading extends WPBakeryShortCode {
 
 		return array(
 			'css_class' => trim( preg_replace( '/\s+/', ' ', $css_class ) ),
-			'styles' => $styles
+			'styles' => $styles,
 		);
 	}
 }

@@ -37,11 +37,11 @@ if(!class_exists('Ultimate_List_Icon'))
 								"heading" => __("Size of Icon", "ultimate_vc"),
 								"param_name" => "icon_size",
 								"value" => '',
-								"min" => 12,
+								"min" => 0,
 								"max" => 200,
 								"suffix" => "px",
 								"description" => __("How big would you like it?", "ultimate_vc"),
-								"dependency" => Array("element" => "icon_type","value" => array("selector")),
+								//"dependency" => Array("element" => "icon_type","value" => array("selector")),
 							),
 							array(
 								"type" => "number",
@@ -209,7 +209,8 @@ if(!class_exists('Ultimate_List_Icon'))
 								"param_name" => "content",
 								"value" => "",
 								"description" => __("Enter the list content here.", "ultimate_vc"),
-								"group"=> "List Content"
+								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
+								"group"=> "List Content",
 							),
 							array(
 								"type" => "textfield",
@@ -219,6 +220,52 @@ if(!class_exists('Ultimate_List_Icon'))
 								"value" => "",
 								"description" => __("Ran out of options? Need more styles? Write your own CSS and mention the class name here.", "ultimate_vc"),
 								
+							),
+							array(
+								"type" => "ult_param_heading",
+								"param_name" => "title_text_typography",
+								"heading" => __("List content settings","ultimate_vc"),
+								"value" => "",
+								"group" => "Typography",
+								"class" => "ult-param-heading",
+								'edit_field_class' => 'ult-param-heading-wrapper no-top-margin vc_column vc_col-sm-12',
+							),
+							array(
+								"type" => "ultimate_google_fonts",
+								"heading" => __("Font Family","ultimate_vc"),
+								"param_name" => "content_font_family",
+								"value" => "",
+								"group" => "Typography"
+							),
+							array(
+								"type" => "ultimate_google_fonts_style",
+								"heading" => __("Font Style","ultimate_vc"),
+								"param_name" => "content_font_style",
+								"value" => "",
+								"group" => "Typography"
+							),
+							array(
+								"type" => "number",
+								"param_name" => "content_font_size",
+								"heading" => __("Font size","ultimate_vc"),
+								"value" => "",
+								"suffix" => "px",
+								"group" => "Typography"
+							),
+
+							array(
+								"type" => "number",
+								"param_name" => "content_line_ht",
+								"heading" => __("Line Height","ultimate_vc"),
+								"value" => "",
+								"suffix" => "px",
+								"group" => "Typography",
+							),
+							array(
+								"type" => "colorpicker",
+								"param_name" => "content_font_color",
+								"heading" => __("Color","ultimate_vc"),
+								"group" => "Typography"
 							),
 						),
 					)
@@ -253,6 +300,7 @@ if(!class_exists('Ultimate_List_Icon'))
 		function icon_list_item_shortcode($atts, $content = null){
 			
 			$icon_type = $icon_img = $img_width = $icon = $icon_color = $icon_color_bg = $icon_size = $icon_style = $icon_border_style = $icon_border_radius = $icon_color_border = $icon_border_size = $icon_border_spacing = $icon_link = $el_class = $icon_animation =  $tooltip_disp = $tooltip_text = $icon_margin = '';
+			$content_font_family = $content_font_style = $content_font_size = $content_line_ht = $content_font_color = '';
 			extract(shortcode_atts( array(
 				'icon_type' => 'selector',
 				'icon'=> '',
@@ -268,6 +316,12 @@ if(!class_exists('Ultimate_List_Icon'))
 				"icon_size" => "",
 				"icon_margin" => "",
 				'el_class'=>'',
+				'content_font_family' => '',
+				'content_font_style' => '',
+				'content_font_size' => '',
+				'content_font_color' => '',
+				'content_line_ht' => '',
+				'content_font_size' => '',
 			),$atts));
 			
 			global $vc_list_icon_size, $vc_list_icon_margin;
@@ -281,11 +335,24 @@ if(!class_exists('Ultimate_List_Icon'))
 			{
 				$css_trans = 'data-animation="'.$icon_animation.'" data-animation-delay="03"';
 			}
-			$output = $style = $link_sufix = $link_prefix = $target = $href = $icon_align_style = '';
+			$output = $style = $link_sufix = $link_prefix = $target = $content_style = $href = $icon_align_style = '';
 			
 			if($icon_margin !== '')
 				$style .= 'margin-right:'.$icon_margin.'px;';
-				
+			if($content_font_family != ''){
+				$apply_font_family = get_ultimate_font_family($content_font_family);
+				if($apply_font_family)
+					$content_style .= 'font-family:\''.$apply_font_family.'\';';
+			}
+			if($content_font_style != ''){
+					$content_style .= get_ultimate_font_style($content_font_style);
+				}
+			if($content_font_color !='')
+				$content_style .= 'color:'.$content_font_color.';';
+			if($content_font_size != '')
+				$content_style .= 'font-size:'.$content_font_size.'px;';
+			if($content_line_ht)
+				$content_style .='line-height:'.$content_line_ht.'px;';
 			$icon_animation = $icon_link = '';
 			
 			$output .= '<div class="uavc-list-content">';
@@ -299,7 +366,7 @@ if(!class_exists('Ultimate_List_Icon'))
 				$output .= $main_icon;				
 				$output .= "\n".'</div>';
 			}
-			$output .= '<span class="uavc-list-desc">'.do_shortcode($content).'</span>';
+			$output .= '<span class="uavc-list-desc" style="'.$content_style.'">'.do_shortcode($content).'</span>';
 			$output .= '</div>';
 			
 			$output = '<li>'.$output.'</li>';

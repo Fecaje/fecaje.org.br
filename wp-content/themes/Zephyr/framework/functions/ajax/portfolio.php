@@ -33,6 +33,7 @@ function us_ajax_portfolio() {
 	// Filtering $template_vars, as is will be extracted to the template as local variables
 	$template_vars = shortcode_atts( array(
 		'metas' => array('title'),
+		'ratio' => '3x2',
 	), us_maybe_get_post_json( 'template_vars' ) );
 
 	while ( have_posts() ){

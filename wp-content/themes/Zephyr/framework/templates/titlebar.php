@@ -118,8 +118,12 @@ if ( $show_breadcrumbs ) {
 }
 if ( $show_prevnext AND ! empty( $prevnext ) ) {
 	$output .= '<div class="g-nav"><div class="g-nav-list">';
-	foreach ( $prevnext as $key => $item ) {
-		$output .= '<a class="g-nav-item to_' . $key . '" title="' . esc_attr( $item['title'] ) . '" href="' . $item['link'] . '"></a>';
+	$keys = array( 'next', 'prev' );
+	foreach ( $keys as $key ) {
+		if ( isset( $prevnext[$key] ) ) {
+			$item = $prevnext[$key];
+			$output .= '<a class="g-nav-item to_' . $key . '" title="' . esc_attr( $item['title'] ) . '" href="' . $item['link'] . '"></a>';
+		}
 	}
 	$output .= '</div></div>';
 }

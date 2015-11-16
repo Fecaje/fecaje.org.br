@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WPBakery Visual Composer updater
  *
@@ -97,7 +98,7 @@ class Vc_Updater {
 			$json = wp_remote_get( $this->envatoDownloadPurchaseUrl( $username, $api_key, $purchase_code ) );
 			$result = json_decode( $json['body'], true );
 			if ( ! isset( $result['download-purchase']['download_url'] ) ) {
-				return new WP_Error( 'no_credentials', __( 'Error! Envato API error' . ( isset( $result['error'] ) ? ': ' . $result['error'] : '.' ), 'js_composer' ) );
+				return new WP_Error( 'no_credentials', __( 'Error! Envato API error', 'js_composer' ) . ( isset( $result['error'] ) ? ': ' . $result['error'] : '.' ) );
 			}
 			$result['download-purchase']['download_url'];
 			$download_file = download_url( $result['download-purchase']['download_url'] );

@@ -16,7 +16,24 @@
 	outline:none;
 	display:inline-block;
 }
-
+/* Hide full scrren TinyMce button */
+.ult_hide_editor_fullscreen #qt_wpb_tinymce_content_dfw,
+.ult_hide_editor_fullscreen .mce-widget.mce-btn.mce-wp-dfw {
+    display: none;
+}
+/* Hide unwanted border radius for modules - Video Banner & Creative Link */
+.video_banner_css_editor.no-vc-border .vc_settings label:nth-last-child(2),
+.creative_link_css_editor.no-vc-border .vc_settings label:nth-last-child(2),
+.video_banner_css_editor.no-vc-border .vc_border-radius,
+.video_banner_css_editor.no-vc-border .vc_settings label,
+.creative_link_css_editor.no-vc-border .vc_border-radius,
+.creative_link_css_editor.no-vc-border .vc_settings label {
+    display: none;
+}
+.video_banner_css_editor.no-vc-border .vc_settings label:last-child,
+.creative_link_css_editor.no-vc-border .vc_settings label:last-child {
+    display: block;
+}
 .ult-param-heading-wrapper {
 	padding: 10px 15px;
 	font-size: 14px;
@@ -901,7 +918,7 @@ select.tooltip_animation {
 .vc_col-sm-12.vc_column.ult_space_border {
 	padding-bottom: 15px;
 	border-bottom: 2px solid #f0f0f0;
-
+}
 
 span.vc_admin_label.admin_label_link_hover_style {
   display: block;

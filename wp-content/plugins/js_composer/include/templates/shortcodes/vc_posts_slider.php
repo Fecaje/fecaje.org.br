@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shortcode attributes
  * @var $atts
@@ -17,10 +18,11 @@
  * @var $orderby
  * @var $order
  * @var $el_class
+ * @var $css
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Posts_slider
  */
-$output = '';
+$title = $type = $count = $interval = $slides_content = $slides_title = $link = $custom_links = $thumb_size = $posttypes = $posts_in = $categories = $order = $orderby = $el_class = $css = '';
 $link_image_start = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
@@ -33,8 +35,6 @@ $el_end = '';
 $slides_wrap_start = '';
 $slides_wrap_end = '';
 
-$el_class = $this->getExtraClass( $el_class );
-
 if ( 'nivo' === $type ) {
 	$type = ' wpb_slider_nivo theme-default';
 	wp_enqueue_script( 'nivo-slider' );
@@ -43,7 +43,7 @@ if ( 'nivo' === $type ) {
 
 	$slides_wrap_start = '<div class="nivoSlider">';
 	$slides_wrap_end = '</div>';
-} else if ( 'flexslider' === $type || 'flexslider_fade' === $type || 'flexslider_slide' === $type || 'fading' === $type ) {
+} elseif ( 'flexslider' === $type || 'flexslider_fade' === $type || 'flexslider_slide' === $type || 'fading' === $type ) {
 	$el_start = '<li>';
 	$el_end = '</li>';
 	$slides_wrap_start = '<ul class="slides">';
@@ -55,7 +55,7 @@ $flex_fx = '';
 if ( 'flexslider' === $type || 'flexslider_fade' === $type || 'fading' === $type ) {
 	$type = ' wpb_flexslider flexslider_fade flexslider';
 	$flex_fx = ' data-flex_fx="fade"';
-} else if ( 'flexslider_slide' === $type ) {
+} elseif ( 'flexslider_slide' === $type ) {
 	$type = ' wpb_flexslider flexslider_slide flexslider';
 	$flex_fx = ' data-flex_fx="slide"';
 }
@@ -66,12 +66,12 @@ if ( 'link_image' === $link ) {
 }
 
 $query_args = array(
-	'post_status' => 'publish'
+	'post_status' => 'publish',
 );
 
 //exclude current post/page from query
 if ( '' !== $posts_in ) {
-	$query_args['post__in'] = explode( ",", $posts_in );
+	$query_args['post__in'] = explode( ',', $posts_in );
 }
 global $vc_posts_grid_exclude_id;
 $vc_posts_grid_exclude_id[] = get_the_ID();
@@ -103,7 +103,7 @@ if ( '' !== $categories ) {
 		array_push( $gc, $grid_cat );
 	}
 	$gc = implode( ',', $gc );
-	////http://snipplr.com/view/17434/wordpress-get-category-slug/
+	// http://snipplr.com/view/17434/wordpress-get-category-slug/
 	$query_args['category_name'] = $gc;
 
 	$taxonomies = get_taxonomies( '', 'object' );
@@ -111,7 +111,7 @@ if ( '' !== $categories ) {
 	foreach ( $taxonomies as $t ) {
 		if ( in_array( $t->object_type[0], $pt ) ) {
 			$query_args['tax_query'][] = array(
-				'taxonomy' => $t->name, //$t->name,//'portfolio_category',
+				'taxonomy' => $t->name,
 				'terms' => $categories,
 				'field' => 'slug',
 			);
@@ -143,9 +143,8 @@ while ( $my_query->have_posts() ) {
 	if ( in_array( get_the_ID(), $vc_posts_grid_exclude_id ) ) {
 		continue;
 	}
-	//$teaser_post_type = 'posts_slider_teaser_'.$my_query->post->post_type . ' ';
 	if ( 'teaser' === $slides_content ) {
-		$content = apply_filters( 'the_excerpt', get_the_excerpt() ); //get_the_excerpt();
+		$content = apply_filters( 'the_excerpt', get_the_excerpt() );
 	} else {
 		$content = '';
 	}
@@ -162,16 +161,16 @@ while ( $my_query->have_posts() ) {
 	if ( 'link_no' !== $link ) {
 		if ( 'link_post' === $link ) {
 			$link_image_start = '<a class="link_image" href="' . get_permalink( $post_id ) . '" title="' . sprintf( esc_attr__( 'Permalink to %s', 'js_composer' ), the_title_attribute( 'echo=0' ) ) . '">';
-		} else if ( $link == 'link_image' ) {
-			$p_video = get_post_meta( $post_id, "_p_video", true );
+		} elseif ( 'link_image' === $link ) {
+			$p_video = get_post_meta( $post_id, '_p_video', true );
 			//
 			if ( '' !== $p_video ) {
 				$p_link = $p_video;
 			} else {
-				$p_link = $p_img_large[0]; // TODO!!!
+				$p_link = $p_img_large[0];
 			}
 			$link_image_start = '<a class="link_image prettyphoto" href="' . $p_link . '" ' . $pretty_rel_random . ' title="' . the_title_attribute( 'echo=0' ) . '" >';
-		} else if ( 'custom_link' === $link ) {
+		} elseif ( 'custom_link' === $link ) {
 			if ( isset( $custom_links[ $i ] ) ) {
 				$slide_custom_link = $custom_links[ $i ];
 			} else {
@@ -206,13 +205,17 @@ if ( $teasers ) {
 	$teasers = __( 'Nothing found.', 'js_composer' );
 }
 
-$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'wpb_gallery wpb_posts_slider wpb_content_element' . $el_class, $this->settings['base'], $atts );
+$class_to_filter = 'wpb_gallery wpb_posts_slider wpb_content_element';
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . $this->getExtraClass( $el_class );
+$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
-$output .= "\n\t" . '<div class="' . esc_attr( $css_class ) . '">';
-$output .= "\n\t\t" . '<div class="wpb_wrapper">';
-$output .= wpb_widget_title( array( 'title' => $title, 'extraclass' => 'wpb_posts_slider_heading' ) );
-$output .= '<div class="wpb_gallery_slides' . $type . '" data-interval="' . $interval . '"' . $flex_fx . '>' . $teasers . '</div>';
-$output .= "\n\t\t" . '</div> ' . $this->endBlockComment( '.wpb_wrapper' );
-$output .= "\n\t" . '</div> ' . $this->endBlockComment( $this->getShortcode() );
+$output = '
+	<div class="' . esc_attr( $css_class ) . '">
+		<div class="wpb_wrapper">
+			' . wpb_widget_title( array( 'title' => $title, 'extraclass' => 'wpb_posts_slider_heading' ) ) . '
+			<div class="wpb_gallery_slides' . $type . '" data-interval="' . $interval . '"' . $flex_fx . '>' . $teasers . '</div>
+		</div>
+	</div>
+';
 
 echo $output;

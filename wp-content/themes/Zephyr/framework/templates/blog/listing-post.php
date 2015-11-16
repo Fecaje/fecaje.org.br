@@ -6,7 +6,7 @@
  * (!) Should be called in WP_Query fetching loop only.
  * @link https://codex.wordpress.org/Class_Reference/WP_Query#Standard_Loop
  *
- * @var $layout_type string Blog layout: large / smallcircle / smallsquare / grid / grid / masonry / compact / related
+ * @var $layout_type string Blog layout: large / smallcircle / smallsquare / grid / masonry / compact / related / latest
  * @var $metas array Meta data that should be shown: array('date', 'author', 'categories', 'tags', 'comments')
  * @var $content_type string Content type: 'excerpt' / 'content' / 'none'
  * @var $show_read_more boolean
@@ -23,11 +23,12 @@ $post_format = get_post_format() ? get_post_format() : 'standard';
 $thumbnail_sizes = array(
 	'large' => 'large',
 	'smallcircle' => 'tnail-1x1-small',
-	'smallsquared' => 'tnail-1x1-small',
+	'smallsquare' => 'tnail-1x1-small',
 	'compact' => FALSE,
 	'related' => 'tnail-3x2',
 	'grid' => 'tnail-3x2',
 	'masonry' => 'tnail-masonry',
+	'latest' => FALSE,
 );
 $has_preview = ( ! isset( $thumbnail_sizes[ $layout_type ] ) OR $thumbnail_sizes[ $layout_type ] !== FALSE );
 
@@ -69,11 +70,20 @@ $meta_html = array_fill_keys( $metas, '' );
 
 // Preparing post metas separately because we might want to order them inside the .w-blog-post-meta in future
 $meta_html['date'] = '<time class="w-blog-post-meta-date date updated';
-if ( ! in_array('date', $metas) ) {
+if ( ! in_array( 'date', $metas ) ) {
 	// Hiding from users but not from search engines
 	$meta_html['date'] .= ' hidden';
 }
-$meta_html['date'] .= '">' . get_the_date() . '</time>';
+$meta_html['date'] .= '">';
+if ( $layout_type == 'latest' ) {
+	// Special date format for latest posts
+	$meta_html['date'] .= '<span class="w-blog-post-meta-date-month">' . get_the_date( 'M' ) . '</span>';
+	$meta_html['date'] .= '<span class="w-blog-post-meta-date-day">' . get_the_date( 'd' ) . '</span>';
+	$meta_html['date'] .= '<span class="w-blog-post-meta-date-year">' . get_the_date( 'Y' ) . '</span>';
+} else {
+	$meta_html['date'] .= get_the_date();
+}
+$meta_html['date'] .= '</time>';
 
 $meta_html['author'] = '<span class="w-blog-post-meta-author vcard author';
 if ( ! in_array('author', $metas) ) {
@@ -146,7 +156,7 @@ $meta_html = apply_filters( 'us_listing_post_meta_html', $meta_html, get_the_ID(
 			</div>
 <?php endif/*( ! empty( $the_content ) )*/; ?>
 <?php if ( $show_read_more ): ?>
-			<a class="w-blog-post-more w-btn" href="<?php the_permalink() ?>"><?php _e( 'Read More', 'us' ) ?></a>
+			<a class="w-blog-post-more w-btn" href="<?php the_permalink() ?>"><span class="w-btn-label"><?php _e( 'Read More', 'us' ) ?></span></a>
 <?php endif/*( $show_read_more )*/; ?>
 		</div>
 	</div>

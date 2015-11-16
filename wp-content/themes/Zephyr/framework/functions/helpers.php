@@ -1,4 +1,4 @@
-<?php
+<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
 
 /**
  * Prepare a proper icon classname from user's custom input
@@ -22,36 +22,79 @@ function us_prepare_icon_class( $icon_class ) {
 }
 
 /**
+ * Search for some file in child theme, in parent theme and in framework
+ *
+ * @param string $filename Relative path to filename with extension
+ *
+ * @return mixed Full path to file or FALSE if no file was found
+ */
+function us_locate_file( $filename ) {
+	global $us_template_directory, $us_stylesheet_directory, $us_file_paths;
+	if ( ! isset( $us_file_paths ) ) {
+		$us_file_paths = apply_filters( 'us_file_paths', array() );
+	}
+	$filename = untrailingslashit( $filename );
+	if ( ! isset( $us_file_paths[ $filename ] ) ) {
+		if ( is_child_theme() AND file_exists( $us_stylesheet_directory . '/' . $filename ) ) {
+			// Searching in child theme first
+			$us_file_paths[ $filename ] = $us_stylesheet_directory . '/' . $filename;
+		} elseif ( file_exists( $us_template_directory . '/' . $filename ) ) {
+			// Searching in parent theme
+			$us_file_paths[ $filename ] = $us_template_directory . '/' . $filename;
+		} elseif ( file_exists( $us_template_directory . '/framework/' . $filename ) ) {
+			// Searching in theme framework
+			$us_file_paths[ $filename ] = $us_template_directory . '/framework/' . $filename;
+		} else {
+			// Found nothing
+			$us_file_paths[ $filename ] = FALSE;
+		}
+	}
+
+	return $us_file_paths[ $filename ];
+}
+
+/**
+ * Search for some file in framework, in parent theme and in child theme
+ *
+ * @param string $filename
+ *
+ * @return array Found files in their reversed priority order
+ */
+function us_locate_files( $filename ) {
+	global $us_template_directory, $us_stylesheet_directory;
+	$filename = untrailingslashit( $filename );
+	$found = array();
+	if ( file_exists( $us_template_directory . '/framework/' . $filename ) ) {
+		// Searching in theme framework
+		$found[] = $us_template_directory . '/framework/' . $filename;
+	}
+	if ( file_exists( $us_template_directory . '/' . $filename ) ) {
+		// Searching in parent theme
+		$found[] = $us_template_directory . '/' . $filename;
+	}
+	if ( is_child_theme() AND file_exists( $us_stylesheet_directory . '/' . $filename ) ) {
+		// Searching in child theme first
+		$found[] = $us_stylesheet_directory . '/' . $filename;
+	}
+
+	return $found;
+}
+
+/**
  * Load some specified template and pass variables to it's scope.
  *
  * (!) If you create a template that is loaded via this method, please describe the variables that it should receive.
  *
- * @param string $template_name Template name to include (ex: 'single-post')
+ * @param string $template_name Template name to include (ex: 'templates/form/form')
  * @param array $vars Array of variables to pass to a included templated
  */
 function us_load_template( $template_name, $vars = NULL ) {
 
-	// Storing known paths within single app launch to reduce file_exists checks
-	static $template_paths = array();
-	if ( empty( $template_paths ) ) {
-		// First function execution
-		$template_paths = apply_filters( 'us_template_paths', array() );
-	}
-
 	// Searching for the needed file in a child theme, in the parent theme and, finally, in the framework
-	if ( ! isset( $template_paths[ $template_name ] ) ) {
-		$template_paths[ $template_name ] = '';
-		if ( is_child_theme() AND file_exists( STYLESHEETPATH . '/' . $template_name . '.php' ) ) {
-			$template_paths[ $template_name ] = STYLESHEETPATH . '/' . $template_name . '.php';
-		} elseif ( file_exists( TEMPLATEPATH . '/' . $template_name . '.php' ) ) {
-			$template_paths[ $template_name ] = TEMPLATEPATH . '/' . $template_name . '.php';
-		} elseif ( file_exists( TEMPLATEPATH . '/framework/' . $template_name . '.php' ) ) {
-			$template_paths[ $template_name ] = TEMPLATEPATH . '/framework/' . $template_name . '.php';
-		}
-	}
+	$file_path = us_locate_file( $template_name . '.php' );
 
 	// Template not found
-	if ( empty( $template_paths[ $template_name ] ) ) {
+	if ( $file_path === FALSE ) {
 		do_action( 'us_template_not_found:' . $template_name, $vars );
 
 		return;
@@ -64,9 +107,26 @@ function us_load_template( $template_name, $vars = NULL ) {
 
 	do_action( 'us_before_template:' . $template_name, $vars );
 
-	include $template_paths[ $template_name ];
+	include $file_path;
 
 	do_action( 'us_after_template:' . $template_name, $vars );
+}
+
+/**
+ * Get some specified template output with variables passed to it's scope.
+ *
+ * (!) If you create a template that is loaded via this method, please describe the variables that it should receive.
+ *
+ * @param string $template_name Template name to include (ex: 'templates/form/form')
+ * @param array $vars Array of variables to pass to a included templated
+ *
+ * @return string
+ */
+function us_get_template( $template_name, $vars = NULL ) {
+	ob_start();
+	us_load_template( $template_name, $vars );
+
+	return ob_get_clean();
 }
 
 /**
@@ -78,10 +138,7 @@ function us_load_template( $template_name, $vars = NULL ) {
  * @return mixed
  */
 function us_get_option( $name, $default_value = NULL ) {
-	global $smof_data;
-	$value = isset( $smof_data[ $name ] ) ? $smof_data[ $name ] : $default_value;
-
-	return apply_filters( 'us_get_option_' . $name, $value );
+	return usof_get_option( $name, $default_value );
 }
 
 /**
@@ -115,6 +172,7 @@ function us_close_wp_query_context() {
  * Load and return some specific config or it's part
  *
  * @param string $path <config_name>[.<name1>[.<name2>[...]]]
+ *
  * @oaram mixed $default Value to return if no data is found
  *
  * @return mixed
@@ -124,16 +182,28 @@ function us_config( $path, $default = NULL ) {
 	// Caching configuration values in a inner static value within the same request
 	static $configs = array();
 	// Defined paths to configuration files
-	$configs_paths = apply_filters( 'us_configs_paths', array() );
 	$path = explode( '.', $path );
 	$config_name = $path[0];
 	if ( ! isset( $configs[ $config_name ] ) ) {
-		if ( ! isset( $configs_paths[ $config_name ] ) ) {
-			$configs_paths[ $config_name ] = $us_template_directory . '/framework/config/' . $config_name . '.php';
+		$config_paths = us_locate_files( 'config/' . $config_name . '.php' );
+		if ( empty( $config_paths ) ) {
+			if ( WP_DEBUG ) {
+				wp_die( 'Config not found: ' . $config_name );
+			}
+			$configs[ $config_name ] = array();
+		} else {
+			us_maybe_load_theme_textdomain();
+			// Parent $config data may be used from a config file
+			$config = array();
+			foreach ( $config_paths as $config_path ) {
+				$config = require $config_path;
+				// Config may be forced not to be overloaded from a config file
+				if ( isset( $final_config ) AND $final_config ) {
+					break;
+				}
+			}
+			$configs[ $config_name ] = apply_filters( 'us_config_' . $config_name, $config );
 		}
-		us_maybe_load_theme_textdomain();
-		$configs[ $config_name ] = require $configs_paths[ $config_name ];
-		$configs[ $config_name ] = apply_filters( 'us_config_' . $config_name, $configs[ $config_name ] );
 	}
 	$value = $configs[ $config_name ];
 	for ( $i = 1; $i < count( $path ); $i ++ ) {
@@ -231,15 +301,6 @@ function us_vc_build_link( $value ) {
 	return array_map( 'trim', $result );
 }
 
-function us_get_main_theme_version() {
-	$theme = wp_get_theme();
-	if ( is_child_theme() ) {
-		$theme = wp_get_theme( $theme->get( 'Template' ) );
-	}
-
-	return $theme->get( 'Version' );
-}
-
 /**
  * Load theme's textdomain
  *
@@ -249,13 +310,186 @@ function us_get_main_theme_version() {
  * @return bool
  */
 function us_maybe_load_theme_textdomain( $domain = 'us', $path = '/languages' ) {
-	$texdomain_loaded = is_textdomain_loaded( $domain );
-	if ( ! $texdomain_loaded AND is_child_theme() ) {
-		$texdomain_loaded = load_theme_textdomain( $domain, STYLESHEETPATH . $path );
+	if ( is_textdomain_loaded( $domain ) ) {
+		return TRUE;
 	}
-	if ( ! $texdomain_loaded ) {
-		$texdomain_loaded = load_theme_textdomain( $domain, TEMPLATEPATH . $path );
+	$locale = apply_filters( 'theme_locale', get_locale(), $domain );
+	$filepath = us_locate_file( $path . '/' . $locale . '.mo' );
+	if ( $filepath === FALSE ) {
+		return FALSE;
 	}
 
-	return $texdomain_loaded;
+	return load_textdomain( $domain, $filepath );
+}
+
+/**
+ * Merge arrays, inserting $arr2 into $arr1 before/after certain key
+ *
+ * @param array $arr Modifyed array
+ * @param array $inserted Inserted array
+ * @param string $position 'before' / 'after' / 'top' / 'bottom'
+ * @param string $key Associative key of $arr1 for before/after insertion
+ *
+ * @return array
+ */
+function us_array_merge_insert( array $arr, array $inserted, $position = 'bottom', $key = NULL ) {
+	if ( $position == 'top' ) {
+		return array_merge( $inserted, $arr );
+	}
+	$key_position = ( $key === NULL ) ? FALSE : array_search( $key, array_keys( $arr ) );
+	if ( $key_position === FALSE OR ( $position != 'before' AND $position != 'after' ) ) {
+		return array_merge( $arr, $inserted );
+	}
+	if ( $position == 'after' ) {
+		$key_position ++;
+	}
+
+	return array_merge( array_slice( $arr, 0, $key_position, TRUE ), $inserted, array_slice( $arr, $key_position, NULL, TRUE ) );
+}
+
+/**
+ * Recursively merge two or more arrays in a proper way
+ *
+ * @param array $array1
+ * @param array $array2
+ * @param array ...
+ *
+ * @return array
+ */
+function us_array_merge( $array1, $array2 ) {
+	$keys = $keys = array_keys( $array2 );
+	// Is associative array?
+	if ( array_keys( $keys ) !== $keys ) {
+		foreach ( $array2 as $key => $value ) {
+			if ( is_array( $value ) AND isset( $array1[ $key ] ) AND is_array( $array1[ $key ] ) ) {
+				$array1[ $key ] = us_array_merge( $array1[ $key ], $value );
+			} else {
+				$array1[ $key ] = $value;
+			}
+		}
+	} else {
+		foreach ( $array2 as $value ) {
+			if ( ! in_array( $value, $array1, TRUE ) ) {
+				$array1[] = $value;
+			}
+		}
+	}
+
+	if ( func_num_args() > 2 ) {
+		foreach ( array_slice( func_get_args(), 2 ) as $array2 ) {
+			$array1 = us_array_merge( $array1, $array2 );
+		}
+	}
+
+	return $array1;
+}
+
+/**
+ * Combine user attributes with known attributes and fill in defaults from config when needed.
+ *
+ * @param array $atts Passed attributes
+ * @param string $shortcode Shortcode name
+ * @param string $param_name Shortcode's config param to take pairs from
+ *
+ * @return array
+ */
+function us_shortcode_atts( $atts, $shortcode, $param_name = 'atts' ) {
+	$pairs = us_config( 'shortcodes.' . $shortcode . '.' . $param_name, array() );
+
+	return shortcode_atts( $pairs, $atts, $shortcode );
+}
+
+/**
+ * Get number of shares of the provided URL.
+ *
+ * @param string $url The url to count shares
+ * @param array $providers Possible array values: 'facebook', 'twitter', 'linkedin', 'gplus', 'pinterest'
+ *
+ * @link https://gist.github.com/jonathanmoore/2640302 Great relevant code snippets
+ *
+ * Dev note: keep in mind that list of providers may differ for the same URL in different function calls.
+ *
+ * @return array Associative array of providers => share counts
+ */
+function us_get_sharing_counts( $url, $providers ) {
+	// TODO One-end hashing function needed
+	$transient = 'us_sharing_count_' . md5( $url );
+	// Will be used for array keys operations
+	$flipped = array_flip( $providers );
+	$cached_counts = get_transient( $transient );
+	if ( is_array( $cached_counts ) ) {
+		$counts = array_intersect_key( $cached_counts, $flipped );
+		if ( count( $counts ) == count( $providers ) ) {
+			// The data exists and is complete
+			return $counts;
+		}
+	} else {
+		$counts = array();
+	}
+
+	// Facebook share count
+	if ( in_array( 'facebook', $providers ) AND ! isset( $counts['facebook'] ) ) {
+		$fb_query = 'SELECT share_count FROM link_stat WHERE url = "';
+		$remote_get_url = 'https://graph.facebook.com/fql?q=' . urlencode( $fb_query ) . $url . urlencode( '"' );
+		$result = wp_remote_get( $remote_get_url, array( 'timeout' => 3 ) );
+		if( is_array( $result ) ) {
+			$data = json_decode($result['body'], TRUE);
+		} else {
+			$data = null;
+		}
+		if ( is_array( $data ) AND isset( $data['data'] ) AND isset( $data['data'][0] ) AND isset( $data['data'][0]['share_count'] ) ) {
+			$counts['facebook'] = $data['data'][0]['share_count'];
+		} else {
+			$counts['facebook'] = '0';
+		}
+	}
+
+	// Twitter share count
+	if ( in_array( 'twitter', $providers ) AND ! isset( $counts['twitter'] ) ) {
+		$result = wp_remote_get( 'http://cdn.api.twitter.com/1/urls/count.json?url=' . $url, array( 'timeout' => 3 ) );
+		if( is_array( $result ) ) {
+			$data = json_decode($result['body'], TRUE);
+		} else {
+			$data = null;
+		}
+		$counts['twitter'] = ( is_array( $data ) AND isset( $data['count'] ) ) ? $data['count'] : '0';
+	}
+
+	// Google+ share count
+	if ( in_array( 'gplus', $providers ) AND ! isset( $counts['gplus'] ) ) {
+		// Cannot use the official API, as it requires a separate key, and even with this key doesn't work
+		$result = wp_remote_get( 'https://plusone.google.com/_/+1/fastbutton?url=' . $url, array( 'timeout' => 3 ) );
+		if ( is_array( $result ) AND preg_match( '~\<div[^\>]+id=\"aggregateCount\"[^\>]*\>([^\>]+)\<\/div\>~', $result['body'], $matches ) ) {
+			$counts['gplus'] = $matches[1];
+		} else {
+			$counts['gplus'] = '0';
+		}
+	}
+
+	// LinkedIn share count
+	if ( in_array( 'linkedin', $providers ) AND ! isset( $counts['linkedin'] ) ) {
+		$result = wp_remote_get( 'http://www.linkedin.com/countserv/count/share?url=' . $url . '&format=json', array( 'timeout' => 3 ) );
+		if( is_array( $result ) ) {
+			$data = json_decode($result['body'], TRUE);
+		} else {
+			$data = null;
+		}
+		$counts['linkedin'] = isset( $data['count'] ) ? $data['count'] : '0';
+	}
+
+	// Pinterest share count
+	if ( in_array( 'pinterest', $providers ) AND ! isset( $counts['pinterest'] ) ) {
+		$result = wp_remote_get( 'http://api.pinterest.com/v1/urls/count.json?callback=receiveCount&url=' . $url, array( 'timeout' => 3 ) );
+		if( is_array( $result ) ) {
+			$data = json_decode( rtrim( str_replace( 'receiveCount(', '', $result['body'] ), ')' ), TRUE );
+		} else {
+			$data = null;
+		}
+		$counts['pinterest'] = isset( $data['count'] ) ? $data['count'] : '0';
+	}
+
+	// Caching the result for the next 2 hours
+	set_transient( $transient, $counts, 2 * HOUR_IN_SECONDS );
+
+	return $counts;
 }

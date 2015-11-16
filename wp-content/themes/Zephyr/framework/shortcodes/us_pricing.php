@@ -3,26 +3,19 @@
 /**
  * Shortcode: us_pricing
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['style'] string Table style: '1' / '2'
+ * @param $atts ['items'] string Pricing table items
+ * @param $atts ['el_class'] string Extra class name
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var string Table style: '1' / '2'
-	 */
-	'style' => '1',
-	/**
-	 * @var string Pricing table items
-	 */
-	'items' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_pricing' );
 
 if ( empty( $atts['items'] ) ) {
 	$atts['items'] = array();
@@ -36,66 +29,34 @@ if ( empty( $atts['items'] ) ) {
 $classes = ' style_' . $atts['style'];
 $items_html = '';
 
+if ( ! empty( $atts['el_class'] ) ) {
+	$classes .= ' ' . $atts['el_class'];
+}
+
 foreach ( $atts['items'] as $index => $item ) {
-	// Filtering the included items
-	$item = shortcode_atts( array(
-		/**
-		 * @var string Item title
-		 */
-		'title' => '',
-		/**
-		 * @var string Item type: 'default' / 'featured'
-		 */
-		'type' => 'default',
-		/**
-		 * @var string Item price
-		 */
-		'price' => '',
-		/**
-		 * @var string Price substring
-		 */
-		'substring' => '',
-		/**
-		 * @var string Comma-separated list of features
-		 */
-		'features' => '',
-		/**
-		 * @var string Button label
-		 */
-		'btn_text' => '',
-		/**
-		 * @var string Button color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white'
-		 */
-		'btn_color' => '',
-		/**
-		 * @var string Button background color
-		 */
-		'btn_bg_color' => '',
-		/**
-		 * @var string Button text color
-		 */
-		'btn_text_color' => '',
-		/**
-		 * @var string Button size: 'small' / 'medium' / 'large'
-		 */
-		'btn_size' => '',
-		/**
-		 * @var string Button style: 'raised' / 'flat'
-		 */
-		'btn_style' => '',
-		/**
-		 * @var string Button icon
-		 */
-		'btn_icon' => '',
-		/**
-		 * @var string Icon position: 'left' / 'right'
-		 */
-		'btn_iconpos' => '',
-		/**
-		 * @var string Button link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
-		 */
-		'btn_link' => '',
-	), array_filter( $item ) );
+	/**
+	 * Filtering the included items
+	 *
+	 * @param $item ['title'] string Item title
+	 * @param $item ['type'] string Item type: 'default' / 'featured'
+	 * @param $item ['price'] string Item price
+	 * @param $item ['substring'] string Price substring
+	 * @param $item ['features'] string Comma-separated list of features
+	 * @param $item ['btn_text'] string Button label
+	 * @param $item ['btn_color'] string Button color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white'
+	 * @param $item ['btn_bg_color'] string Button background color
+	 * @param $item ['btn_text_color'] string Button text color
+	 * @param $item ['btn_size'] string Button size: 'small' / 'medium' / 'large'
+	 * @param $item ['btn_style'] string Button style: 'raised' / 'flat'
+	 * @param $item ['btn_icon'] string Button icon
+	 * @param $item ['btn_iconpos'] string Icon position: 'left' / 'right'
+	 * @param $item ['btn_link'] string Button link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+	 */
+	//$item = us_shortcode_atts( array_filter( $item ), 'us_pricing', 'items_atts' );
+	$item['type'] = ( isset( $item['type'] ) ) ? $item['type'] : 'default';
+	$item['btn_icon'] = ( isset( $item['btn_icon'] ) ) ? $item['btn_icon'] : '';
+	$item['btn_link'] = ( isset( $item['btn_link'] ) ) ? $item['btn_link'] : '';
+
 	$items_html .= '<div class="w-pricing-item type_' . $item['type'] . '"><div class="w-pricing-item-h"><div class="w-pricing-item-header">';
 	if ( ! empty( $item['title'] ) ) {
 		$items_html .= '<h5 class="w-pricing-item-title">' . $item['title'] . '</h5>';
@@ -117,7 +78,13 @@ foreach ( $atts['items'] as $index => $item ) {
 		$items_html .= '</ul>';
 	}
 	if ( ! empty( $item['btn_text'] ) ) {
-		$btn_classes = ' style_' . $item['btn_style'] . ' size_' . $item['btn_size'];
+		$btn_classes = '';
+		if ( ! empty( $item['btn_style'] ) ) {
+			$btn_classes = ' style_' . $item['btn_style'];
+		}
+		if ( ! empty( $item['btn_size'] ) ) {
+			$btn_classes = ' size_' . $item['btn_size'];
+		}
 		$btn_classes .= ' color_' . $item['btn_color'];
 		$btn_inner_css = '';
 		if ( $item['btn_color'] == 'custom' ) {
@@ -132,7 +99,12 @@ foreach ( $atts['items'] as $index => $item ) {
 		$item['btn_icon'] = trim( $item['btn_icon'] );
 		if ( $item['btn_icon'] != '' ) {
 			$icon_html = '<i class="' . us_prepare_icon_class( $item['btn_icon'] ) . '"></i>';
-			$btn_classes .= ' icon_at' . $item['btn_iconpos'];
+			if ( ! empty( $item['btn_iconpos'] ) ) {
+				$btn_classes .= ' icon_at' . $item['btn_iconpos'];
+			} else {
+				$btn_classes .= ' icon_atleft';
+			}
+
 		} else {
 			$btn_classes .= ' icon_none';
 		}
@@ -145,7 +117,7 @@ foreach ( $atts['items'] as $index => $item ) {
 			$items_html .= ' style="' . $btn_inner_css . '"';
 		}
 		$items_html .= '>';
-		$items_html .= $icon_html . '<label>' . $item['btn_text'] . '</label></a>';
+		$items_html .= $icon_html . '<span class="w-btn-label">' . $item['btn_text'] . '</span></a>';
 		$items_html .= '</div>';
 	}
 	$items_html .= '</div></div>';

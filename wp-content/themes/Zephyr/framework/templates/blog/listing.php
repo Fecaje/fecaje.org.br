@@ -6,7 +6,8 @@
  * (!) $query_args should be filtered before passing to this template.
  *
  * @var $query_args array Arguments for the new WP_Query. If not set, current global $wp_query will be used instead.
- * @var $layout_type string Blog layout: large / smallcircle / smallsquare / grid / grid / masonry / compact / related
+ * @var $layout_type string Blog layout: large / smallcircle / smallsquare / grid / masonry / compact / related / latest
+ * @var $columns int Number of columns 1 / 2 / 3 / 4
  * @var $metas array Meta data that should be shown: array('date', 'author', 'categories', 'tags', 'comments')
  * @var $content_type string Content type: 'excerpt' / 'content' / 'none'
  * @var $show_read_more boolean Show "Read more" link after the excerpt?
@@ -21,6 +22,7 @@
 
 // Variables defaults and filtering
 $layout_type = isset( $layout_type ) ? $layout_type : 'large';
+$columns = ( isset( $columns ) AND $layout_type == 'latest' ) ? intval( $columns ) : 1;
 $default_metas = array( 'date', 'author', 'categories', 'tags', 'comments' );
 $metas = ( isset( $metas ) AND is_array( $metas ) ) ? array_intersect( $metas, $default_metas ) : $default_metas;
 $content_type = isset( $content_type ) ? $content_type : 'excerpt';
@@ -61,6 +63,10 @@ if ( $layout_type == 'masonry' ) {
 	wp_enqueue_script( 'us-isotope' );
 }
 $classes .= ' layout_' . $layout_type;
+
+if ( $layout_type == 'latest' ) {
+	$classes .= ' cols_' . $columns;
+}
 
 if ( ! empty( $el_class ) ) {
 	$classes .= ' ' . $el_class;
@@ -116,10 +122,10 @@ if ( $wp_query->max_num_pages > 1 ) {
 			),
 		);
 		?><div class="g-loadmore"<?php echo us_pass_data_to_js( $loadmore_options ) ?>>
-			<a href="javascript:void(0);" class="w-btn color_primary style_flat size_large">
-				<label><?php _e( 'Load More', 'us' ) ?></label>
-			</a>
-			<div class="g-preloader style_2"></div>
+			<div class="g-loadmore-btn">
+				<span><?php _e( 'Load More', 'us' ) ?></span>
+			</div>
+			<div class="g-preloader type_1"></div>
 		</div><?php
 	}
 }

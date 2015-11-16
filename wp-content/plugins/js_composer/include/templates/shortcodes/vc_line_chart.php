@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shortcode attributes
  * @var $title
@@ -10,9 +11,11 @@
  * @var $tooltips
  * @var $x_values
  * @var $values
+ * @var $css
  * Shortcode class
  * @var $this WPBakeryShortCode_Vc_Line_Chart
  */
+$el_class = $title = $type = $legend = $style = $tooltips = $animation = $x_values = $values = $css = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
 
@@ -68,13 +71,13 @@ $base_colors = array(
 		'warning' => '#e08700',
 		'danger' => '#ff4b3c',
 		'inverse' => '#464646',
-	)
+	),
 );
 $colors = array(
 	'flat' => array(
 		'normal' => $base_colors['normal'],
-		'active' => $base_colors['active']
-	)
+		'active' => $base_colors['active'],
+	),
 );
 foreach ( $base_colors['normal'] as $name => $color ) {
 	$colors['modern']['normal'][ $name ] = array( vc_colorCreator( $color, 7 ), $color );
@@ -85,9 +88,9 @@ foreach ( $base_colors['active'] as $name => $color ) {
 
 wp_enqueue_script( 'vc_line_chart' );
 
-$el_class = $this->getExtraClass( $el_class );
-
-$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'vc_chart vc_line-chart wpb_content_element' . $el_class, $this->settings['base'], $atts );
+$class_to_filter = 'vc_chart vc_line-chart wpb_content_element';
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . $this->getExtraClass( $el_class );
+$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
 $options = array();
 
@@ -103,10 +106,10 @@ if ( ! empty( $animation ) ) {
 	$options[] = 'data-vc-animation="' . $animation . '"';
 }
 
-$values = (array) vc_param_group_parse_atts($values);
+$values = (array) vc_param_group_parse_atts( $values );
 $data = array(
 	'labels' => explode( ';', trim( $x_values, ';' ) ),
-	'datasets' => array()
+	'datasets' => array(),
 );
 
 foreach ( $values as $k => $v ) {
@@ -114,7 +117,7 @@ foreach ( $values as $k => $v ) {
 	if ( 'custom' === $style ) {
 		if ( ! empty( $v['custom_color'] ) ) {
 			$color = $v['custom_color'];
-			$highlight = vc_colorCreator( $v['custom_color'] , -10 ); //10% darker
+			$highlight = vc_colorCreator( $v['custom_color'], - 10 ); //10% darker
 		} else {
 			$color = 'grey';
 			$highlight = 'grey';
@@ -135,8 +138,8 @@ foreach ( $values as $k => $v ) {
 	}
 
 	if ( 'modern' === $style ) {
-		$stroke_color = vc_colorCreator( is_array( $color ) ? end( $color ) : $color, -7 );
-		$highlight_stroke_color = vc_colorCreator( $stroke_color, -7 );
+		$stroke_color = vc_colorCreator( is_array( $color ) ? end( $color ) : $color, - 7 );
+		$highlight_stroke_color = vc_colorCreator( $stroke_color, - 7 );
 	} else {
 		$stroke_color = $color;
 		$highlight_stroke_color = $highlight;
@@ -152,11 +155,11 @@ foreach ( $values as $k => $v ) {
 		'highlightStroke' => $highlight_stroke_color,
 		'pointHighlightFill' => $highlight_stroke_color,
 		'pointHighlightStroke' => $highlight_stroke_color,
-		'data' => explode( ';', isset( $v['y_values'] ) ? trim( $v['y_values'], ';' ) : '' )
+		'data' => explode( ';', isset( $v['y_values'] ) ? trim( $v['y_values'], ';' ) : '' ),
 	);
 }
 
-$options[] = 'data-vc-type="' . esc_attr($type) . '"';
+$options[] = 'data-vc-type="' . esc_attr( $type ) . '"';
 $options[] = 'data-vc-values="' . htmlentities( json_encode( $data ) ) . '"';
 
 if ( '' !== $title ) {

@@ -7,16 +7,9 @@ $us_layout = US_Layout::instance();
 //$us_layout->titlebar = 'default';
 get_header();
 
-$metas = array();
-foreach ( array( 'date', 'author', 'categories', 'comments' ) as $meta_key ) {
-	if ( us_get_option( 'post_meta_' . $meta_key ) ) {
-		$metas[] = $meta_key;
-	}
-}
-
 $template_vars = array(
-	'metas' => $metas,
-	'show_tags' => ! ! us_get_option( 'post_meta_tags' ),
+	'metas' => (array) us_get_option( 'post_meta', array() ),
+	'show_tags' => in_array( 'tags', us_get_option( 'post_meta', array() ) ),
 );
 ?>
 <!-- MAIN -->
@@ -32,7 +25,6 @@ $template_vars = array(
 				the_post();
 
 				us_load_template( 'templates/blog/single-post', $template_vars );
-
 			}
 			?>
 
@@ -42,7 +34,7 @@ $template_vars = array(
 
 		<?php if ( $us_layout->sidebar_pos == 'left' OR $us_layout->sidebar_pos == 'right' ): ?>
 			<aside class="l-sidebar at_<?php echo $us_layout->sidebar_pos ?>">
-				<?php dynamic_sidebar( 'default_sidebar' ); ?>
+				<?php generated_dynamic_sidebar(); ?>
 			</aside>
 		<?php endif; ?>
 

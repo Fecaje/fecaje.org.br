@@ -5,54 +5,36 @@
  *
  * Overloaded by UpSolution custom implementation.
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['toggle'] bool {@for [vc_tta_accordion]} Act as toggle?
+ * @param $atts ['c_align'] string {@for [vc_tta_accordion], [vc_tta_tour]} Text alignment: 'left' / 'center' / 'right'
+ * @param $atts ['c_icon'] string {@for [vc_tta_accordion]} Icon: '' / 'chevron' / 'plus' / 'triangle'
+ * @param $atts ['c_position'] string {@for [vc_tta_accordion]} Icon position: 'left' / 'right'
+ * @param $atts ['title_tag'] string Title Tag Name (inherited from wrapping vc_tta_tabs shortcode): 'div' / 'h2'/ 'h3'/ 'h4'/ 'h5'/ 'h6'/ 'p'
+ * @param $atts ['layout'] string {@for [vc_tta_tabs]} Tabs layout: '' / 'timeline'
+ * @param $atts ['tab_position'] string {@for [vc_tta_tour]} Tabs position: 'left' / 'right'
+ * @param $atts ['controls_size'] string {@for [vc_tta_tour]} Tabs size: 'auto' / '10' / '20' / '30' / '40' / '50'
+ * @param $atts ['el_class'] string {@for [vc_tta_accordion], [vc_tta_tabs], [vc_tta_tour]} Extra class
+ * @param $atts ['css'] string Custom CSS
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var bool Act as toggle?
-	 * @for [vc_tta_accordion]
-	 */
-	'toggle' => FALSE,
-	/**
-	 * @var string Text alignment: 'left' / 'center' / 'right'
-	 * @for [vc_tta_accordion], [vc_tta_tour]
-	 */
-	'c_align' => 'left',
-	/**
-	 * @var string Icon: '' / 'chevron' / 'plus' / 'triangle'
-	 * @for [vc_tta_accordion]
-	 */
-	'c_icon' => 'chevron',
-	/**
-	 * @var string Icon position: 'left' / 'right'
-	 * @for [vc_tta_accordion]
-	 */
-	'c_position' => 'right',
-	/**
-	 * @var string Tabs layout: '' / 'timeline'
-	 * @for [vc_tta_tabs]
-	 */
-	'layout' => '',
-	/**
-	 * @var string Tabs position: 'left' / 'right'
-	 * @for [vc_tta_tour]
-	 */
-	'tab_position' => 'left',
-	/**
-	 * @var string Tabs size: 'auto' / '10' / '20' / '30' / '40' / '50'
-	 * @for [vc_tta_tour]
-	 */
-	'controls_size' => 'auto',
-	/**
-	 * @var string Extra class
-	 * @for [vc_tta_accordion], [vc_tta_tabs], [vc_tta_tour]
-	 */
-	'el_class' => '',
-), $atts );
+// Backward compatibility
+if ( $shortcode_base == 'vc_tour' ) {
+	$shortcode_base = 'vc_tta_tour';
+} elseif ( $shortcode_base == 'vc_accordion' ) {
+	$shortcode_base = 'vc_tta_accordion';
+} elseif ( $shortcode_base == 'vc_tabs' ) {
+	$shortcode_base = 'vc_tta_tabs';
+}
+
+// $shorcode_base may be: 'vc_tta_tour' / 'vc_tta_accordion' / 'vc_tta_tabs'
+$atts = us_shortcode_atts( $atts, $shortcode_base );
 
 $classes = '';
 $list_classes = '';
@@ -69,18 +51,27 @@ foreach ( $us_tabs_atts as $index => $tab_atts ) {
 	}
 }
 // If none of the tabs is active, the first one will be
-if ( empty( $active_tab_indexes ) AND ! empty( $us_tabs_atts ) AND ! $atts['toggle'] ) {
+if ( empty( $active_tab_indexes ) AND ! empty( $us_tabs_atts ) AND ( ! isset( $atts['toggle'] ) OR ! $atts['toggle'] ) ) {
 	$active_tab_indexes[] = 0;
 	$us_tabs_atts[0]['active'] = 'yes';
 }
 
 // Inheriging some of the attributes to the sections
-foreach ( $us_tabs_atts as $index => $tab_atts ) {
-	$us_tabs_atts[ $index ]['c_position'] = $atts['c_position'];
+if ( isset( $atts['c_position'] ) ) {
+	foreach ( $us_tabs_atts as $index => $tab_atts ) {
+		$us_tabs_atts[ $index ]['c_position'] = $atts['c_position'];
+	}
+}
+
+// Inheriging some of the attributes to the sections
+if ( isset( $atts['title_tag'] ) ) {
+	foreach ( $us_tabs_atts as $index => $tab_atts ) {
+		$us_tabs_atts[ $index ]['title_tag'] = $atts['title_tag'];
+	}
 }
 
 $layout = 'default';
-if ( $atts['layout'] == 'timeline' ) {
+if ( isset( $atts['layout'] ) AND $atts['layout'] == 'timeline' ) {
 	$layout = 'timeline';
 } elseif ( $shortcode_base == 'vc_tta_tabs' ) {
 	$list_classes .= ' hidden';
@@ -107,6 +98,12 @@ if ( $shortcode_base == 'vc_tta_accordion' ) {
 } else {
 	// For accordion state of tabs
 	$classes .= ' icon_chevron iconpos_right';
+}
+
+
+
+if ( ! empty( $atts['css'] ) AND function_exists( 'vc_shortcode_custom_css_class' ) ) {
+	$classes .= ' ' . vc_shortcode_custom_css_class( $atts['css'] );
 }
 
 if ( ! empty( $atts['el_class'] ) ) {

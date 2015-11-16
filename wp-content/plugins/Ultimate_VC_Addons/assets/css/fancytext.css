@@ -37,6 +37,12 @@
 .ultimate-vticker.ticker-down {
     display: inline-block !important
 }
+.ultimate-vticker.ticker, 
+.ultimate-vticker.ticker *,
+.ultimate-vticker.ticker-down,
+.ultimate-vticker.ticker-down * {
+	font-family: inherit;
+}
 .ultimate-typed-main {
     display: inline-block
 }
@@ -61,6 +67,13 @@
     -ms-animation: blink .7s infinite;
     -o-animation: blink .7s infinite;
     animation: blink .7s infinite
+}
+.ultimate-typed-main {
+    font-family: inherit!important;
+    font-weight: inherit !important;
+    font-size: inherit!important;
+    font-style: inherit !important;
+    line-height: inherit !important;
 }
 @-keyframes blink {
     0 {

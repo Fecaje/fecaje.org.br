@@ -26,9 +26,12 @@
  * @var $i_icon_linecons
  * @var $i_icon_pixelicons
  * @var $css_animation
+ * @var $css
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Btn
  */
+$style = $shape = $color = $size = $custom_background = $custom_text = $align = $link = $title = $button_block = $el_class = $outline_custom_color = $outline_custom_hover_background =
+$outline_custom_hover_text = $add_icon = $i_align = $i_type = $i_icon_entypo = $i_icon_fontawesome = $i_icon_linecons = $i_icon_pixelicons = $i_icon_typicons = $css = $css_animation = '';
 $a_href = $a_title = $a_target = '';
 $styles = array();
 $icon_wrapper = false;
@@ -52,7 +55,7 @@ $wrapper_classes = array(
 	'vc_btn3-container',
 	$this->getExtraClass( $el_class ),
 	$this->getCSSAnimation( $css_animation ),
-	'vc_btn3-' . $align
+	'vc_btn3-' . $align,
 );
 
 $button_classes = array(
@@ -60,7 +63,7 @@ $button_classes = array(
 	'vc_btn3',
 	'vc_btn3-size-' . $size,
 	'vc_btn3-shape-' . $shape,
-	'vc_btn3-style-' . $style
+	'vc_btn3-style-' . $style,
 );
 
 $button_html = $title;
@@ -69,18 +72,18 @@ if ( '' === trim( $title ) ) {
 	$button_classes[] = 'vc_btn3-o-empty';
 	$button_html = '<span class="vc_btn3-placeholder">&nbsp;</span>';
 }
-if ( 'true' == $button_block && 'inline' !== $align ) {
+if ( 'true' === $button_block && 'inline' !== $align ) {
 	$button_classes[] = 'vc_btn3-block';
 }
 if ( 'true' === $add_icon ) {
 	$button_classes[] = 'vc_btn3-icon-' . $i_align;
 	vc_icon_element_fonts_enqueue( $i_type );
 
-	if ( isset( ${"i_icon_" . $i_type} ) ) {
+	if ( isset( ${'i_icon_' . $i_type} ) ) {
 		if ( 'pixelicons' === $i_type ) {
 			$icon_wrapper = true;
 		}
-		$icon_class = ${"i_icon_" . $i_type};
+		$icon_class = ${'i_icon_' . $i_type};
 	} else {
 		$icon_class = 'fa fa-adjust';
 	}
@@ -110,7 +113,7 @@ if ( 'custom' === $style ) {
 	if ( ! $custom_background && ! $custom_text ) {
 		$button_classes[] = 'vc_btn3-color-grey';
 	}
-} else if ( 'outline-custom' === $style ) {
+} elseif ( 'outline-custom' === $style ) {
 	if ( $outline_custom_color ) {
 		$styles[] = vc_get_css_color( 'border-color', $outline_custom_color );
 		$styles[] = vc_get_css_color( 'color', $outline_custom_color );
@@ -150,7 +153,9 @@ if ( $styles ) {
 	$attributes[] = 'style="' . implode( ' ', $styles ) . '"';
 }
 
-$wrapper_classes = esc_attr( apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, implode( ' ', array_filter( $wrapper_classes ) ), $this->settings['base'], $atts ) );
+$class_to_filter = implode( ' ', array_filter( $wrapper_classes ) );
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' );
+$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
 if ( $button_classes ) {
 	$button_classes = esc_attr( apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, implode( ' ', array_filter( $button_classes ) ), $this->settings['base'], $atts ) );
@@ -166,8 +171,8 @@ if ( $use_link ) {
 $attributes = implode( ' ', $attributes );
 
 ?>
-	<div class="<?php echo trim( $wrapper_classes ); ?>"><?php if ( $use_link ) {
-	echo '<a ' . $attributes . '>' . $button_html . '</a>';
+<div class="<?php echo trim( esc_attr( $css_class ) ) ?>"><?php if ( $use_link ) {
+		echo '<a ' . $attributes . '>' . $button_html . '</a>';
 } else {
 	echo '<button ' . $attributes . '>' . $button_html . '</button>';
-} ?></div><?php echo $this->endBlockComment( $this->getShortcode() );
+} ?></div>

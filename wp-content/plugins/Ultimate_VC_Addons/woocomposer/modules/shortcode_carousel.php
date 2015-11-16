@@ -25,7 +25,7 @@ if(!class_exists('WooComposer_ViewCarousel')){
 				}
 				vc_map(
 					array(
-						"name"		=> __("Products Carousel [Beta]", "ultimate_vc"),
+						"name"		=> __("Products Carousel", "ultimate_vc"),
 						"base"		=> "woocomposer_carousel",
 						"icon"		=> "woo_carousel",
 						"class"	   => "woo_carousel",
@@ -33,6 +33,7 @@ if(!class_exists('WooComposer_ViewCarousel')){
 						"description" => __("Display products in carousel slider","ultimate_vc"),
 						"controls" => "full",
 						"show_settings_on_create" => true,
+						"deprecated" => "3.13.5",
 						"params" => array(
 							array(
 								"type" => "woocomposer",
@@ -466,7 +467,8 @@ if(!class_exists('WooComposer_ViewCarousel')){
 			}
 			ob_start();
 			$output .= '<div class="woocommerce">';
-			wc_print_notices();
+			if(function_exists('wc_print_notices'))
+				wc_print_notices();
 			$output .= ob_get_clean();
 			$output .= '</div>';
 			$uid = uniqid();

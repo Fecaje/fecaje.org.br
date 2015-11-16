@@ -36,6 +36,7 @@ if(!class_exists('Ultimate_Video_Banner')) {
 						'icon' => 'vc_ultimate_video_banner',
 						'category' => 'Ultimate VC Addons',
 						'description' => __('Show your video in ease.','ultimate_vc'),
+						'deprecated' => '3.13.5',
 						'params' => array(
 							array(
 								'type' => 'textfield',
@@ -206,7 +207,7 @@ if(!class_exists('Ultimate_Video_Banner')) {
 								'type' => 'css_editor',
 								'heading' => __('CSS','ultimate_vc'),
 								'param_name' => 'video_banner_vc_css',
-								'edit_field_class' => 'vc_col-sm-12 vc_column no-vc-background no-vc-border',
+								'edit_field_class' => 'vc_col-sm-12 vc_column no-vc-background no-vc-border video_banner_css_editor',
 								'group' => 'Design'
 							),
 							array(

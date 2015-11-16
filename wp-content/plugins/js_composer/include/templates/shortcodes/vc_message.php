@@ -1,6 +1,10 @@
 <?php
 /**
  * Shortcode attributes
+ *
+ * @todo add $icon_... defaults
+ * @todo add $icon_typicons and etc
+ *
  * @var $atts
  * @var $el_class
  * @var $message_box_style
@@ -10,13 +14,14 @@
  * @var $css_animation
  * @var $icon_type
  * @var $icon_fontawesome
- * // Todo add $icon_... defaults
  * @var $content - shortcode content
+ * @var $css
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Message
  */
-// Todo add $icon_typicons and etc
-
+$el_class = $message_box_color = $message_box_style = $style = $css = $color = $css_animation = $icon_type = '';
+$icon_fontawesome = $icon_linecons = $icon_openiconic = $icon_typicons = $icon_entypo = '';
+$defaultIconClass = 'fa fa-adjust';
 $atts = $this->convertAttributesToMessageBox2( $atts );
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
@@ -25,14 +30,16 @@ $elementClass = array(
 	'base' => apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'vc_message_box', $this->settings['base'], $atts ),
 	'style' => 'vc_message_box-' . $message_box_style,
 	'shape' => 'vc_message_box-' . $style,
-	'color' => ( strlen( $color ) > 0 && strpos( 'alert', $color ) === false ) ? 'vc_color-' . $color : 'vc_color-' . $message_box_color,
-	'extra' => $this->getExtraClass( $el_class ),
+	'color' => ( strlen( $color ) > 0 && false === strpos( 'alert', $color ) ) ? 'vc_color-' . $color : 'vc_color-' . $message_box_color,
 	'css_animation' => $this->getCSSAnimation( $css_animation ),
 );
-$elementClass = preg_replace( array( '/\s+/', '/^\s|\s$/' ), array( ' ', '' ), implode( ' ', $elementClass ) );
+
+$class_to_filter = preg_replace( array( '/\s+/', '/^\s|\s$/' ), array( ' ', '' ), implode( ' ', $elementClass ) );
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . $this->getExtraClass( $el_class );
+$css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
 // Pick up icons
-$iconClass = isset( ${"icon_" . $icon_type} ) ? ${"icon_" . $icon_type} : $defaultIconClass;
+$iconClass = isset( ${'icon_' . $icon_type} ) ? ${'icon_' . $icon_type} : $defaultIconClass;
 switch ( $color ) {
 	case 'info':
 		$icon_type = 'fontawesome';
@@ -76,7 +83,7 @@ if ( 'pixelicons' !== $icon_type ) {
 	vc_icon_element_fonts_enqueue( $icon_type );
 }
 ?>
-<div class="<?php echo esc_attr( $elementClass ); ?>">
+<div class="<?php echo esc_attr( $css_class ); ?>">
 	<div class="vc_message_box-icon"><i class="<?php echo esc_attr( $iconClass ); ?>"></i>
 	</div><?php echo wpb_js_remove_wpautop( $content, true );
-?></div><?php echo $this->endBlockComment( $this->getShortcode() ); ?>
+	?></div>

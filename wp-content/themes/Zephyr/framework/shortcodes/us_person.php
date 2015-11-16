@@ -3,84 +3,44 @@
 /**
  * Shortcode: us_person
  *
- * @var $shortcode {String} Current shortcode name
- * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
- * @var $atts {Array} Shortcode attributes
- * @var $content {String} Shortcode's inner content
+ * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
+ *
+ * @var $shortcode string Current shortcode name
+ * @var $shortcode_base string The original called shortcode name (differs if called an alias)
+ * @var $content string Shortcode's inner content
+ * @var $atts array Shortcode attributes
+ *
+ * @param $atts ['name'] string Name
+ * @param $atts ['role'] string Role
+ * @param $atts ['image'] int Photo (from WP Media Library)
+ * @param $atts ['layout'] string Layout: 'card' / 'flat' / 'toplinks' / 'modern'
+ * @param $atts ['link'] string Link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+ * @param $atts ['email'] string Email
+ * @param $atts ['facebook'] string Facebook link
+ * @param $atts ['twitter'] string Twitter link
+ * @param $atts ['google_plus'] string Google+ link
+ * @param $atts ['linkedin'] string LinkedIn link
+ * @param $atts ['skype'] string Skype link
+ * @param $atts ['custom_icon'] string Custom icon
+ * @param $atts ['custom_link'] string Custom link
+ * @param $atts ['el_class'] string Extra class name
  */
 
-$atts = shortcode_atts( array(
-	/**
-	 * @var string Name
-	 */
-	'name' => __( 'Jon Snow', 'us' ),
-	/**
-	 * @var string Role
-	 */
-	'role' => __( 'Lord Commander', 'us' ),
-	/**
-	 * @var int Photo (from WP Media Library)
-	 */
-	'image' => '',
-	/**
-	 * @var string Layout style: '1' / '2'
-	 */
-	'style' => '1',
-	/**
-	 * @var string Link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
-	 */
-	'link' => '',
-	/**
-	 * @var string Email
-	 */
-	'email' => '',
-	/**
-	 * @var string Facebook link
-	 */
-	'facebook' => '',
-	/**
-	 * @var string Twitter link
-	 */
-	'twitter' => '',
-	/**
-	 * @var string Google+ link
-	 */
-	'google_plus' => '',
-	/**
-	 * @var string LinkedIn link
-	 */
-	'linkedin' => '',
-	/**
-	 * @var string Skype link
-	 */
-	'skype' => '',
-	/**
-	 * @var string Custom icon
-	 */
-	'custom_icon' => '',
-	/**
-	 * @var string Custom link
-	 */
-	'custom_link' => '',
-	/**
-	 * @var string Extra class name
-	 */
-	'el_class' => '',
-), $atts );
+$atts = us_shortcode_atts( $atts, 'us_person' );
 
 $classes = '';
 
-$classes .= ' style_' . $atts['style'];
+$classes .= ' layout_' . $atts['layout'];
 
 $img_html = '';
 if ( is_numeric( $atts['image'] ) ) {
 	$img = wp_get_attachment_image_src( intval( $atts['image'] ), 'tnail-1x1' );
 	if ( $img !== FALSE ) {
-		$img_html = '<img src="' . $img[0] . '" width="' . $img[1] . '" height="' . $img[2] . '" alt="">';
+		$img_html = '<img src="' . $img[0] . '" width="' . $img[1] . '" height="' . $img[2] . '" alt="' . esc_attr( $atts['name'] ) . '">';
 	}
-} else {
+} elseif ( ! empty( $atts['image'] ) ) {
 	// Direct link to image is set in the shortcode attribute
-	$img_html = '<img src="' . $atts['image'] . '" alt="">';
+	$img_html = '<img src="' . $atts['image'] . '" alt="' . esc_attr( $atts['name'] ) . '">';
 }
 
 $links_html = '';
@@ -100,7 +60,12 @@ if ( ! empty( $atts['linkedin'] ) ) {
 	$links_html .= '<a class="w-person-links-item" href="' . esc_url( $atts['linkedin'] ) . '" target="_blank"><i class="fa fa-linkedin"></i></a>';
 }
 if ( ! empty( $atts['skype'] ) ) {
-	$links_html .= '<a class="w-person-links-item" href="' . esc_url( $atts['skype'] ) . '" target="_blank"><i class="fa fa-skype"></i></a>';
+	// Skype link may be some http(s): or skype: link. If protocol is not set, adding "skype:"
+	$skype_url = $atts['skype'];
+	if ( strpos( $skype_url, ':' ) === FALSE ) {
+		$skype_url = 'skype:' . esc_attr( $skype_url );
+	}
+	$links_html .= '<a class="w-person-links-item" href="' . $skype_url . '"><i class="fa fa-skype"></i></a>';
 }
 $atts['custom_icon'] = trim( $atts['custom_icon'] );
 if ( ! empty( $atts['custom_icon'] ) AND ! empty( $atts['custom_link'] ) ) {
@@ -127,8 +92,14 @@ if ( ! empty( $atts['el_class'] ) ) {
 	$classes .= ' ' . $atts['el_class'];
 }
 
-$output = '<div class="w-person' . $classes . '"><div class="w-person-image">';
-$output .= $link_start . $img_html . $link_end . '</div><div class="w-person-content">';
+$output = '<div class="w-person' . $classes . '">';
+$output .= '<div class="w-person-image">';
+$output .= $link_start . $img_html . $link_end;
+if ( $atts['layout'] == 'toplinks' ) {
+	$output .= $links_html;
+}
+$output .= '</div>';
+$output .= '<div class="w-person-content">';
 if ( ! empty( $atts['name'] ) ) {
 	$output .= $link_start . '<h4 class="w-person-name"><span>' . $atts['name'] . '</span></h4>' . $link_end;
 }
@@ -138,6 +109,9 @@ if ( ! empty( $atts['role'] ) ) {
 if ( ! empty( $content ) ) {
 	$output .= '<div class="w-person-description">' . do_shortcode( $content ) . '</div>';
 }
-$output .= $links_html . '</div></div>';
+if ( $atts['layout'] != 'toplinks' ) {
+	$output .= $links_html;
+}
+$output .= '</div></div>';
 
 echo $output;

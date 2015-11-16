@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 							'assets/js/modal.js'
 						],
 					dest: 'assets/min-js/modal-all.min.js',
-				}, 
+				},
 				{ // all .js to min.js
 					expand: true,
 					src: [
@@ -31,9 +31,10 @@ module.exports = function(grunt) {
 					dest: 'assets/min-js/',
 					cwd: 'assets/js/',
 					ext: '.min.js'
-				}, 
+				},
 				{ // all .js to .ultimate.min.js
 					src: [
+							'assets/js/ultimate_bg.js',
 							'assets/js/*.js',
 							'!assets/js/modernizr-custom.js',
 							'!assets/js/classie.js',
@@ -53,9 +54,21 @@ module.exports = function(grunt) {
 							'!assets/js/mb-YTPlayer.js',
 							'!assets/js/jquery.vhparallax.js',
 							'!assets/js/SmoothScroll.js',
+							'!assets/js/smoothscoll-mousewheel.js',
+							'!assets/js/smoothscroll-easing.js',
+							'!assets/js/smoothscroll-simplr-smoothscroll.js',
 							'!assets/js/jquery.js'
 						],
 					dest: 'assets/min-js/ultimate.min.js'
+				},
+				{ // all smoothscroll .js to smoothscroll.min.js
+					src: [
+							'assets/js/smoothscoll-mousewheel.js',
+							//'assets/js/smoothscroll-easing.js',
+							'assets/js/smoothscroll-simplr-smoothscroll.js',
+							'assets/js/SmoothScroll.js',
+						],
+					dest: 'assets/min-js/smoothscroll.min.js'
 				},
 				{
 					src: [
@@ -132,6 +145,7 @@ module.exports = function(grunt) {
 							'admin/css/bootstrap-datetimepicker-admin.css',
 							'admin/css/jquery-colorpicker.css',
 							'admin/css/jquery-classygradient-min.css',
+							'assets/css/advanced-buttons.css',
 						],
 					dest: 'admin/css/ultimate-vc-backend.min.css'
 				}, { //woocomposer backend css optimization
