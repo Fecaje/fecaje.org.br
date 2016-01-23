@@ -5,10 +5,8 @@
 			if($this.hasClass("ult_full_width")){
 				var rtl = $this.attr('data-rtl');
 				var w = $("html").outerWidth();
-				var al = 0;
-				var bl = $this.offset().left;
-				var xl = Math.abs(al-bl);
-				var left = xl;
+				var cw = $this.width();
+				var left = (w - cw)/2;
 				if(rtl === 'true' || rtl === true)
 					$this.css({"position":"relative","right":"-"+left+"px","width":w+"px"});
 				else
@@ -24,7 +22,7 @@
 				$('head').append(css);
 			}
 		});
-
+		
 		$(window).resize(function(){
 			$(".ult-carousel-wrapper").each(function(){
 				var $this = $(this);
@@ -32,34 +30,14 @@
 					var rtl = $this.attr('data-rtl');
 					$this.removeAttr("style");
 					var w = $("html").outerWidth();
-					var al = 0;
-					var bl = $this.offset().left;
-					var xl = Math.abs(al-bl);
-					var left = xl;
+					var cw = $this.width();
+					var left = (w - cw)/2;
 					if(rtl === 'true' || rtl === true)
 						$this.css({"position":"relative","right":"-"+left+"px","width":w+"px"});
 					else
 						$this.css({"position":"relative","left":"-"+left+"px","width":w+"px"});
 				}
 			});
-		});
-	});
-	$(window).load(function(){
-		$(".ult-carousel-wrapper").each(function(){
-			var $this = $(this);
-			if($this.hasClass("ult_full_width")){
-				$this.css('left',0);
-				var al = 0;
-				var bl = $this.offset().left;
-				var xl = Math.abs(al-bl);
-				var rtl = $this.attr('data-rtl');
-				var w = $("html").outerWidth();
-				var left = xl;
-				if(rtl === 'true' || rtl === true)
-					$this.css({"position":"relative","right":"-"+left+"px","width":w+"px"});
-				else
-					$this.css({"position":"relative","left":"-"+left+"px","width":w+"px"});
-			}
 		});
 	});
 })(jQuery);

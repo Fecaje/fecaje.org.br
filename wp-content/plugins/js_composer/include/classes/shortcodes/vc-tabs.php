@@ -1,5 +1,7 @@
 <?php
 
+/**
+ */
 class WPBakeryShortCode_VC_Tabs extends WPBakeryShortCode {
 	static $filter_added = false;
 	protected $controls_css_settings = 'out-tc vc_controls-content-widget';
@@ -7,6 +9,7 @@ class WPBakeryShortCode_VC_Tabs extends WPBakeryShortCode {
 
 	public function __construct( $settings ) {
 		parent::__construct( $settings );
+		// WPBakeryVisualComposer::getInstance()->addShortCode( array( 'base' => 'vc_tab' ) );
 		if ( ! self::$filter_added ) {
 			$this->addFilter( 'vc_inline_template_content', 'setCustomTabId' );
 			self::$filter_added = true;
@@ -17,18 +20,29 @@ class WPBakeryShortCode_VC_Tabs extends WPBakeryShortCode {
 		$width = $custom_markup = '';
 		$shortcode_attributes = array( 'width' => '1/1' );
 		foreach ( $this->settings['params'] as $param ) {
-			if ( 'content' !== $param['param_name'] ) {
-				$shortcode_attributes[ $param['param_name'] ] = isset( $param['value'] ) ? $param['value'] : null;
-			} elseif ( 'content' === $param['param_name'] && null === $content ) {
-				$content = $param['value'];
+			if ( $param['param_name'] != 'content' ) {
+				//$shortcode_attributes[$param['param_name']] = $param['value'];
+				if ( isset( $param['value'] ) && is_string( $param['value'] ) ) {
+					$shortcode_attributes[ $param['param_name'] ] = __( $param['value'], "js_composer" );
+				} elseif ( isset( $param['value'] ) ) {
+					$shortcode_attributes[ $param['param_name'] ] = $param['value'];
+				}
+			} else if ( $param['param_name'] == 'content' && $content == null ) {
+				//$content = $param['value'];
+				$content = __( $param['value'], "js_composer" );
 			}
 		}
-		extract( shortcode_atts( $shortcode_attributes, $atts ) );
+		extract( shortcode_atts(
+			$shortcode_attributes
+			, $atts ) );
 
 		// Extract tab titles
 
 		preg_match_all( '/vc_tab title="([^\"]+)"(\stab_id\=\"([^\"]+)\"){0,1}/i', $content, $matches, PREG_OFFSET_CAPTURE );
-
+		/*
+$tab_titles = array();
+if ( isset($matches[1]) ) { $tab_titles = $matches[1]; }
+*/
 		$output = '';
 		$tab_titles = array();
 
@@ -50,10 +64,23 @@ class WPBakeryShortCode_VC_Tabs extends WPBakeryShortCode {
 			$output .= do_shortcode( $content );
 		}
 
+
+		/*
+if ( count($tab_titles) ) {
+	$tmp .= '<ul class="clearfix">';
+	foreach ( $tab_titles as $tab ) {
+		$tmp .= '<li><a href="#tab-'. sanitize_title( $tab[0] ) .'">' . $tab[0] . '</a></li>';
+	}
+	$tmp .= '</ul>';
+} else {
+	$output .= do_shortcode( $content );
+}
+*/
 		$elem = $this->getElementHolder( $width );
 
 		$iner = '';
 		foreach ( $this->settings['params'] as $param ) {
+			$custom_markup = '';
 			$param_value = isset( $$param['param_name'] ) ? $$param['param_name'] : '';
 			if ( is_array( $param_value ) ) {
 				// Get first element from the array
@@ -63,15 +90,17 @@ class WPBakeryShortCode_VC_Tabs extends WPBakeryShortCode {
 			}
 			$iner .= $this->singleParamHtmlHolder( $param, $param_value );
 		}
+		//$elem = str_ireplace('%wpb_element_content%', $iner, $elem);
 
-		if ( isset( $this->settings['custom_markup'] ) && '' !== $this->settings['custom_markup'] ) {
-			if ( '' !== $content ) {
-				$custom_markup = str_ireplace( '%content%', $tmp . $content, $this->settings['custom_markup'] );
-			} elseif ( '' === $content && isset( $this->settings['default_content_in_template'] ) && '' !== $this->settings['default_content_in_template'] ) {
-				$custom_markup = str_ireplace( '%content%', $this->settings['default_content_in_template'], $this->settings['custom_markup'] );
+		if ( isset( $this->settings["custom_markup"] ) && $this->settings["custom_markup"] != '' ) {
+			if ( $content != '' ) {
+				$custom_markup = str_ireplace( "%content%", $tmp . $content, $this->settings["custom_markup"] );
+			} else if ( $content == '' && isset( $this->settings["default_content_in_template"] ) && $this->settings["default_content_in_template"] != '' ) {
+				$custom_markup = str_ireplace( "%content%", $this->settings["default_content_in_template"], $this->settings["custom_markup"] );
 			} else {
-				$custom_markup = str_ireplace( '%content%', '', $this->settings['custom_markup'] );
+				$custom_markup = str_ireplace( "%content%", '', $this->settings["custom_markup"] );
 			}
+			//$output .= do_shortcode($this->settings["custom_markup"]);
 			$iner .= do_shortcode( $custom_markup );
 		}
 		$elem = str_ireplace( '%wpb_element_content%', $iner, $elem );

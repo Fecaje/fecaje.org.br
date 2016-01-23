@@ -8,4 +8,5 @@
  */
 class WPBakeryShortCode_VC_Cta_button extends WPBakeryShortCode {
 
+
 }

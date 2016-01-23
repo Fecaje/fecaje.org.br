@@ -1,5 +1,5 @@
 <?php
-VcShortcodeAutoloader::getInstance()->includeClass( 'WPBakeryShortCode_VC_Tta_Accordion' );
+require_once "vc-tta-accordion.php";
 
 class WPBakeryShortCode_VC_Tta_Tabs extends WPBakeryShortCode_VC_Tta_Accordion {
 
@@ -18,7 +18,7 @@ class WPBakeryShortCode_VC_Tta_Tabs extends WPBakeryShortCode_VC_Tta_Accordion {
 		$autoplay = $this->atts['autoplay'];
 		if ( $autoplay && 'none' !== $autoplay && intval( $autoplay ) > 0 ) {
 			$attributes[] = 'data-vc-tta-autoplay="' . esc_attr( json_encode( array(
-					'delay' => intval( $autoplay ) * 1000,
+					'delay' => intval( $autoplay ) * 1000
 				) ) ) . '"';
 		}
 
@@ -28,11 +28,11 @@ class WPBakeryShortCode_VC_Tta_Tabs extends WPBakeryShortCode_VC_Tta_Accordion {
 	public function getTtaGeneralClasses() {
 		$classes = parent::getTtaGeneralClasses();
 
-		if ( ! empty( $this->atts['no_fill_content_area'] ) ) {
+		if ( $this->atts['no_fill_content_area'] ) {
 			$classes .= ' vc_tta-o-no-fill';
 		}
 
-		if ( isset( $this->atts['tab_position'] ) ) {
+		if ( $this->atts['tab_position'] ) {
 			$classes .= ' ' . $this->getTemplateVariable( 'tab_position' );
 		}
 

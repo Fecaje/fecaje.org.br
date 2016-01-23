@@ -16,14 +16,7 @@ add_action( 'vc_before_init', 'vc_check_for_custom_css_build' );
 function vc_check_for_custom_css_build() {
 	$version = vc_settings()->getCustomCssVersion();
 	if ( vc_settings()->useCustomCss() && ( ! $version || version_compare( WPB_VC_VERSION, $version, '<>' ) ) ) {
-		if ( vc_user_access()
-			->wpAny( 'manage_options' )
-			->part( 'settings' )
-			->can( 'vc-color-tab' )
-			->get()
-		) {
-			add_action( 'admin_notices', 'vc_custom_css_admin_notice' );
-		}
+		add_action( 'admin_notices', 'vc_custom_css_admin_notice' );
 	}
 }
 
@@ -34,10 +27,10 @@ function vc_check_for_custom_css_build() {
  */
 function vc_custom_css_admin_notice() {
 	global $current_screen;
-	vc_settings()->set( 'compiled_js_composer_less', '' );
+
 	$class = 'notice notice-warning vc_settings-custom-design-notice';
 	$message_important = __( 'Important notice', 'js_composer' );
-	if ( is_object( $current_screen ) && isset( $current_screen->id ) && 'visual-composer_page_vc-color' === $current_screen->id ) {
+	if ( is_object( $current_screen ) && isset( $current_screen->id ) && 'visual-composer_page_vc-color' == $current_screen->id ) {
 		$message = __( 'You have an outdated version of Visual Composer Design Options. It is required to review and save it.', 'js_composer' );
 		$html = '<p><strong>' . esc_html( $message_important ) . '</strong>: ' . esc_html( $message ) . '</p>';
 	} else {
@@ -70,7 +63,7 @@ function vc_page_settings_tab_color_submit_attributes( $submitButtonAttributes )
 		// Hover color
 		'vc_grey_hover' => array(
 			'key' => 'wpb_js_vc_color_hover',
-			'default' => vc_settings()->getDefault( 'vc_color_hover' ),
+			'default' => vc_settings()->getDefault( 'vc_color_hover' )
 		),
 		'vc_image_slider_link_active' => 'wpb_js_vc_color_hover',
 		// Call to action background color
@@ -84,7 +77,7 @@ function vc_page_settings_tab_color_submit_attributes( $submitButtonAttributes )
 				array(
 					'plain' => array(
 						'darken({{ value }}, 5%)',
-					),
+					)
 				),
 			),
 		),
@@ -138,7 +131,7 @@ function vc_page_settings_desing_options_load() {
 	wp_enqueue_script( 'vc_less_js', vc_asset_url( 'lib/bower/lessjs/dist/less.min.js' ), array( 'wpb_js_composer_js_listeners' ), WPB_VC_VERSION );
 	wp_enqueue_script( 'vc_less_builder', vc_asset_url( 'js/lib/vc_less.js' ), array(
 		'vc_less_js',
-		'wpb_js_composer_js_tools',
+		'wpb_js_composer_js_tools'
 	), WPB_VC_VERSION );
 }
 

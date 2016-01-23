@@ -4,7 +4,7 @@
  * JWPLayer loader.
  * @since 4.3
  */
-class Vc_Vendor_Jwplayer implements Vc_Vendor_Interface {
+Class Vc_Vendor_Jwplayer implements Vc_Vendor_Interface {
 	/**
 	 * Dublicate jwplayer logic for editor, when used in frontend editor mode.
 	 *
@@ -14,21 +14,21 @@ class Vc_Vendor_Jwplayer implements Vc_Vendor_Interface {
 
 		add_action( 'wp_enqueue_scripts', array(
 			&$this,
-			'vc_load_iframe_jscss',
+			'vc_load_iframe_jscss'
 		) );
 		add_filter( 'vc_front_render_shortcodes', array(
 			&$this,
-			'renderShortcodes',
+			'renderShortcodes'
 		) );
 		add_filter( 'vc_frontend_template_the_content', array(
 			&$this,
-			'wrapPlaceholder',
+			'wrapPlaceholder'
 		) );
 
 		// fix for #1065
 		add_filter( 'vc_shortcode_content_filter_after', array(
 			&$this,
-			'renderShortcodesPreview',
+			'renderShortcodesPreview'
 		) );
 	}
 
@@ -79,7 +79,7 @@ class Vc_Vendor_Jwplayer implements Vc_Vendor_Interface {
 
 	/**
 	 * @since 4.3
-	 * @todo check it for preview mode (check is it needed)
+	 * Todo check it for preview mode (check is it needed)
 	 */
 	public function vc_load_iframe_jscss() {
 		wp_enqueue_script( 'vc_vendor_jwplayer', vc_asset_url( 'js/frontend_editor/vendors/plugins/jwplayer.js' ), array( 'jquery' ), '1.0', true );

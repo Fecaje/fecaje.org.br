@@ -8,7 +8,7 @@
 
 return array(
 	'default_sidebar' => array(
-		'name' => 'Default Sidebar',
+		'name' => __( 'Default Sidebar', 'us' ),
 		'id' => 'default_sidebar',
 		'description' => __( 'This is the default sidebar. You can choose from the theme\'s options page where the widgets from this sidebar will be shown.', 'us' ),
 		'before_widget' => '<div id="%1$s" class="widget %2$s">',

@@ -581,7 +581,7 @@ if(!class_exists('Ultimate_Info_Circle'))
 							"param_name" => "responsive_breakpoint",
 							"value" => 800,
 							"suffix" => "px",
-							"description" => __("Break point is the point of screen resolution from where you can set your info-circle style into list style to the minimum screen resolution.", "smile"),
+							//"description" => __("Select true to change its display style on low resolution.", "smile"),
 							"dependency" => Array("element" => "responsive", "value" => array("on")),
 							//"group" => $reponsive_tab			
 						),

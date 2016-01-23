@@ -26,10 +26,10 @@ $header_titlebar_fields = array(
 		'type' => 'select',
 		'options' => array(
 			'' => __( 'Default (set at Theme Options)', 'us' ),
-			'default' => __( 'Content colors', 'us' ),
-			'alternate' => __( 'Alternate bg & Content text', 'us' ),
-			'primary' => __( 'Primary bg & White text', 'us' ),
-			'secondary' => __( 'Secondary bg & White text', 'us' ),
+			'default' => __( 'Content bg | Content text', 'us' ),
+			'alternate' => __( 'Alternate bg | Content text', 'us' ),
+			'primary' => __( 'Primary bg | White text', 'us' ),
+			'secondary' => __( 'Secondary bg | White text', 'us' ),
 		),
 	),
 	array(

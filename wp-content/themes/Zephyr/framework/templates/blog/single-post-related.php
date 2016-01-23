@@ -11,7 +11,7 @@ if ( ! has_tag() ) {
 	return;
 }
 
-$tag_ids = wp_get_post_tags( get_the_ID(), array( 'fields' => 'ids' ) );
+$tag_ids = wp_get_post_tags( 0, array( 'fields' => 'ids' ) );
 $query_args = array(
 	'tag__in' => $tag_ids,
 	'post__not_in' => array( get_the_ID() ),
@@ -36,7 +36,7 @@ if ( $wp_query->have_posts() ) {
 	);
 	?><section class="l-section for_related">
 		<div class="l-section-h i-cf">
-			<h4><?php _e('Related Articles', 'us') ?></h4>
+			<h5><?php _e('Related Articles', 'us') ?></h5>
 			<?php us_load_template( 'templates/blog/listing', $template_vars ) ?>
 		</div>
 	</section><?php

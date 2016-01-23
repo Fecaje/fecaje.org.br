@@ -18,7 +18,7 @@ vc.less.generateLessFormData = function ( formData, variablesData ) {
 				object = _.first( _.where( formData, { 'name': value } ) );
 				if ( _.isObject( object ) ) {
 					objectValue = object.value;
-					if ( 0 < objectValue.length ) {
+					if ( objectValue.length > 0 ) {
 						lessData[ key ] = objectValue;
 					}
 				}

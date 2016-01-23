@@ -4,21 +4,13 @@ if(!class_exists('Ultimate_Button_Param'))
 	class Ultimate_Button_Param
 	{
 		function __construct()
-		{
-			if(defined('WPB_VC_VERSION') && version_compare(WPB_VC_VERSION, 4.8) >= 0) {
-				if(function_exists('vc_add_shortcode_param'))
-				{
-					vc_add_shortcode_param('ult_button' , array($this, 'button_prev_param'));
-				}
-			}
-			else {
-				if(function_exists('add_shortcode_param'))
-				{
-					add_shortcode_param('ult_button' , array($this, 'button_prev_param'));
-				}
+		{	
+			if(function_exists('add_shortcode_param'))
+			{
+				add_shortcode_param('ult_button' , array($this, 'button_prev_param'));
 			}
 		}
-
+	
 		function button_prev_param($settings, $value){
 			$param_name = isset($settings['param_name']) ? $settings['param_name'] : '';
 			$type = isset($settings['type']) ? $settings['type'] : '';
@@ -45,7 +37,7 @@ if(!class_exists('Ultimate_Button_Param'))
 				}
 			}
 			$selector .= '<select>';
-
+			
 			$output = '';
 			$output .= '<div class="select2_option" style="width: 45%; float: left;">';
 			$output .= $selector;
@@ -66,7 +58,7 @@ if(!class_exists('Ultimate_Button_Param'))
 				</script>';
 			return $output;
 		}
-
+		
 	}
 }
 

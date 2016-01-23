@@ -3,27 +3,58 @@
 /**
  * Shortcode: us_image_slider
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['ids'] string Comma-separated list of image IDs (from media library)
- * @param $atts ['arrows'] string Navigation arrows: 'always' / 'hover' / 'hide'
- * @param $atts ['nav'] string Additional navigation: 'none' / 'dots' / 'thumbs'
- * @param $atts ['transition'] string Transition effect: 'slide' / 'crossfade'
- * @param $atts ['autoplay'] bool Enable auto-rotation?
- * @param $atts ['autoplay_period'] int Auto-rotation period (in milliseconds)
- * @param $atts ['fullscreen'] bool Allow fullscreen view?
- * @param $atts ['orderby'] string Elements order: '' / 'rand'
- * @param $atts ['img_size'] string Images size: 'large' / 'medium' / 'thumbnail' / 'full'
- * @param $atts ['img_fit'] bool How to fim an image: 'scaledown' / 'contain' / 'cover'
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_image_slider' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Comma-separated list of image IDs (from media library)
+	 */
+	'ids' => '',
+	/**
+	 * @var string Navigation arrows: 'always' / 'hover' / 'hide'
+	 */
+	'arrows' => 'always',
+	/**
+	 * @var string Additional navigation: 'none' / 'dots' / 'thumbs'
+	 */
+	'nav' => 'none',
+	/**
+	 * @var string Transition effect: 'slide' / 'crossfade'
+	 */
+	'transition' => 'slide',
+	/**
+	 * @var bool Enable auto-rotation?
+	 */
+	'autoplay' => FALSE,
+	/**
+	 * @var int Auto-rotation period (in milliseconds)
+	 */
+	'autoplay_period' => 3000,
+	/**
+	 * @var bool Allow fullscreen view?
+	 */
+	'fullscreen' => FALSE,
+	/**
+	 * @var string Elements order: '' / 'rand'
+	 */
+	'orderby' => '',
+	/**
+	 * @var string Images size: 'large' / 'medium' / 'thumbnail' / 'full'
+	 */
+	'img_size' => 'large',
+	/**
+	 * @var bool How to fim an image: 'scaledown' / 'contain' / 'cover'
+	 */
+	'img_fit' => 'scaledown',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 if ( empty( $atts['ids'] ) ) {
 	return;
@@ -36,7 +67,7 @@ $us_image_slider_index = isset( $us_image_slider_index ) ? ( $us_image_slider_in
 $classes = '';
 // Royal Slider options
 $js_options = array(
-	'transitionSpeed' => 300,
+	'transitionSpeed' => '300',
 	'loopRewind' => TRUE,
 	'slidesSpacing' => 0,
 	'imageScalePadding' => 0,
@@ -122,22 +153,18 @@ foreach ( $attachments as $index => $attachment ) {
 		}
 		$full_image_attr = ' data-rsBigImg="' . $full_image[0] . '"';
 	}
-
-	$image_alt = trim( strip_tags( get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ) ) );
-	if ( empty( $image_alt ) )
-		$image_alt = trim( strip_tags( $attachment->post_excerpt ) ); // If not, Use the Caption
-	if ( empty( $image_alt ) )
-		$image_alt = trim( strip_tags( $attachment->post_title ) ); // Finally, use the title
-
-	$images_html .= '<a class="rsImg" data-rsw="' . $image[1] . '" data-rsh="' . $image[2] . '"' . $full_image_attr . ' href="' . $image[0] . '">';
 	if ( $atts['nav'] == 'thumbs' ) {
-		$images_html .= wp_get_attachment_image( $attachment->ID, 'thumbnail', FALSE, array(
-			'class' => 'rsTmb',
-		) );
+		$tnail = wp_get_attachment_image_src( $attachment->ID, 'thumbnail' );
+		if ( ! $tnail ) {
+			$tnail = $image;
+		}
+		$images_html .= '<a class="rsImg" data-rsw="' . $image[1] . '" data-rsh="' . $image[2] . '"' . $full_image_attr . ' href="' . $image[0] . '">';
+		$images_html .= '<img class="rsTmb" src="' . $tnail[0] . '" width="' . $tnail[1] . '" height="' . $tnail[2] . '" alt="" />';
+		$images_html .= '</a>';
 	} else {
-		$images_html .= $image_alt;
+		$images_html .= '<a class="rsImg" data-rsw="' . $image[1] . '" data-rsh="' . $image[2] . '"' . $full_image_attr . ' href="' . $image[0] . '">';
+		$images_html .= '</a>';
 	}
-	$images_html .= '</a>';
 }
 
 // We need Roayl Slider script for this

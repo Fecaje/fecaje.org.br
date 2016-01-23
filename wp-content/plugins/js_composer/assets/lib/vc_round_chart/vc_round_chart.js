@@ -19,7 +19,7 @@
 					showTooltips: $this.data( 'vcTooltips' ),
 					animationEasing: $this.data( 'vcAnimation' ),
 					segmentStrokeColor: $this.data( 'vcStrokeColor' ),
-					segmentShowStroke: 0 !== stroke_width,
+					segmentShowStroke: stroke_width !== 0,
 					segmentStrokeWidth: stroke_width,
 					responsive: true
 				},
@@ -40,12 +40,12 @@
 
 			// If color/highlight is array (of 2 colors), replace it with generated gradient
 			for ( i = data.length - 1;
-				  0 <= i;
+				  i >= 0;
 				  i -- ) {
 				for ( j = color_keys.length - 1;
-					  0 <= j;
+					  j >= 0;
 					  j -- ) {
-					if ( 'object' === typeof( data[ i ][ color_keys[ j ] ] ) && 2 === data[ i ][ color_keys[ j ] ].length ) {
+					if ( 'object' === typeof( data[ i ][ color_keys[ j ] ] ) && data[ i ][ color_keys[ j ] ].length === 2 ) {
 						gradient = ctx.createLinearGradient( 0, 0, 0, ctx.canvas.height );
 						gradient.addColorStop( 0, data[ i ][ color_keys[ j ] ][ 0 ] );
 						gradient.addColorStop( 1, data[ i ][ color_keys[ j ] ][ 1 ] );

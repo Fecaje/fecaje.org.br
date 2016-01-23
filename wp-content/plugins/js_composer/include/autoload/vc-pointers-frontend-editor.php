@@ -9,10 +9,10 @@ function vc_frontend_editor_pointer() {
 
 add_action( 'admin_init', 'vc_frontend_editor_pointer' );
 
-function vc_frontend_editor_register_pointer( $pointers ) {
+function vc_frontend_editor_register_pointer( $p ) {
 	global $post;
 	if ( is_object( $post ) && ! strlen( $post->post_content ) ) {
-		$pointers['vc_pointers_frontend_editor'] = array(
+		$p['vc_pointers_frontend_editor'] = array(
 			'name' => 'vcPointerController',
 			'messages' => array(
 				array(
@@ -24,7 +24,7 @@ function vc_frontend_editor_register_pointer( $pointers ) {
 						),
 						'position' => array(
 							'edge' => 'top',
-							'align' => 'left',
+							'align' => 'left'
 						),
 						'buttonsEvent' => 'vcPointersEditorsTourEvents',
 					),
@@ -39,7 +39,7 @@ function vc_frontend_editor_register_pointer( $pointers ) {
 						),
 						'position' => array(
 							'edge' => 'left',
-							'align' => 'center',
+							'align' => 'center'
 						),
 						'buttonsEvent' => 'vcPointersEditorsTourEvents',
 					),
@@ -52,25 +52,25 @@ function vc_frontend_editor_register_pointer( $pointers ) {
 						'content' => sprintf( '<h3> %s </h3> <p> %s <br/><br/> %s</p>',
 							__( 'Control Elements', 'js_composer' ),
 							__( 'You can edit your element at any time and drag it around your layout.', 'js_composer' ),
-							sprintf( __( 'P.S. Learn more at our <a href="%s" target="_blank">Knowledge Base</a>.', 'js_composer' ), 'http://kb.wpbakery.com' )
+							sprintf( __( 'P.S. Learn more at our <a href="%s" target="_blank">Knowledge Base</a>.', 'js_composer' )
+								, 'http://kb.wpbakery.com' )
 						),
 						'position' => array(
 							'edge' => 'left',
-							'align' => 'center',
+							'align' => 'center'
 						),
 						'buttonsEvent' => 'vcPointersEditorsTourEvents',
 					),
 					'closeCallback' => 'vcPointersCloseInIFrame',
 					'showCallback' => 'vcPointersSetInIFrame',
-				),
+				)
 			),
 		);
 	}
 
-	return $pointers;
+	return $p;
 }
 
-// @todo check is this correct place (editable page)
 function vc_page_editable_enqueue_pointer_scripts() {
 	if ( vc_is_page_editable() ) {
 		wp_enqueue_style( 'wp-pointer' );
@@ -80,12 +80,13 @@ function vc_page_editable_enqueue_pointer_scripts() {
 			array(
 				'jquery',
 				'underscore',
-				'wp-pointer',
+				'wp-pointer'
 			),
 			WPB_VC_VERSION,
-			true
-		);
+			true );
 	}
 }
+
+;
 
 add_action( 'wp_enqueue_scripts', 'vc_page_editable_enqueue_pointer_scripts' );

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Shortcode attributes
  * @var $atts
@@ -9,7 +8,7 @@
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Widget_sidebar
  */
-$title = $el_class = $sidebar_id = '';
+$output = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
 
@@ -26,16 +25,13 @@ ob_end_clean();
 
 $sidebar_value = trim( $sidebar_value );
 $sidebar_value = ( '<li' === substr( $sidebar_value, 0, 3 ) ) ? '<ul>' . $sidebar_value . '</ul>' : $sidebar_value;
-
+//
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'wpb_widgetised_column wpb_content_element' . $el_class, $this->settings['base'], $atts );
-
-$output = '
-	<div class="' . esc_attr( $css_class ) . '">
-		<div class="wpb_wrapper">
-			' . wpb_widget_title( array( 'title' => $title, 'extraclass' => 'wpb_widgetised_column_heading' ) ) . '
-			' . $sidebar_value . '
-		</div>
-	</div>
-';
+$output .= "\n\t" . '<div class="' . esc_attr( $css_class ) . '">';
+$output .= "\n\t\t" . '<div class="wpb_wrapper">';
+$output .= wpb_widget_title( array( 'title' => $title, 'extraclass' => 'wpb_widgetised_column_heading' ) );
+$output .= "\n\t\t\t" . $sidebar_value;
+$output .= "\n\t\t" . '</div> ' . $this->endBlockComment( '.wpb_wrapper' );
+$output .= "\n\t" . '</div> ' . $this->endBlockComment( $this->getShortcode() );
 
 echo $output;

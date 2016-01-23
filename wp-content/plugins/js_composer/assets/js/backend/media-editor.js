@@ -5,20 +5,13 @@
  *
  * WP 3.5 Media manager integration into Visual Composer.
  * ========================================================= */
-/* global wp, _ */
-(function ( $, _ ) {
-	'use strict';
+(function ( $ ) {
 	var media = wp.media,
 		origFeaturedImageSet = media.featuredImage.set,
 		origEditorSendAttachment = media.editor.send.attachment,
 		l10n = i18nLocale,
 		workflows = {},
-		attachmentCompatRender,
-		templateSettings = {
-			evaluate: /<#([\s\S]+?)#>/g,
-			interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
-			escape: /\{\{([^\}]+?)\}\}(?!\})/g
-		};
+		attachmentCompatRender
 
 	attachmentCompatRender = _.extend( media.view.AttachmentCompat.prototype.render );
 	media.view.AttachmentCompat.prototype.render = function () {
@@ -85,8 +78,7 @@
 				data: {
 					action: 'vc_media_editor_add_image',
 					filters: window.vc_selectedFilters,
-					ids: ids,
-					_vcnonce: window.vcAdminNonce
+					ids: ids
 				}
 			} ).done( function ( response ) {
 				var newId;
@@ -152,7 +144,7 @@
 			return this.$hidden_ids.val();
 		},
 		set: function ( selection ) {
-			this.$img_ul.html( _.template( $( '#vc_settings-image-block' ).html(), selection, templateSettings ) );
+			this.$img_ul.html( _.template( $( '#vc_settings-image-block' ).html(), selection ) );
 
 			this.$clear_button.show();
 
@@ -265,7 +257,7 @@
 				$thumbnails_string = '';
 
 			_.each( images, function ( image ) {
-				$thumbnails_string += _.template( $( '#vc_settings-image-block' ).html(), image, templateSettings );
+				$thumbnails_string += _.template( $( '#vc_settings-image-block' ).html(), image );
 			} );
 
 			$hidden_ids.val( _.map( images, function ( image ) {
@@ -317,7 +309,7 @@
 					var $this = $( this ),
 						editor = 'visual-composer';
 					media.vc_editor.$vc_editor_element = $( this );
-					if ( 'true' === $this.attr( 'use-single' ) ) {
+					if ( $this.attr( 'use-single' ) === 'true' ) {
 						media.VcSingleImage.frame( this ).open( 'vc_editor' );
 						return;
 					}
@@ -339,8 +331,8 @@
 	 * @param callback Processed attachments are passed as first and only argument
 	 * @return void
 	 */
-	function processImages( attachments, callback ) {
-		var ids = attachments.models ? attachments.pluck( 'id' ) : attachments;
+	function processImages( ids, callback ) {
+
 		$.ajax( {
 			dataType: "json",
 			type: 'POST',
@@ -349,32 +341,29 @@
 				action: 'vc_media_editor_add_image',
 				filters: window.vc_selectedFilters,
 				ids: ids,
-				vc_inline: true,
-				_vcnonce: window.vcAdminNonce
+				vc_inline: true
 			}
 		} ).done( function ( response ) {
-			var models, attachment, promises, i;
+			var attachments, attachment, promises, i;
 
 			if ( 'function' !== typeof(callback) ) {
 				return;
 			}
 
-			models = [];
+			attachments = [];
 			promises = [];
 
 			for ( i = 0;
 				  i < response.data.ids.length;
 				  i ++ ) {
-				attachment = attachments[ response.data.ids[ i ] ];
-				if ( ! attachment ) {
-					attachment = media.model.Attachment.get( response.data.ids[ i ] );
-					promises.push( attachment.fetch() );
-				}
-				models.push( attachment );
+
+				attachment = media.model.Attachment.get( response.data.ids[ i ] );
+				promises.push( attachment.fetch() );
+				attachments.push( attachment );
 			}
 
 			$.when.apply( $, promises ).done( function () {
-				callback( models );
+				callback( attachments );
 			} );
 		} ).fail( function ( response ) {
 			$( '.media-modal-close' ).click();
@@ -388,8 +377,17 @@
 	}
 
 	vc.events.on( 'click:media_editor:add_image', function ( selection, type ) {
+		var ids;
+
+		ids = [];
+
 		$( '.media-modal' ).addClass( 'processing-media' );
-		processImages( _.extend( {}, selection ), finishImageProcessing );
+
+		selection.each( function ( model ) {
+			ids.push( model.get( 'id' ) );
+		} );
+
+		processImages( ids, finishImageProcessing );
 
 		function finishImageProcessing( newAttachments ) {
 			var attachments,
@@ -476,8 +474,7 @@
 				action: 'vc_media_editor_preview_image',
 				filter: $filter.val(),
 				attachment_id: attachmentId,
-				preferred_size: window.getUserSetting( 'imgsize', 'medium' ),
-				_vcnonce: window.vcAdminNonce
+				preferred_size: window.getUserSetting( 'imgsize', 'medium' )
 			}
 		} ).done( function ( response ) {
 			if ( ! response.success || ! response.data.src.length ) {
@@ -494,4 +491,5 @@
 		} );
 	}
 
-}( window.jQuery, window._ ));
+}
+( jQuery ));

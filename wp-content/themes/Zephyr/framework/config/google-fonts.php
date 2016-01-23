@@ -1404,14 +1404,6 @@ return array(
 		'variants' => array( '400' ),
 		'fallback' => 'sans-serif',
 	),
-	'Martel' => array(
-		'variants' => array( '200', '300', '400', '500', '600', '700', '800', '900' ),
-		'fallback' => 'serif',
-	),
-	'Martel Sans' => array(
-		'variants' => array( '200', '300', '400', '500', '600', '700', '800', '900' ),
-		'fallback' => 'sans-serif',
-	),
 	'Marvel' => array(
 		'variants' => array( '400', '400italic', '700', '700italic' ),
 		'fallback' => 'sans-serif',

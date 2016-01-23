@@ -6,7 +6,7 @@
 
 $us_layout = US_Layout::instance();
 // Needed for canvas class
-$us_layout->titlebar = ( us_get_option( 'titlebar_content', 'all' ) == 'hide' ) ? 'none' : 'default';
+$us_layout->titlebar = 'default';
 $us_layout->sidebar_pos = us_get_option( 'search_sidebar', 'right' );
 get_header();
 
@@ -17,11 +17,16 @@ us_load_template( 'templates/titlebar', array(
 
 $template_vars = array(
 	'layout_type' => us_get_option( 'search_layout', 'large' ),
-	'metas' => (array) us_get_option( 'search_meta', array() ),
+	'metas' => array(),
 	'content_type' => us_get_option( 'search_content_type', 'excerpt' ),
-	'show_read_more' => in_array( 'read_more', us_get_option( 'search_meta', array() ) ),
+	'show_read_more' => ! ! us_get_option( 'search_read_more', TRUE ),
 	'pagination' => us_get_option( 'search_pagination', 'regular' ),
 );
+foreach ( array( 'date', 'author', 'categories', 'comments', 'tags' ) as $meta_key ) {
+	if ( us_get_option( 'search_meta_' . $meta_key, TRUE ) ) {
+		$template_vars['metas'][] = $meta_key;
+	}
+}
 ?>
 <!-- MAIN -->
 <div class="l-main">

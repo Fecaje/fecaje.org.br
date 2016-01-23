@@ -7,14 +7,14 @@ Add-on Name: Advanced Tab
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
-if(!class_exists('ULT_TAB_ELEMENT'))
+if(!class_exists('ULT_TAB_ELEMENT')) 
 {
 	class ULT_TAB_ELEMENT
 
 	{
 		function __construct()
 		{
-			add_action( 'wp_enqueue_scripts', 'ultimate_tabs',1 );
+			add_action( 'wp_enqueue_scripts', 'ultimate_tabs',1 );	
 			add_action('init',array($this,'ult_tab_init'));
 			//add_action('admin_init', 'ult_tab_init');
 			add_action( 'admin_print_scripts', 'ultimate_tabs_admin',999 );
@@ -45,7 +45,7 @@ function ultimate_single_tab($atts ,$content = null)
 			//wp_enqueue_script('imd_ui_tabs_rotate');
  //echo $content = wpb_js_remove_wpautop($content, true);
 			global $tabarr;
-
+			  
 			   $tabarr[]=array(
 			   	'title'=>$title,
 			   	'tab_id'=>$tab_id,
@@ -61,7 +61,7 @@ function ultimate_single_tab($atts ,$content = null)
 			   	);
 
 
-			if( current_user_can('editor') || current_user_can('administrator') ) {
+			if( current_user_can('editor') || current_user_can('administrator') ) { 
 
 			$admn="Empty tab. Edit page to add content here.";
 			}
@@ -110,6 +110,7 @@ extract( shortcode_atts( array(
     'shadow_color' 				=>'#333333',
     'shadow_width' 				=>'',
     'enable_bg_color'			=>'',
+    'resp_style'				=>'',
     'container_border_style1'	=>'',
 	'container_color_border'	=>'',
 	'cont_border_size'			=>'',
@@ -123,7 +124,7 @@ extract( shortcode_atts( array(
 	'acttab_title'				=>'',
 	'resp_type'					=>'Tabs',
 	'resp_width'				=>'400',
-	'resp_style'				=>'Both',
+	'resp_style'				=>'Icon',
 	'ac_tabs'					=>'',
 	'icon_color'				=>'#74777b',
 	'icon_hover_color'			=>'#ffffff',
@@ -148,7 +149,7 @@ if($acttab_background==''){
 if($acttab_title==''){
 	$acttab_title=$tab_hover_title_color;
 }
-
+ 
 /*---------------padding---------------------*/
  $css_class='';
  $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, vc_shortcode_custom_css_class( $css, ' ' ), "ult_tab_element", $atts );
@@ -167,7 +168,7 @@ $container_style=$ult_style=$tab_style_no='';
 if($tab_bottom_border=='Disable'){
 $border_thickness="0";
 $border_color="transparent";
-}
+} 
 if($container_width!=''){
 	$container_style='max-width:'.$container_width.'px;';
 }
@@ -181,7 +182,7 @@ if($title_line_ht!='')
 $tabs_nav_style .='line-height:'.$title_line_ht.'px;';
 
 if (function_exists('get_ultimate_font_family')) {
-
+	
 		$mhfont_family = get_ultimate_font_family($main_heading_font_family);
 		if($mhfont_family!='')
 		$tabs_nav_style .= 'font-family:'.$mhfont_family.';';
@@ -193,7 +194,7 @@ if (function_exists('get_ultimate_font_family')) {
 	}
 
 /*-------------------auto rotate------------------*/
-
+ 
 if($auto_rotate=='Disables'){
 	$interval=0;
 	$autorotate='no';
@@ -214,18 +215,18 @@ $ul_style=$tabs_nav = $style='';
 /*------------------- style------------------*/
 
 if($tab_style=='Style_1'){
-
+	
 	$style='style1';
 	}
 else if($tab_style=='Style_2'){
-
+	
 	$style='style2';
-
+	
 }
 else if($tab_style=='Style_3'){
-
+	
 	$style='style3';
-
+	
 }
 else if($tab_style=='Style_4'){
 	$ult_style='ult_tab_style_4';
@@ -243,7 +244,7 @@ foreach ($tabarr as $key => $value) {
 	 $icon_value=$value["icon_size"];
 	if (is_numeric($icon_value)) {
 	 $icon_value1[]=$value["icon_size"];
-	}
+	} 
 }
 
 
@@ -278,7 +279,7 @@ if($title_line_ht!='')
 $contain_bg .='line-height:'.$desc_line_ht.'px;';
 
 if (function_exists('get_ultimate_font_family')) {
-
+	
 		$dhfont_family = get_ultimate_font_family($desc_font_family);
 		if($dhfont_family!='')
 		$contain_bg .= 'font-family:'.$dhfont_family.';';
@@ -351,16 +352,16 @@ $accontaint='';
 $ult_ac_border='';
 foreach ($tabarr as $key => $value) {
 		$cnt++;
-
+	
 
 	 $icon_position=$font_icons_position;
 	 //echo $disp_icon;
 	if($disp_icon=='Disables'){
 	$icon_position='none';
 	}
-	 $tabicon=$value["icon"];
-	 $icon_color=$icon_color;
-	 $icon_size=$icon_size;
+	 $tabicon=$value["icon"]; 
+	 $icon_color=$icon_color; 
+	 $icon_size=$icon_size; 
 	 $icon_hover_color=$icon_hover_color;
 	 $margin=$icon_margin;
   	 $tab_id=$value["tab_id"];
@@ -383,7 +384,7 @@ $link_li_style.='background-color:'.$tab_background_color.';';
 }
 else{
 	$bgcolor .='background-color:'.$tab_background_color.';';
-
+	
 }
 $style5bgcolor='';
 if($tab_style=='Style_5'||$tab_style=='Style_6'){
@@ -400,7 +401,7 @@ if($tab_style=='Style_4'){
 
 }
 if($tab_style=='Style_1'||$tab_style=='Style_3'){
-
+	
 	$link_li_style.='';
 	$link_li_style .='border-color:'.$border_color.';';
 	$link_li_style .='border-width:'.$border_thickness.'px;';
@@ -430,12 +431,12 @@ else{
 
 }
 
-/*------------ accordian border style --------------*/
+/*------------ accordian border style --------------*/	
 
 	$ult_ac_border .='border-bottom-color:'.$border_color.';';
 	$ult_ac_border .='border-bottom-width:'.$border_thickness.'px;';
 	$ult_ac_border .='border-bottom-style:solid;';
-
+  
 	if(isset($value['title'])) {
 		//echo $icon_position;
 			if($icon_position=='Right')
@@ -471,7 +472,7 @@ else{
 			            <div class="ult-tabto-acontent" style="'.$contain_bg.'">
 			               '.$accontaint .'
 			            </div>
-        	</dd>';
+        	</dd>';	
 
 				}
 				else if($icon_position=='Left'){
@@ -504,7 +505,7 @@ else{
 			            <div class="ult-tabto-acontent" style="'.$contain_bg.'">
 			               '.$accontaint .'
 			            </div>
-        	</dd>';
+        	</dd>';	
 				}
 		     	else if($icon_position=='Top')
 				{
@@ -536,7 +537,7 @@ else{
 				            <div class="ult-tabto-acontent" style="'.$contain_bg.'">
 				               '.$accontaint .'
 				            </div>
-	        	</dd>';
+	        	</dd>';	
 
 				}
 			  	 else {
@@ -557,17 +558,17 @@ else{
 	        	<a class="ult-tabto-actitle withBorder ult_a " id="'.$tab_id.'" style="color:'.$tab_title_color.';'.$style5bgcolor.';background-color:'.$tab_background_color.';'.$ult_ac_border.'" href="#'.$tab_id.'">
 	        		<i class="accordion-icon">+</i>
 	        			<span class="ult_tab_main ult_ac_main ult_noacordicn' .$resp_style.'">
-
+						
 						<span class="ult-span-text no_icon ult_acordian-text" style="'.$tabs_nav_style.';color:inherit " >'.$value['title'].'</span>
 						</span></a></dt>
 	            		<dd class="ult-tabto-accordionItem ult-tabto-accolapsed">
 				            <div class="ult-tabto-acontent" style="'.$contain_bg.'">
 				               '.$accontaint .'
 				            </div>
-	        			</dd>';
+	        			</dd>';	
 
 		     	 }
-
+		
    	    }
  }
  $newtab .='</ul>';
@@ -589,7 +590,7 @@ $op .=$newtab;
 $op .='<div class="ult_tabcontent '.$style.'" style="'.$contain_bg.'">';
 $tabanimatclass="";
 if($tab_animation=='Slide-Zoom'){
-
+	
 	$tabanimatclass="tabanimate";
 }
 $op .='<div class="ult_tab_min_contain '.$tabanimatclass.'" >';
@@ -606,12 +607,12 @@ $actab='';
 $actab .='<div class="ult_acord">
    <div class="ult-tabto-accordion " style="width:;"
     data-titlecolor="'.$tab_title_color.'"  data-titlebg="'.$tab_background_color.'"
-     data-titlehoverbg="'.$tab_hover_background_color.'" data-titlehovercolor="'.$tab_hover_title_color.'" data-animation="'.$tab_animation.'"
+     data-titlehoverbg="'.$tab_hover_background_color.'" data-titlehovercolor="'.$tab_hover_title_color.'" data-animation="'.$tab_animation.'" 
      data-activetitle="'.$acttab_title.'" data-activeicon="'.$act_icon_color.'" data-activebg="'.$acttab_background.'">
      <dl>';
 
 $actab .=$acord;
-$actab .='
+$actab .='      
     	</dl>
     <!--<div class="extraborder" style="background-color:'.$tab_hover_background_color.'"></div>-->
 </div>
@@ -630,23 +631,37 @@ function ult_tab_init() {
 
 	$tab_id_1 = time() . '-1-' . rand( 0, 100 );
 	$tab_id_2 = time() . '-2-' . rand( 0, 100 );
-
+	
 	$settings = array(
 		'name'    => __('Advanced Tabs') ,
+		
+
 		'base'    => 'ult_tab_element',
+		
 		"category" => __("Ultimate VC Addons","ultimate_vc"),
+		
 		"description" => __("Create nice looking tabs .","ultimate_vc"),
+
+		 "icon" => "ult_tab_eleicon",
 		 "class" => "ult_tab_eleicon",
+		
+
 		//'show_settings_on_create' => false,
+		
+		
 		'is_container' => true,
+		
 		'weight'                  => - 5,
+		
 		'html_template'           => dirname( __FILE__ ) . '../vc_templates/ult_tab_element.php',
+		
 		'admin_enqueue_css'       => preg_replace( '/\s/', '%20', plugins_url( '../admin/vc_extend/css/sub-tab.css', __FILE__ ) ),
+		
 		'js_view'                 => 'UltimateTabView',
 		// JS View name for backend. Can be used to override or add some logic for shortcodes in backend (cloning/rendering/deleting/editing).
-		'icon' => 'icon-wpb-ui-tab-content ult_tab_eleicon',
+		'icon' => 'icon-wpb-ui-tab-content',
 		'params'                  => array(
-
+		
 		array(
 			"type" => "dropdown",
 			"class" => "",
@@ -666,13 +681,13 @@ function ult_tab_init() {
 				'Horizontal Slide'=>'Slide-Horizontal',
 				'Slide-Zoom'=>'Slide-Zoom',
 				'Fade'=>'Fade',
-				'Scale'=>'Scale',
+				'Scale'=>'Scale',				
 				'None'=>'None' ),
-
+			
 			"group" => "General ",
-
-		),
-
+			
+		),	
+	
 		array(
 			"type" => "dropdown",
 			"class" => "",
@@ -729,9 +744,9 @@ function ult_tab_init() {
 			"group" => "General ",
 		),
 
-
+		
 		/*---------tab----------------*/
-
+	
 		array(
 			"type" => "colorpicker",
 			"heading" => __("Tab Title Color"),
@@ -749,7 +764,7 @@ function ult_tab_init() {
 			"group" => "Tab",
 			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
 		),
-
+		
 
 		array(
 			"type" => "colorpicker",
@@ -757,7 +772,7 @@ function ult_tab_init() {
 			"param_name" => "tab_hover_title_color",
 			"value" => "",
 			"group" => "Tab",
-
+			
 		),
 		array(
 			"type" => "colorpicker",
@@ -767,7 +782,7 @@ function ult_tab_init() {
 			"group" => "Tab",
 			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
 		),
-
+		
 		array(
 			"type" => "colorpicker",
 			"heading" => __("Tab Active Title Color"),
@@ -801,7 +816,7 @@ function ult_tab_init() {
 			"dependency" => Array("element" => "tab_style","value" => array("Style_4","Style_1","Style_3","Style_5","Style_6")),
 			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
 		 ),
-
+		
 
 			array(
 			"type" => "dropdown",
@@ -853,7 +868,7 @@ function ult_tab_init() {
 			"value" => "",
 			"dependency" => Array("element" => "tab_style","value" => array("Style_5","Style_6")),
 			"group" => "Tab",
-
+			
 		),
 		/*---------icon----------------*/
 		array(
@@ -863,7 +878,7 @@ function ult_tab_init() {
 			"param_name" => "disp_icon",
 			"value" => array("Enable" =>"Enable","Disable" =>"Disables"),
 			"group" => "Icon ",
-			"description" => __("Display icon with tab title.", "ultimate_vc"),
+			"description" => __("Display icon with tab title.", "ultimate_vc"),					
 			),
 
 		array(
@@ -876,7 +891,7 @@ function ult_tab_init() {
 				'edit_field_class' => 'ult-param-heading-wrapper  vc_column vc_col-sm-12 ult_tabicon_notice',
 			),
 		array(
-			"type" => "dropdown",
+			"type" => "dropdown",			
 			"class" => "",
 			"heading" => __("Icon Position"),
 			"param_name" => "font_icons_position",
@@ -896,9 +911,9 @@ function ult_tab_init() {
 			"min" => 15,
 			"max" => 72,
 			"suffix" => "px",
-			"group" => "Icon ",
-			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),
-			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
+			"group" => "Icon ",	
+			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),	
+			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",	
 		),
 		array(
 			"type" => "colorpicker",
@@ -906,7 +921,7 @@ function ult_tab_init() {
 			"param_name" => "icon_color",
 			"value" => "",
 			"group" => "Icon ",
-			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),
+			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),		
 		),
 		array(
 			"type" => "colorpicker",
@@ -914,7 +929,7 @@ function ult_tab_init() {
 			"param_name" => "icon_hover_color",
 			"value" => "",
 			"group" => "Icon ",
-			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),
+			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),		
 		),
 		array(
 			"type" => "colorpicker",
@@ -938,13 +953,13 @@ function ult_tab_init() {
               	"Left" => "",
             ),
             "group" => "Icon ",
-			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),
-			"description" => __("Adjust spacing of icon.", "ultimate_vc"),
+			"dependency" => Array("element" => "disp_icon","value" => array("Enable")),	
+			"description" => __("Adjust spacing of icon.", "ultimate_vc"),		
         ),
 
 
 		/*--------------container-----------*/
-
+		
 		array(
 			"type" => "colorpicker",
 			"heading" => __("Container Text Color"),
@@ -958,7 +973,7 @@ function ult_tab_init() {
 			"param_name" => "enable_bg_color",
 			"value" => "",
 			"group" => "Container ",
-
+			
 		),
 		array(
 			"type" => "ultimate_border",
@@ -972,7 +987,7 @@ function ult_tab_init() {
 				__("Left","ultimate_vc")    => ""
 			),
 			//"enable_radius" => false,                   //  Enable border-radius. default true
-			"radius" => array(
+			"radius" => array(                          
 				__("Top Left","ultimate_vc")        => "",                // use 'Top Left'
 			  	__("Top Right","ultimate_vc")       => "",                  // use 'Top Right'
 			  	__("Bottom Right","ultimate_vc")    => "3",                // use 'Bottom Right'
@@ -993,11 +1008,11 @@ function ult_tab_init() {
 			"value" => array('Tabs'=>'Tabs',
 							 'Accordion'=>'Accordion',
 							 ),
-
+			
 			"group" => "Responsive",
-			"description" => __("Display normal tab or convert them into accordion on responsive devices.", "ultimate_vc"),
+			"description" => __("Display normal tab or convert them into accordion on responsive devices.", "ultimate_vc"),					
 		),
-
+		
 		array(
 			"type" => "number",
 			"class" => "",
@@ -1010,28 +1025,27 @@ function ult_tab_init() {
 			"description" => __("Enable accordion below this width.", "ultimate_vc"),
 			"dependency" => Array("element" => "resp_type","value" => array("Accordion")),
 			"group" => "Responsive",
-
+			
 		),
 		array(
 			"type" => "dropdown",
 			"class" => "",
 			"heading" => __("Responsive Mode Visibility "),
 			"param_name" => "resp_style",
-			"value" => array(
-								'Both'=>'Both',
-								'Icon'=>'Icon',
-							 	'Title'=>'Title',
-							),
-
+			"value" => array('Icon'=>'Icon',
+							 'Title'=>'Title',
+							 'Both'=>'Both',
+							 ),
+		
 			"group" => "Responsive",
 			"dependency" => Array("element" => "resp_type","value" => array("Tabs")),
 			"description" => __("Choose what you want to display on responsive devices.", "ultimate_vc"),
 		),
-
-
-
+		
+		
+		
 /*-----------typography------------*/
-
+		
 		array(
 			"type" => "text",
 			"heading" => __("<h2>Title Settings</h2>"),
@@ -1045,15 +1059,15 @@ function ult_tab_init() {
 			"param_name" => "main_heading_font_family",
 			"description" => __("Select the font of your choice. You can <a target='_blank' href='".admin_url('admin.php?page=ultimate-font-manager')."'>add new in the collection here</a>.", "imedica"),
 			"group" => "Typography",
-			),
+			),	
 
 		array(
 			"type" => "ultimate_google_fonts_style",
 			"heading" 		=>	__("Font Style", "imedica"),
 			"param_name"	=>	"title_font_style",
 			"group" => "Typography",
-			),
-
+			),	
+	
 
 		array(
 			"type" => "number",
@@ -1072,7 +1086,7 @@ function ult_tab_init() {
 			"group" => "Typography",
 			"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
 			),
-
+		
 		array(
 			"type" => "text",
 			"heading" => __("<h2>Container Description </h2>"),
@@ -1086,14 +1100,14 @@ function ult_tab_init() {
 			"param_name" => "desc_font_family",
 			"description" => __("Select the font of your choice. You can <a target='_blank' href='".admin_url('admin.php?page=ultimate-font-manager')."'>add new in the collection here</a>.", "smile"),
 			"group" => "Typography",
-			),
+			),	
 
 		array(
 			"type" => "ultimate_google_fonts_style",
 			"heading" 		=>	__("Font Style", "imedica"),
 			"param_name"	=>	"desc_font_style",
 			"group" => "Typography",
-			),
+			),	
 		array(
 			"type" => "number",
 			"param_name" => "desc_font_size",
@@ -1127,7 +1141,7 @@ function ult_tab_init() {
 if(function_exists('vc_map')){
 	vc_map( $settings );
 }
-
+	
 
 /* ---for single tabs element-------------*/
 if(function_exists('vc_map')){
@@ -1144,12 +1158,12 @@ vc_map( array(
 	//'admin_enqueue_js'  => preg_replace( '/\s/', '%20', plugins_url( 'vc_extend/js/single_element_js.js', __FILE__ ) ),
 	'js_view'     => 'UltimateSubTabView',
 	'params' => array(
-
+		
 		array(
 			'type' => 'textfield',
 			'heading' => __( 'Title', 'ultimate_vc' ),
 			'param_name' => 'title',
-
+			
 		),
 
 		array(
@@ -1159,7 +1173,7 @@ vc_map( array(
 			'param_name' => "tab_id"
 		),
 
-
+		
 
 
 		array(
@@ -1174,7 +1188,7 @@ vc_map( array(
 		),
 
 
-
+		
 		array(
 			'type' => 'textfield',
 			'heading' => __( 'Extra class name', 'ultimate_vc' ),
@@ -1184,7 +1198,7 @@ vc_map( array(
 		),
 
 	),
-
+	
 ) );
 
 }
@@ -1204,8 +1218,8 @@ function ultimate_tabs() {
 	}
 	wp_register_script('ult_tabs_rotate',plugins_url( $js_path.'tabs'.$ext.'.js', __FILE__ ),array( 'jquery'),ULTIMATE_VERSION,true);
 	wp_register_style('ult_tabs',plugins_url( $css_path.'tabs'.$ext.'.css', __FILE__ ));
-	wp_register_script('ult_tabs_acordian_js',plugins_url( $js_path.'tabs-accordion'.$ext.'.js', __FILE__ ),array( 'jquery'),ULTIMATE_VERSION,true);
-	wp_register_style('ult_tabs_acordian',plugins_url( $css_path.'tabs-accordion'.$ext.'.css', __FILE__ ));
+	wp_register_script('ult_tabs_acordian_js',plugins_url( $js_path.'tabs-accordion'.$ext.'.js', __FILE__ ),array( 'jquery'),ULTIMATE_VERSION,true);	
+	wp_register_style('ult_tabs_acordian',plugins_url( $css_path.'tabs-accordion'.$ext.'.css', __FILE__ ));	
 }
 
 function ultimate_tabs_admin() {
@@ -1216,8 +1230,8 @@ function ultimate_tabs_admin() {
 	wp_register_script('tab-js-1', plugins_url( '../admin/vc_extend/js/ult_tab_admin_enqueue_js.js', __FILE__ ),array( 'jquery'),ULTIMATE_VERSION,true);
 	wp_register_script('tab-js-2', plugins_url( '../admin/vc_extend/js/single_element_js.js', __FILE__ ),array( 'jquery'),ULTIMATE_VERSION,true);
 
-	wp_enqueue_script('tab-js-1');
-	wp_enqueue_script('tab-js-2');
+	wp_enqueue_script('tab-js-1');	
+	wp_enqueue_script('tab-js-2');	
 	//wp_enqueue_style('css-1',plugins_url( '../admin/vc_extend/css/sub-tab.css', __FILE__ ));
 }
 
@@ -1231,7 +1245,7 @@ function ultimate_tabs_admin() {
 
 if(class_exists('ULT_TAB_ELEMENT'))
 {
-
+	
 $ULT_TAB_ELEMENT = new ULT_TAB_ELEMENT;
 
 }
@@ -1274,7 +1288,7 @@ if ( class_exists( "WPBakeryShortCode" ) ) {
 					// Extract tab titles
 
 					preg_match_all( '/vc_tab title="([^\"]+)"(\stab_id\=\"([^\"]+)\"){0,1}/i', $content, $matches, PREG_OFFSET_CAPTURE );
-
+			
 					$output = '';
 					$tab_titles = array();
 
@@ -1297,7 +1311,7 @@ if ( class_exists( "WPBakeryShortCode" ) ) {
 					}
 
 
-
+				
 					$elem = $this->getElementHolder( $width );
 
 					$iner = '';
@@ -1337,7 +1351,7 @@ if ( class_exists( "WPBakeryShortCode" ) ) {
 
 		    public function setCustomTabId( $content ) {
 				return preg_replace( '/tab\_id\=\"([^\"]+)\"/', 'tab_id="$1-' . time() . '"', $content );
-
+			
 			}
 
 
@@ -1358,7 +1372,7 @@ class WPBakeryShortCode_SINGLE_TAB extends WPBakeryShortCode_VC_Column {
 						protected $controls_css_settings = 'tc vc_control-container';
 						protected $controls_list = array('add', 'edit', 'clone', 'delete');
 						//protected $controls_template_file = 'editors/partials/backend_controls_tab.tpl.php';
-
+						
 						//protected $controls_template_file = 'ultimate_vc/include/templates/editors/partials/backend_controls_tab.tpl.php';
 
 						protected $predefined_atts = array(
@@ -1369,7 +1383,7 @@ class WPBakeryShortCode_SINGLE_TAB extends WPBakeryShortCode_VC_Column {
 								'icon'=> '',
 								'ul_sub_class'=>'',
 							);
-
+					
 
 
 					public function __construct( $settings ) {
@@ -1388,7 +1402,7 @@ class WPBakeryShortCode_SINGLE_TAB extends WPBakeryShortCode_VC_Column {
 						return 'class="wpb_column_container vc_container_for_children"';
 					}
 					public function getColumnControls( $controls, $extended_css = '' ) {
-
+					
 					    return $this->getColumnControlsModular($extended_css);
 					}
 
@@ -1397,8 +1411,8 @@ class WPBakeryShortCode_SINGLE_TAB extends WPBakeryShortCode_VC_Column {
 }
 
 
+ 
 
 
-
-
+	
 //add_shortcode('ult_tab_element',array($this,'ultimate_tab_shortcode'));

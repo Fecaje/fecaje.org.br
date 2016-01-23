@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @param $settings
  * @param $value

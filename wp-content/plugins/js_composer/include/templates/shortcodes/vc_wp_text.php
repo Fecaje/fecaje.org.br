@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Shortcode attributes
  * @var $atts
@@ -8,7 +7,6 @@
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Wp_Text
  */
-$el_class = '';
 $output = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 $atts['filter'] = true; //Hack to make sure that <p> added
@@ -29,9 +27,9 @@ if ( is_object( $wp_widget_factory ) && isset( $wp_widget_factory->widgets, $wp_
 	the_widget( $type, $atts, $args );
 	$output .= ob_get_clean();
 
-	$output .= '</div>';
+	$output .= '</div>' . $this->endBlockComment( $this->getShortcode() ) . "\n";
 
 	echo $output;
 } else {
-	echo $this->debugComment( 'Widget ' . esc_attr( $type ) . 'Not found in : vc_wp_text' );
+	echo $this->endBlockComment( 'Widget ' . esc_attr( $type ) . 'Not found in : vc_wp_text' );
 }

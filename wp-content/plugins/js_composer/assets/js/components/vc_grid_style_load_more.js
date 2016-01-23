@@ -60,7 +60,7 @@ var vcGridStyleLoadMore = null;
 		this.setIsLoading();
 		$els.addClass( 'vc_visible-item ' + vcGridSettings.addItemsAnimation + ' animated' );
 		this.unsetIsLoading();
-		jQuery( window ).trigger( 'grid:items:added', this.$el );
+		jQuery(window).trigger( 'grid:items:added', this.$el );
 	};
 	/**
 	 * Filter function called by grid object ot filter content.
@@ -68,12 +68,12 @@ var vcGridStyleLoadMore = null;
 	 * @param filter - string parameter with filter settings.
 	 */
 	vcGridStyleLoadMore.prototype.filter = function ( filter ) {
-		filter = _.isUndefined( filter ) || '*' === filter ? '' : filter;
+		filter = _.isUndefined( filter ) || filter === '*' ? '' : filter;
 		if ( this.filterValue == filter ) {
 			return false; // already filtred
 		}
 		this.$content.find( '.vc_visible-item, .vc_grid_filter-item' ).removeClass( 'vc_visible-item vc_grid_filter-item '
-		+ ( 'none' !== vcGridSettings.addItemsAnimation ? vcGridSettings.addItemsAnimation + ' animated' : '') );
+		+ ( vcGridSettings.addItemsAnimation != 'none' ? vcGridSettings.addItemsAnimation + ' animated' : '') );
 		this.filterValue = filter;
 		this.$content
 			.find( '.vc_grid-item' + this.filterValue )
@@ -93,10 +93,7 @@ var vcGridStyleLoadMore = null;
 
 		this.$content = els.find( '[data-vc-grid-content="true"]' );
 
-		this.$loadMoreBtn = els.find( '[data-vc-grid-load-more-btn="true"] .vc_btn3' );
-		if ( ! this.$loadMoreBtn.length ) {
-			this.$loadMoreBtn = els.find( '[data-vc-grid-load-more-btn="true"] .vc_btn' );
-		}
+		this.$loadMoreBtn = els.find( '[data-vc-grid-load-more-btn="true"] .vc_btn' );
 		var self = this;
 		this.$loadMoreBtn.click( function ( e ) {
 			e.preventDefault();

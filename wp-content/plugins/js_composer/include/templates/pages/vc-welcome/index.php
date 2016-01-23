@@ -8,12 +8,8 @@
 		<?php echo sprintf( __( 'Version %s', 'js_composer' ), WPB_VC_VERSION ) ?>
 	</div>
 	<p class="vc-page-actions">
-		<?php if ( vc_user_access()
-			->wpAny( 'manage_options' )
-			->part( 'settings' )
-			->can( 'vc-general-tab' )
-			->get() ) : ?><a href="<?php echo esc_attr( admin_url( 'admin.php?page=vc-general' ) ) ?>"
-		   class="button button-primary"><?php _e( 'Settings', 'js_composer' ) ?></a><?php endif; ?>
+		<a href="<?php echo esc_attr( admin_url( 'admin.php?page=vc-general' ) ) ?>"
+		   class="button button-primary"><?php _e( 'Settings', 'js_composer' ) ?></a>
 		<a href="https://twitter.com/share" class="twitter-share-button"
 		   data-text="Take full control over your WordPress site with Visual Composer page builder by @WPBakery"
 		   data-url="http://vc.wpbakery.com" data-size="large">Tweet</a>
@@ -28,10 +24,10 @@
 			}( document, 'script', 'twitter-wjs' );</script>
 	</p>
 	<?php vc_include_template( '/pages/partials/_tabs.php',
-	array(
+		array(
 			'slug' => $page->getSlug(),
 			'active_tab' => $active_page->getSlug(),
-			'tabs' => $pages,
+			'tabs' => $pages
 		) );
 	?>
 	<?php echo $active_page->render(); ?>

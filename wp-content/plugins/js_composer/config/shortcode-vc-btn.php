@@ -1,5 +1,4 @@
 <?php
-
 /**
  * New button implementation
  * array_merge is needed due to merging other shortcode data into params.
@@ -20,7 +19,7 @@ $icons_params = vc_map_integrate_shortcode( 'vc_icon', 'i_', '',
 if ( is_array( $icons_params ) && ! empty( $icons_params ) ) {
 	foreach ( $icons_params as $key => $param ) {
 		if ( is_array( $param ) && ! empty( $param ) ) {
-			if ( 'i_type' === $param['param_name'] ) {
+			if ( $param['param_name'] == 'i_type' ) {
 				// append pixelicons to dropdown
 				$icons_params[ $key ]['value'][ __( 'Pixel', 'js_composer' ) ] = 'pixelicons';
 			}
@@ -28,6 +27,7 @@ if ( is_array( $icons_params ) && ! empty( $icons_params ) ) {
 				// remove admin label
 				unset( $icons_params[ $key ]['admin_label'] );
 			}
+
 		}
 	}
 }
@@ -70,7 +70,7 @@ $params = array_merge(
 			'description' => __( 'Select custom background color for your element.', 'js_composer' ),
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'custom' ),
+				'value' => array( 'custom' )
 			),
 			'edit_field_class' => 'vc_col-sm-6 vc_column',
 			'std' => '#ededed',
@@ -82,7 +82,7 @@ $params = array_merge(
 			'description' => __( 'Select custom text color for your element.', 'js_composer' ),
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'custom' ),
+				'value' => array( 'custom' )
 			),
 			'edit_field_class' => 'vc_col-sm-6 vc_column',
 			'std' => '#666',
@@ -94,7 +94,7 @@ $params = array_merge(
 			'description' => __( 'Select outline and text color for your element.', 'js_composer' ),
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'outline-custom' ),
+				'value' => array( 'outline-custom' )
 			),
 			'edit_field_class' => 'vc_col-sm-4 vc_column',
 			'std' => '#666',
@@ -106,7 +106,7 @@ $params = array_merge(
 			'description' => __( 'Select hover background color for your element.', 'js_composer' ),
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'outline-custom' ),
+				'value' => array( 'outline-custom' )
 			),
 			'edit_field_class' => 'vc_col-sm-4 vc_column',
 			'std' => '#666',
@@ -118,7 +118,7 @@ $params = array_merge(
 			'description' => __( 'Select hover text color for your element.', 'js_composer' ),
 			'dependency' => array(
 				'element' => 'style',
-				'value' => array( 'outline-custom' ),
+				'value' => array( 'outline-custom' )
 			),
 			'edit_field_class' => 'vc_col-sm-4 vc_column',
 			'std' => '#fff',
@@ -150,14 +150,14 @@ $params = array_merge(
 				           __( 'Classic Green', 'js_composer' ) => 'success',
 				           __( 'Classic Orange', 'js_composer' ) => 'warning',
 				           __( 'Classic Red', 'js_composer' ) => 'danger',
-				           __( 'Classic Black', 'js_composer' ) => 'inverse',
+				           __( 'Classic Black', 'js_composer' ) => "inverse"
 				           // + Btn2 Colors (default color set)
 			           ) + getVcShared( 'colors-dashed' ),
 			'std' => 'grey',
 			// must have default color grey
 			'dependency' => array(
 				'element' => 'style',
-				'value_not_equal_to' => array( 'custom', 'outline-custom' ),
+				'value_not_equal_to' => array( 'custom', 'outline-custom' )
 			),
 		),
 		array(
@@ -173,7 +173,7 @@ $params = array_merge(
 			'type' => 'dropdown',
 			'heading' => __( 'Alignment', 'js_composer' ),
 			'param_name' => 'align',
-			'description' => __( 'Select button alignment.', 'js_composer' ),
+			'description' => __( 'Select button alignment.', 'js_comopser' ),
 			// compatible with btn2, default left to be compatible with btn1
 			'value' => array(
 				__( 'Inline', 'js_composer' ) => 'inline',
@@ -181,7 +181,7 @@ $params = array_merge(
 				__( 'Left', 'js_composer' ) => 'left',
 				// default as well
 				__( 'Right', 'js_composer' ) => 'right',
-				__( 'Center', 'js_composer' ) => 'center',
+				__( 'Center', 'js_composer' ) => 'center'
 			),
 		),
 		array(
@@ -241,12 +241,6 @@ $params = array_merge(
 			'heading' => __( 'Extra class name', 'js_composer' ),
 			'param_name' => 'el_class',
 			'description' => __( 'Style particular content element differently - add a class name and refer to it in custom CSS.', 'js_composer' ),
-		),
-		array(
-			'type' => 'css_editor',
-			'heading' => __( 'CSS box', 'js_composer' ),
-			'param_name' => 'css',
-			'group' => __( 'Design Options', 'js_composer' ),
 		),
 	)
 );

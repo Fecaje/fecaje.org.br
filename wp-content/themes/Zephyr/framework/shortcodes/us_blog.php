@@ -5,30 +5,66 @@
  *
  * Listing of blog posts.
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
  * @var $shortcode string Current shortcode name
  * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
  * @var $atts array Shortcode attributes
- *
- * @param $atts ['layout'] string Blog layout: 'smallcircle' / 'smallsquare' / 'large' / 'grid' / 'masonry' / 'short'
- * @param $atts ['columns'] int Number of columns: 1 / 2 / 3 / 4
- * @param $atts ['content_type'] string Content type: 'excerpt' / 'content' / 'none'
- * @param $atts ['pagination'] string Pagination type: 'none' / 'regular' / 'ajax'
- * @param $atts ['categories'] string Comma-separated list of categories slugs to filter the posts
- * @param $atts ['orderby'] string Posts order: 'date' / 'rand'
- * @param $atts ['show_date'] bool
- * @param $atts ['show_author'] bool
- * @param $atts ['show_categories'] bool
- * @param $atts ['show_tags'] bool
- * @param $atts ['show_comments'] bool
- * @param $atts ['show_read_more'] bool
- * @param $atts ['items'] int Number of items per page
- * @param $atts ['el_class'] string Extra class name
+ * @var $content string Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_blog' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Blog layout: 'smallcircle' / 'large' / 'grid' / 'masonry'
+	 */
+	'layout' => 'large',
+	/**
+	 * @var string Content type: 'excerpt' / 'content' / 'none'
+	 */
+	'content_type' => 'excerpt',
+	/**
+	 * @var string Pagination type: 'none' / 'regular' / 'ajax'
+	 */
+	'pagination' => 'none',
+	/**
+	 * @var string Comma-separated list of categories slugs to filter the posts
+	 */
+	'categories' => NULL,
+	/**
+	 * @var string Posts order: 'date' / 'rand'
+	 */
+	'order_by' => 'date',
+	/**
+	 * @var bool
+	 */
+	'show_date' => TRUE,
+	/**
+	 * @var bool
+	 */
+	'show_author' => TRUE,
+	/**
+	 * @var bool
+	 */
+	'show_categories' => TRUE,
+	/**
+	 * @var bool
+	 */
+	'show_tags' => TRUE,
+	/**
+	 * @var bool
+	 */
+	'show_comments' => TRUE,
+	/**
+	 * @var bool
+	 */
+	'show_read_more' => TRUE,
+	/**
+	 * @var int Number of items per page
+	 */
+	'items' => NULL,
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 $metas = array();
 foreach ( array( 'date', 'author', 'categories', 'tags', 'comments' ) as $meta_key ) {
@@ -56,34 +92,13 @@ if ( ! empty( $atts['categories'] ) ) {
 }
 
 // Setting posts order
-$orderby_translate = array(
-	'date' => 'date',
-	'date_asc' => 'date',
-	'alpha' => 'title',
-	'rand' => 'rand'
-);
-$order_translate = array(
-	'date' => 'DESC',
-	'date_asc' => 'ASC',
-	'alpha' => 'ASC',
-	'rand' => ''
-);
-$orderby = ( in_array( $atts['orderby'], array ( 'date', 'date_asc', 'alpha', 'rand' ) ) ) ? $atts['orderby'] : 'date';
-if ( $orderby == 'rand' ) {
+if ( $atts['order_by'] == 'rand' ) {
 	$query_args['orderby'] = 'rand';
 } else/*if ( $atts['order_by'] == 'date' )*/ {
 	$query_args['orderby'] = array(
-		$orderby_translate[$orderby] => $order_translate[$orderby],
+		'date' => 'DESC',
 	);
 }
-//
-//if ( $atts['order_by'] == 'rand' ) {
-//	$query_args['orderby'] = 'rand';
-//} else/*if ( $atts['order_by'] == 'date' )*/ {
-//	$query_args['orderby'] = array(
-//		'date' => 'DESC',
-//	);
-//}
 
 // Posts per page
 $atts['items'] = max( 0, intval( $atts['items'] ) );
@@ -102,11 +117,10 @@ if ( $atts['pagination'] == 'regular' ) {
 $template_vars = array(
 	'query_args' => $query_args,
 	'layout_type' => $atts['layout'],
-	'columns' => $atts['columns'],
 	'content_type' => $atts['content_type'],
 	'metas' => $metas,
 	'show_read_more' => ! ! $atts['show_read_more'],
 	'pagination' => $atts['pagination'],
-	'el_class' => $atts['el_class'],
+	'el_class' => ' ' . $atts['el_class'],
 );
 us_load_template( 'templates/blog/listing', $template_vars );

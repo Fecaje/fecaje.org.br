@@ -9,7 +9,9 @@
  * @action After the template: 'us_after_template:templates/theme-options.min.css'
  */
 
-$buffer = us_get_template( 'templates/theme-options.css' );
+ob_start();
+us_load_template( 'templates/theme-options.css' );
+$buffer = ob_get_clean();
 
 // Remove comments
 $buffer = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer );

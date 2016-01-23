@@ -53,7 +53,7 @@ function us_ajax_cform() {
 
 	// Validating fields
 	$errors = array();
-	$fields = us_config( 'cform.fields', array() );
+	$fields = us_config( 'cform.fields' );
 	foreach ( $fields as $field_name => $field ) {
 		if ( ! isset( $shortcode_atts[ $field_name . '_field' ] ) OR $shortcode_atts[ $field_name . '_field' ] != 'required' ) {
 			continue;

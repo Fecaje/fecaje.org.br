@@ -1,3 +1,4 @@
+
 /*
  * Date Format 1.2.3
  * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
@@ -216,7 +217,7 @@ jQuery( document ).ready( function( $ ) {
 			var fields = $( create_organizer_template({}) );
 			organizer_section.find('tfoot').before( fields );
 			fields.prepend( dropdown );
-			fields.find('.chosen').chosen().trigger('change');
+			fields.find('.chosen').chosen();
 		});
 
 		organizer_section.on('change', '.organizer-dropdown', toggle_organizer_fields);

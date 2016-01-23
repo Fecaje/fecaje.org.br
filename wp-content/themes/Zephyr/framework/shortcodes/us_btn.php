@@ -3,27 +3,58 @@
 /**
  * Shortcode: us_btn
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['text'] string Button label
- * @param $atts ['link'] string Button link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
- * @param $atts ['color'] string Button color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white' / 'custom'
- * @param $atts ['bg_color'] string Button Background Color
- * @param $atts ['text_color'] string Button Text Color
- * @param $atts ['style'] string Button style: 'raised' / 'flat'
- * @param $atts ['icon'] string Button icon
- * @param $atts ['iconpos'] string Icon position: 'left' / 'right'
- * @param $atts ['size'] string Button size: 'small' / 'medium' / 'large'
- * @param $atts ['align'] string Button alignment: 'left' / 'center' / 'right'
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_btn' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Button label
+	 */
+	'text' => __( 'Click Me', 'us' ),
+	/**
+	 * @var string Button link in a serialized format: 'url:http%3A%2F%2Fwordpress.org|title:WP%20Website|target:%20_blank'
+	 */
+	'link' => '',
+	/**
+	 * @var string Button color: 'primary' / 'secondary' / 'light' / 'contrast' / 'black' / 'white' / 'custom'
+	 */
+	'color' => 'primary',
+	/**
+	 * @var string Button Background Color
+	 */
+	'bg_color' => '',
+	/**
+	 * @var string Button Text Color
+	 */
+	'text_color' => '',
+	/**
+	 * @var string Button style: 'raised' / 'flat'
+	 */
+	'style' => 'raised',
+	/**
+	 * @var string Button icon
+	 */
+	'icon' => '',
+	/**
+	 * @var string Icon position: 'left' / 'right'
+	 */
+	'iconpos' => 'left',
+	/**
+	 * @var string Button size: 'small' / 'medium' / 'large'
+	 */
+	'size' => 'medium',
+	/**
+	 * @var string Button alignment: 'left' / 'center' / 'right'
+	 */
+	'align' => 'left',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 // .w-btn container additional classes and inner CSS-styles
 $classes = '';
@@ -67,7 +98,7 @@ if ( ! empty( $inner_css ) ) {
 }
 $output .= '>';
 $output .= $icon_html;
-$output .= '<span class="w-btn-label">' . $atts['text'] . '</span>';
+$output .= '<label>' . $atts['text'] . '</label>';
 $output .= '</a></div>';
 
 echo $output;

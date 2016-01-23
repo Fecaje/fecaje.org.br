@@ -2,11 +2,10 @@
  * Plugin Name: Ultimate Addons for Visual Composer
  * Plugin URI: http://codecanyon.net/item/ultimate-addons-for-visual-composer/6892199
  * Description: All in one plugin for your Visual Composer needs!
- * Version: 3.13.7
+ * Version: 3.13.2
  * Author: BrainstormForce
  * Author URI: http://codecanyon.net/user/BrainstormForce
- */
-
+ */ 
 .aio-icon-component i,
 .align-icon i,
 .ult-banner-block i,
@@ -76,12 +75,6 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box
-}
-.upb_video_class,
-.wpb_column,
-.wpb_row,
-.vc_row {
-    position: relative
 }
 .aio-icon,
 .vc_row .aio-icon {
@@ -396,9 +389,6 @@ a.ulimate-info-list-link {
     margin: 0;
     cursor: inherit
 }
-.ult-animation * {
-	-webkit-backface-visibility: hidden;
-}
 .ult-animation.ult-animate-viewport {
     -webkit-transition: opacity 900ms linear;
     -moz-transition: opacity 900ms linear;
@@ -471,7 +461,7 @@ a.ulimate-info-list-link {
 }
 .vc_ultimate_icons a.vc_control-btn.vc_control-btn-append {
     /*margin-bottom: 10px;*/
-
+    
     margin-top: 20px;
     margin-left: 50%;
     z-index: 33000000;
@@ -504,65 +494,4 @@ a.ulimate-info-list-link {
 }
 .vc_element.element-ult_hotspot {
     margin-top: 20%;
-}
-.aio-icon-description p,
-.aio-icon-description div,
-.ifb-flip-box-section-content p,
-.ifb-flip-box-section-content div,
-.info-circle-text p,
-.info-circle-text div,
-.timeline-header>div p,
-.timeline-header>div div,
-.uavc-list-desc p,
-.uavc-list-desc div,
-.ult-tooltipster-content p,
-.ult-tooltipster-content div,
-.ult_price_features p,
-.ult_price_features div,
-.uvc-ctaction-data,
-.uvc-ctaction-data p,
-.uvc-ctaction-data div,
-.uvc-sub-heading p,
-.uvc-sub-heading div,
-.ultimate-ticker-prefix,
-.ultimate-ticker-suffix,
-.ultimate-vticker p,
-.ultimate-vticker div,
-.ult_modal-body p,
-.ult_modal-body div {
-    font-family: inherit!important;
-    font-weight: inherit !important;
-    font-size: inherit!important;
-    font-style: inherit !important;
-    color: inherit !important;
-    line-height: inherit !important;
-}
-.ubtn-text,
-span.middle-text p,
-span.middle-text div,
-.strip_main_text p,
-.strip_main_text div,
-.strip_highlight_text p,
-.strip_highlight_text div,
-.ulsb-strip > h4 p,
-.ulsb-strip > h4 div {
-    font-family: inherit;
-    font-weight: inherit;
-    font-size: inherit;
-    font-style: inherit;
-    color: inherit;
-    line-height: inherit;
-}
-/* Creative  Link Style-10*/
-a.ult_colorlink p,
-a.ult_colorlink div {
-    font-family: inherit;
-    font-weight: inherit;
-    font-size: inherit;
-    font-style: inherit;
-    line-height: inherit;
-}
-/* Advanced Tab */
-li.ult_tab_li > a.ult_a span {
-    color: inherit;
 }

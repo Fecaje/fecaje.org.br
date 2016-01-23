@@ -3,19 +3,10 @@
 /**
  * Shortcode: us_gallery
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['ids'] string Comma-separated list of attachment ids
- * @param $atts ['columns'] int Number of columns
- * @param $atts ['layout'] string Gallery layout: 'default' / 'masonry'
- * @param $atts ['orderby'] string Elements order: '' / 'rand'
- * @param $atts ['indents'] bool Add indents between thumbnails?
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
 // Translating attributes from [gallery] to [us_gallery] format (may be used in both shortcodes
@@ -67,7 +58,32 @@ if ( ! isset( $atts['ids'] ) OR empty( $atts['ids'] ) ) {
 	}
 }
 
-$atts = us_shortcode_atts( $atts, 'us_gallery' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Comma-separated list of attachment ids
+	 */
+	'ids' => '',
+	/**
+	 * @var int Number of columns
+	 */
+	'columns' => 6,
+	/**
+	 * @var string Gallery layout: 'default' / 'masonry'
+	 */
+	'layout' => 'default',
+	/**
+	 * @var string Elements order: '' / 'rand'
+	 */
+	'orderby' => '',
+	/**
+	 * @var bool Add indents between thumbnails?
+	 */
+	'indents' => FALSE,
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 if ( empty( $atts['ids'] ) ) {
 	return;
@@ -135,7 +151,7 @@ if ( is_feed() ) {
 
 $classes .= ' link_' . $link_type;
 
-$classes = apply_filters( 'us_gallery_listing_classes', $classes );
+$classes .= ' animate_revealgrid';
 
 $output = '<div class="w-gallery' . $classes . '"><div class="w-gallery-list">';
 
@@ -153,12 +169,12 @@ foreach ( $attachments as $index => $attachment ) {
 	}
 
 	$output .= '<' . $item_tag_name . ' class="w-gallery-item order_' . ( $index + 1 );
-	$output .= apply_filters( 'us_gallery_listing_item_classes', '' );
+	$output .= ' animate_reveal';
 	$output .= '"';
 	if ( $link_type == 'media' ) {
-		$output .= ' href="' . wp_get_attachment_url( $attachment->ID ) . '" title="' . esc_attr( $title ) . '"';
+		$output .= ' href="' . wp_get_attachment_url( $attachment->ID ) . '" title="' . $title . '"';
 	} elseif ( $link_type == 'attachment' ) {
-		$output .= ' href="' . get_attachment_link( $attachment->ID ) . '" title="' . esc_attr( $title ) . '"';
+		$output .= ' href="' . get_attachment_link( $attachment->ID ) . '" title="' . $title . '"';
 	}
 	$output .= '>';
 	$output .= wp_get_attachment_image( $attachment->ID, $tnail_size, FALSE, array( 'class' => 'w-gallery-item-img' ) );

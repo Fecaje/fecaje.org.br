@@ -4,28 +4,20 @@ if(!class_exists('Ultimate_Animator_Param'))
 	class Ultimate_Animator_Param
 	{
 		function __construct()
-		{
-			if(defined('WPB_VC_VERSION') && version_compare(WPB_VC_VERSION, 4.8) >= 0) {
-				if(function_exists('vc_add_shortcode_param'))
-				{
-					vc_add_shortcode_param('animator' , array($this, 'animator_param'));
-				}
-			}
-			else {
-				if(function_exists('add_shortcode_param'))
-				{
-					add_shortcode_param('animator' , array($this, 'animator_param'));
-				}
+		{	
+			if(function_exists('add_shortcode_param'))
+			{
+				add_shortcode_param('animator' , array($this, 'animator_param'));
 			}
 		}
-
+	
 		function animator_param($settings, $value){
 			$param_name = isset($settings['param_name']) ? $settings['param_name'] : '';
 			$type = isset($settings['type']) ? $settings['type'] : '';
 			$class = isset($settings['class']) ? $settings['class'] : '';
 			$json = ultimate_get_animation_json();
 			$jsonIterator = json_decode($json,true);
-
+			
 			$animators = '<select name="'.$param_name.'" class="wpb_vc_param_value ' . $param_name . ' ' . $type . ' ' . $class . '">';
 
 			foreach ($jsonIterator as $key => $val) {
@@ -47,7 +39,7 @@ if(!class_exists('Ultimate_Animator_Param'))
 				}
 			}
 			$animators .= '<select>';
-
+			
 			$output = '';
 			$output .= '<div class="select_anim" style="width: 45%; float: left;">';
 			$output .= $animators;
@@ -66,7 +58,7 @@ if(!class_exists('Ultimate_Animator_Param'))
 				</script>';
 			return $output;
 		}
-
+		
 	}
 }
 

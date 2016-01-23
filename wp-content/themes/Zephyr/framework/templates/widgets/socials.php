@@ -9,6 +9,7 @@
  * @action After the template: 'us_after_template:templates/widgets/socials'
  */
 $socials = array(
+	'email' => 'Email',
 	'facebook' => 'Facebook',
 	'twitter' => 'Twitter',
 	'google' => 'Google+',
@@ -58,9 +59,7 @@ foreach ( $socials as $social_key => $social ) {
 	}
 
 	$output .= '<div class="w-socials-item ' . $social_key . '">
-		<a class="w-socials-item-link" target="_blank" href="' . $social_url . '">
-			<span class="w-socials-item-link-hover"></span>
-		</a>
+		<a class="w-socials-item-link" target="_blank" href="' . $social_url . '"></a>
 		<div class="w-socials-item-popup">
 			<span>' . $social . '</span>
 		</div>
@@ -73,7 +72,6 @@ $custom_link = us_get_option( 'header_socials_custom_url' );
 if ( ! empty( $custom_icon ) AND ! empty( $custom_link ) ) {
 	$output .= '<div class="w-socials-item custom">';
 	$output .= '<a class="w-socials-item-link" target="_blank" href="' . esc_url( $custom_link ) . '">';
-	$output .= '<span class="w-socials-item-link-hover"></span>';
 	$output .= '<i class="' . us_prepare_icon_class( $custom_icon ) . '"></i>';
 	$output .= '</a></div>';
 }

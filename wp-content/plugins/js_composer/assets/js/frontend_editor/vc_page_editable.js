@@ -12,7 +12,7 @@ var vc_iframe = {
 (function ( $ ) {
 	vc_iframe.showNoContent = function ( show ) {
 		var $vc_no_content_helper_el = $( '#vc_no-content-helper' );
-		(false === show && $vc_no_content_helper_el.addClass( 'vc_not-empty' )) || $vc_no_content_helper_el.removeClass( 'vc_not-empty' );
+		(show === false && $vc_no_content_helper_el.addClass( 'vc_not-empty' )) || $vc_no_content_helper_el.removeClass( 'vc_not-empty' );
 	};
 	vc_iframe.scrollTo = function ( id ) {
 		var $el, el_height, hidden = true, position_y, position,
@@ -20,7 +20,7 @@ var vc_iframe = {
 			window_scroll_top = $( window ).scrollTop();
 		if ( id && ($el = $( '[data-model-id=' + id + ']' )) ) {
 			position = $el.offset();
-			if ( false === (position_y = position ? position.top : false) ) {
+			if ( (position_y = position ? position.top : false) === false ) {
 				return false;
 			}
 			el_height = $el.height();
@@ -53,8 +53,8 @@ var vc_iframe = {
 	};
 	vc_iframe.renderPlaceholder = function ( event, element ) {
 		var tag = $( element ).data( 'tag' ),
-			is_container = parent.vc.map[ tag ] === Object( parent.vc.map[ tag ] ) && ( ( (true === parent.vc.map[ tag ].is_container || false === parent.vc.map[ tag ].is_container || '[object Boolean]' === toString.call( parent.vc.map[ tag ].is_container )) && true === parent.vc.map[ tag ].is_container ) || (null != parent.vc.map[ tag ].as_parent && '[object Array]' === Object.prototype.toString.call( parent.vc.map[ tag ].as_parent ) && false != parent.vc.map[ tag ].as_parent) ),
-			$helper = $( '<div class="vc_helper vc_helper-' + tag + '"><i class="vc_general vc_element-icon'
+			is_container = parent.vc.map[ tag ] === Object( parent.vc.map[ tag ] ) && ( ( (parent.vc.map[ tag ].is_container === true || parent.vc.map[ tag ].is_container === false || toString.call( parent.vc.map[ tag ].is_container ) == '[object Boolean]') && parent.vc.map[ tag ].is_container === true ) || (parent.vc.map[ tag ].as_parent != null && Object.prototype.toString.call( parent.vc.map[ tag ].as_parent ) == '[object Array]' && parent.vc.map[ tag ].as_parent != false) ),
+			$helper = $( '<div class="vc_helper vc_helper-' + tag + '"><i class="vc_element-icon'
 			+ ( parent.vc.map[ tag ].icon ? ' ' + parent.vc.map[ tag ].icon : '' )
 			+ '"'
 			+ ( is_container ? ' data-is-container="true"' : '' )
@@ -70,7 +70,6 @@ var vc_iframe = {
 			cursor: 'move',
 			cursorAt: { top: 20, left: 16 },
 			placeholder: "vc_placeholder-row",
-			cancel: '.vc-non-draggable-row',
 			helper: this.renderPlaceholder,
 			start: function ( event, ui ) {
 				vc_iframe.startSorting();
@@ -92,7 +91,6 @@ var vc_iframe = {
 			cursorAt: { top: 20, left: 16 },
 			connectWith: '.vc_element-container',
 			items: '> [data-model-id]',
-			cancel: '.vc-non-draggable',
 			handle: '.vc_element-move',
 			start: this.startSorting,
 			update: app.saveElementOrder,
@@ -106,7 +104,7 @@ var vc_iframe = {
 				var tag = ui.item.data( 'tag' ),
 					vc_map = window.parent.vc.map || false,
 					parent_tag = ui.placeholder.closest( '[data-tag]' ).data( 'tag' ),
-					allowed_container_element = 'undefined' === typeof(vc_map[ parent_tag ].allowed_container_element) ? true : vc_map[ parent_tag ].allowed_container_element;
+					allowed_container_element = vc_map[ parent_tag ].allowed_container_element === undefined ? true : vc_map[ parent_tag ].allowed_container_element;
 				ui.placeholder.removeClass( 'vc_hidden-placeholder' );
 				ui.placeholder.css( { maxWidth: ui.placeholder.parent().width() } );
 				if ( tag && vc_map ) {
@@ -115,11 +113,11 @@ var vc_iframe = {
 					}
 					if ( ui.sender ) {
 						var $sender_column = ui.sender.closest( '.vc_element' ).removeClass( 'vc_sorting-over' );
-						1 > $sender_column.find( '.vc_element' ).length && $sender_column.addClass( 'vc_empty' );
+						$sender_column.find( '.vc_element' ).length < 1 && $sender_column.addClass( 'vc_empty' );
 					}
 					ui.placeholder.closest( '.vc_element' ).addClass( 'vc_sorting-over' );
-					var is_container = vc_map[ tag ] === Object( vc_map[ tag ] ) && ( ( (true === vc_map[ tag ].is_container || false === vc_map[ tag ].is_container || '[object Boolean]' === toString.call( vc_map[ tag ].is_container )) && true === vc_map[ tag ].is_container ) || (null != vc_map[ tag ].as_parent && '[object Array]' === Object.prototype.toString.call( vc_map[ tag ].as_parent ) && false != vc_map[ tag ].as_parent) );
-					if ( is_container && ! (true === allowed_container_element || allowed_container_element === tag.replace( /_inner$/,
+					var is_container = vc_map[ tag ] === Object( vc_map[ tag ] ) && ( ( (vc_map[ tag ].is_container === true || vc_map[ tag ].is_container === false || toString.call( vc_map[ tag ].is_container ) == '[object Boolean]') && vc_map[ tag ].is_container === true ) || (vc_map[ tag ].as_parent != null && Object.prototype.toString.call( vc_map[ tag ].as_parent ) == '[object Array]' && vc_map[ tag ].as_parent != false) );
+					if ( is_container && ! (allowed_container_element === true || allowed_container_element === tag.replace( /_inner$/,
 							'' )) ) {
 						ui.placeholder.addClass( 'vc_hidden-placeholder' );
 					}
@@ -127,6 +125,7 @@ var vc_iframe = {
 			},
 			out: function ( event, ui ) {
 				ui.placeholder.removeClass( 'vc_hidden-placeholder' );
+				// $(this).closest('.vc_element').removeClass('vc_sorting-over');
 			},
 			stop: function ( event, ui ) {
 				var tag = ui.item.data( 'tag' ),
@@ -140,9 +139,9 @@ var vc_iframe = {
 					$( this ).sortable( 'cancel' );
 					trig_changed = false;
 				}
-				var is_container = vc_map[ tag ] === Object( vc_map[ tag ] ) && ( ( (true === vc_map[ tag ].is_container || false === vc_map[ tag ].is_container || '[object Boolean]' === toString.call( vc_map[ tag ].is_container )) && true === vc_map[ tag ].is_container ) || (null != vc_map[ tag ].as_parent && '[object Array]' === Object.prototype.toString.call( vc_map[ tag ].as_parent ) && false != vc_map[ tag ].as_parent) );
-				if ( is_container && ! (true === allowed_container_element || allowed_container_element === tag.replace( /_inner$/,
-						'' )) ) {
+				var is_container = vc_map[ tag ] === Object( vc_map[ tag ] ) && ( ( (vc_map[ tag ].is_container === true || vc_map[ tag ].is_container === false || toString.call( vc_map[ tag ].is_container ) == '[object Boolean]') && vc_map[ tag ].is_container === true ) || (vc_map[ tag ].as_parent != null && Object.prototype.toString.call( vc_map[ tag ].as_parent ) == '[object Array]' && vc_map[ tag ].as_parent != false) );
+				if ( is_container && ! (allowed_container_element === true || allowed_container_element === tag.replace( /_inner$/,
+						'' )) ) { // && ui.item.hasClass('wpb_container_block')
 					ui.placeholder.removeClass( 'vc_hidden-placeholder' );
 					$( this ).sortable( 'cancel' );
 					trig_changed = false
@@ -164,6 +163,7 @@ var vc_iframe = {
 				var id = ui.item.data( 'modelId' ),
 					model = parent.vc.shortcodes.get( id ),
 					css_class = model.view.convertSize( model.getParam( 'width' ) );
+				// ui.item.removeClass(css_class).data('removedClass', css_class);
 				ui.item.appendTo( ui.item.parent().parent() );
 				ui.placeholder.addClass( css_class );
 				ui.placeholder.width( ui.placeholder.width() - 4 );
@@ -171,12 +171,37 @@ var vc_iframe = {
 			cursor: 'move',
 			cursorAt: { top: 20, left: 16 },
 			stop: function ( event, ui ) {
+				// ui.item.addClass(ui.item.data('removedClass'));
 				vc_iframe.stopSorting( event, ui );
 			},
 			update: app.saveColumnOrder,
 			placeholder: 'vc_placeholder-column',
 			helper: this.renderPlaceholder
 		} );
+		/*
+		 $('.vc_element_button', parent.document).draggable({
+		 // connectToSortable: '.vc_element-container',
+		 helper: 'clone',
+		 revert: true,
+		 cursor:"move"
+		 });
+		 */
+		/*
+		 $('.vc_row_button', parent.document).draggable({
+		 connectToSortable: $('.entry-content'),
+		 helper: 'clone',
+		 revert: 'invalid',
+		 iframeFix: true
+		 // appendTo: "body"
+		 });
+		 /* .mouseup(function(){
+		 $(this).draggable( "disable" );
+		 $('.wpb_column > .wpb_wrapper').sortable('disable');
+		 $('.vc_placeholder', parent.document).remove();
+		 // $('.vc_placeholder').remove();
+		 $(this).draggable( "enable" );
+		 });
+		 */
 		$vc_row_el.disableSelection();
 		$vc_row_el.delegate( 'select', 'mouseenter', function () {
 			$vc_row_el.enableSelection();
@@ -307,6 +332,7 @@ var vc_iframe = {
 		vc_iframe.scripts_to_load = $elements;
 	};
 	vc_iframe.addStyles = function ( $elements ) {
+		// $elements.appendTo('body');
 		$elements.each( function () {
 			$( '<style/>', {
 				type: 'text/css'
@@ -328,15 +354,15 @@ var vc_iframe = {
 					if ( src ) {
 						$.getScript( src, function () {
 							vc_iframe.scripts_to_wait -= 1;
-							1 > vc_iframe.scripts_to_wait && vc_iframe.reload()
+							vc_iframe.scripts_to_wait < 1 && vc_iframe.reload()
 						} );
 					} else {
 						// remove not allowed script from queue
 						vc_iframe.scripts_to_wait -= 1;
-						1 > vc_iframe.scripts_to_wait && vc_iframe.reload()
+						vc_iframe.scripts_to_wait < 1 && vc_iframe.reload()
 					}
 				} else if ( $element ) {
-					// TODO: possible this one is not required. Better to add internal js inside shortcode element content.
+					// @todo possible this one is not required. Better to add internal js inside shortcode element content.
 					try {
 						$( '<script/>', {
 							type: 'text/javascript'
@@ -345,7 +371,7 @@ var vc_iframe = {
 						window.console && window.console.error && console.error( e );
 					}
 					vc_iframe.scripts_to_wait -= 1;
-					1 > vc_iframe.scripts_to_wait && vc_iframe.reload()
+					vc_iframe.scripts_to_wait < 1 && vc_iframe.reload()
 				}
 			} else {
 				// this must be a <link> element with href
@@ -358,7 +384,7 @@ var vc_iframe = {
 					} ).appendTo( 'body' );
 				}
 				vc_iframe.scripts_to_wait -= 1;
-				1 > vc_iframe.scripts_to_wait && vc_iframe.reload();
+				vc_iframe.scripts_to_wait < 1 && vc_iframe.reload();
 			}
 		} );
 		vc_iframe.scripts_to_load = false;
@@ -367,7 +393,7 @@ var vc_iframe = {
 			! vc_iframe.scripts_to_wait && vc_iframe.reload();
 		} );
 		window.setTimeout( function () {
-			true === vc_iframe.reload_safety_call && vc_iframe.reload();
+			vc_iframe.reload_safety_call === true && vc_iframe.reload();
 		}, 14000 );
 	};
 	vc_iframe.destroyTabs = function ( $tabs ) {
@@ -378,14 +404,15 @@ var vc_iframe = {
 	};
 	vc_iframe.buildTabs = function ( $tab, active ) {
 		var ver = $.ui.version.split( '.' ),
-			old_version = 1 === parseInt( ver[ 0 ] ) && 9 > parseInt( ver[ 1 ] );
+			old_version = parseInt( ver[ 0 ] ) == 1 && parseInt( ver[ 1 ] ) < 9;
+		// if($call.hasClass('ui-widget')) $call.tabs('destroy');
 		$tab.each( function ( index ) {
 			var $tabs,
 				interval = $( this ).attr( "data-interval" ),
 				tabs_array = [],
 				$wrapper = $( this ).find( '.wpb_tour_tabs_wrapper' );
 			if ( $wrapper.hasClass( 'ui-widget' ) ) {
-				active = false !== active ? active : $wrapper.tabs( 'option', 'active' );
+				active = active !== false ? active : $wrapper.tabs( 'option', 'active' );
 				$tabs = $wrapper.tabs( 'refresh' );
 				$wrapper.tabs( 'option', 'active', active );
 			} else {
@@ -397,7 +424,7 @@ var vc_iframe = {
 					activate: function ( event, ui ) {
 						wpb_prepare_tab_content( event, ui );
 					}
-				} );
+				} ); // .tabs('rotate', interval*1000);
 			}
 			$( this ).find( '.vc_element' ).each( function () {
 				tabs_array.push( this.id );
@@ -412,7 +439,7 @@ var vc_iframe = {
 					else {
 						index --;
 					}
-					if ( 0 > index ) {
+					if ( index < 0 ) {
 						index = $tabs.tabs( "length" ) - 1;
 					}
 					else if ( index >= $tabs.tabs( "length" ) ) {
@@ -426,7 +453,7 @@ var vc_iframe = {
 					if ( $( this ).parent().hasClass( 'wpb_next_slide' ) ) {
 						index = (index + 1) >= length ? 0 : index + 1;
 					} else {
-						index = 0 > index - 1 ? length - 1 : index - 1;
+						index = index - 1 < 0 ? length - 1 : index - 1;
 					}
 					$tabs.tabs( "option", "active", index );
 				}
@@ -447,7 +474,7 @@ var vc_iframe = {
 			$controls.sortable( 'destroy' );
 		}
 		$controls.sortable( {
-			axis: ('vc_tour' === view.model.get( 'shortcode' ) ? 'y' : 'x'),
+			axis: (view.model.get( 'shortcode' ) === 'vc_tour' ? 'y' : 'x'),
 			update: view.stopSorting,
 			items: "> li:not(.add_tab_block)"/*,
 			 start: function (event, ui) { ui.item.css('margin-top', $(window).scrollTop() ); },
@@ -471,11 +498,11 @@ var vc_iframe = {
 				$tabs,
 				$wrapper = $this.find( '.wpb_accordion_wrapper' ),
 				interval = $this.attr( "data-interval" ),
-				active_tab = ! isNaN( $this.data( 'active-tab' ) ) && 0 < parseInt( $this.data( 'active-tab' ) ) ? parseInt( $this.data( 'active-tab' ) ) - 1 : false,
-				collapsible = false === active_tab || 'yes' === $this.data( 'collapsible' );
+				active_tab = ! isNaN( $this.data( 'active-tab' ) ) && parseInt( $this.data( 'active-tab' ) ) > 0 ? parseInt( $this.data( 'active-tab' ) ) - 1 : false,
+				collapsible = active_tab === false || $this.data( 'collapsible' ) === 'yes';
 			//
 			if ( $wrapper.hasClass( 'ui-widget' ) ) {
-				if ( false === active ) {
+				if ( active === false ) {
 					active = $wrapper.accordion( "option", 'active' );
 				}
 				$wrapper.accordion( "refresh" );
@@ -497,7 +524,7 @@ var vc_iframe = {
 						ui.newPanel.parent().parent().addClass( 'vc_active-accordion-tab' );
 					},
 					change: function ( event, ui ) {
-						if ( 'undefined' !== typeof($.fn.isotope) ) {
+						if ( $.fn.isotope != undefined ) {
 							ui.newContent.find( '.isotope' ).isotope( "layout" );
 						}
 						window.vc_carouselBehaviour();
@@ -505,6 +532,7 @@ var vc_iframe = {
 
 				} );
 			}
+			//.tabs().tabs('rotate', interval*1000, true);
 		} );
 	};
 	vc_iframe.setAccordionSorting = function ( view ) {
@@ -552,7 +580,7 @@ var vc_iframe = {
 				sliderTimeout = parseInt( $gallery.attr( 'data-interval' ) ) * 1000,
 				sliderFx = $gallery.attr( 'data-flex_fx' ),
 				slideshow = true;
-			if ( 0 === sliderTimeout ) {
+			if ( sliderTimeout == 0 ) {
 				slideshow = false;
 			}
 			$gallery.flexslider( {
@@ -567,7 +595,7 @@ var vc_iframe = {
 			var sliderSpeed = 800,
 				sliderTimeout = $gallery.attr( 'data-interval' ) * 1000;
 
-			if ( 0 === sliderTimeout ) {
+			if ( sliderTimeout == 0 ) {
 				sliderTimeout = 9999999999;
 			}
 
@@ -608,6 +636,7 @@ var vc_iframe = {
 	};
 	vc_iframe.vc_Flickr = function ( $placeholder ) {
 		var link = $placeholder.data( 'link' );
+		// $('<script type="text/javascript" src="' + link + '"></script>').prependTo($placeholder);
 		$.getScript( link, function () {
 			$( window.b_txt ).insertAfter( $placeholder );
 		} );
@@ -622,7 +651,7 @@ var vc_iframe = {
 		if ( ! $grid.find( '.vc_grid-loading:visible' ).length ) {
 			vcGrid = $grid.data( 'vcGrid' );
 			if ( vcGrid ) {
-				$grid.empty(); // TODO: need to add reinit in plugin
+				$grid.html( '' ); // todo need to add reinit in plugin
 				vcGrid.init();
 			} else {
 				$grid.vcGrid();
@@ -635,7 +664,7 @@ var vc_iframe = {
 			var $grid = $( this );
 			var vcGrid = $( this ).data( 'vcGrid' );
 			if ( ! $grid.find( '.vc_grid-loading:visible' ).length && vcGrid ) {
-				$grid.empty(); // TODO: need to add reinit in plugin
+				$grid.html( '' ); // todo need to add reinit in plugin
 				vcGrid.init();
 			}
 		} );
@@ -663,4 +692,5 @@ var vc_iframe = {
 			}, 10 );
 		}
 	} );
+	// vc_iframe.setSortable(window.parent.vc.app);
 })( window.jQuery );

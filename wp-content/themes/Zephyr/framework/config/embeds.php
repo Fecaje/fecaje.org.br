@@ -14,7 +14,7 @@ return array(
 		'type' => 'video',
 		'regex' => '~^(?:https?://)?(?:www|m\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch\?v=|/watch\?.+&v=))([\w-]{11})(?:.+)?$~x',
 		'match_index' => 1,
-		'html' => '<iframe width="420" height="315" src="//www.youtube.com/embed/<id>" allowfullscreen></iframe>',
+		'html' => '<iframe width="420" height="315" src="//www.youtube.com/embed/<id>" frameborder="0" allowfullscreen></iframe>',
 	),
 	'vimeo' => array(
 		'type' => 'video',

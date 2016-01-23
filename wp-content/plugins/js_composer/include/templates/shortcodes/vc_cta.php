@@ -9,12 +9,10 @@
 
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 $this->buildTemplate( $atts, $content );
-$containerClass = trim( 'vc_cta3-container ' . esc_attr( implode( ' ', $this->getTemplateVariable( 'container-class' ) ) ) );
-$cssClass = trim( 'vc_general ' . esc_attr( implode( ' ', $this->getTemplateVariable( 'css-class' ) ) ) );
 ?>
 <section
-	class="<?php echo esc_attr( $containerClass ); ?>">
-	<div class="<?php echo esc_attr( $cssClass ); ?>"<?php
+	class="vc_cta3-container <?php echo esc_attr( implode( ' ', $this->getTemplateVariable( 'container-class' ) ) ); ?>">
+	<div class="vc_general <?php echo esc_attr( implode( ' ', $this->getTemplateVariable( 'css-class' ) ) ); ?>"<?php
 	if ( $this->getTemplateVariable( 'inline-css' ) ) {
 		echo ' style="' . esc_attr( implode( ' ', $this->getTemplateVariable( 'inline-css' ) ) ) . '"';
 	}
@@ -37,5 +35,5 @@ $cssClass = trim( 'vc_general ' . esc_attr( implode( ' ', $this->getTemplateVari
 		<?php echo $this->getTemplateVariable( 'icons-bottom' ); ?>
 		<?php echo $this->getTemplateVariable( 'icons-right' ); ?>
 	</div>
-</section>
+</section><?php echo $this->endBlockComment( $this->getShortcode() ); ?>
 

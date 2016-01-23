@@ -24,7 +24,7 @@ var vcGridStylePagination = null;
 		this.isLoading = false;
 		this.htmlCache = false;
 		this.$loader = $( '<div class="vc_grid-loading"></div>' );
-		this.$firstSlideItems; // TODO: check this? Expression statement is not assignment or call (at line 27)
+		this.$firstSlideItems; //todo check this? Expression statement is not assignment or call (at line 27)
 		this.init();
 	};
 	/**
@@ -61,7 +61,7 @@ var vcGridStylePagination = null;
 	 * @param filter - string parameter with filter settings.
 	 */
 	vcGridStylePagination.prototype.filter = function ( filter ) {
-		filter = _.isUndefined( filter ) || '*' === filter ? '' : filter;
+		filter = _.isUndefined( filter ) || filter === '*' ? '' : filter;
 		if ( this.filterValue == filter ) {
 			return false; // already filtred
 		}
@@ -72,13 +72,14 @@ var vcGridStylePagination = null;
 			this.$content.data( 'vcPagination' ) && this.$content.data( 'vcPagination' ).twbsPagination( 'destroy' );
 			this.$content.data( 'owl.vccarousel' ).destroy();
 		}
-		this.$content.empty();
+		this.$content.html( '' );
 		$html = $( '.vc_grid-item', this.htmlCache );
-		if ( '' !== filter ) {
+		if ( filter !== '' ) {
 			$html = $html.filter( filter );
 		}
 		this.filterValue = filter;
 		this.buildSlides( $html.addClass( 'vc_visible-item' ) );
+		// 	( vcGridSettings.addItemsAnimation != 'none' ? vcGridSettings.addItemsAnimation + ' animated' : '') ) );
 
 	};
 	/**
@@ -88,6 +89,7 @@ var vcGridStylePagination = null;
 	 */
 	vcGridStylePagination.prototype.buildSlides = function ( $html ) {
 		var i, j, tempArray, chunk = parseInt( this.settings.items_per_page );
+		//this.settings.total_items = $html.length;
 		for ( i = 0, j = $html.length;
 			  i < j;
 			  i += chunk ) {
@@ -107,7 +109,7 @@ var vcGridStylePagination = null;
 	vcGridStylePagination.prototype.addItems = function ( html ) {
 		this.unsetIsLoading();
 		$( html ).appendTo( this.$el );
-		if ( false === this.htmlCache ) {
+		if ( this.htmlCache === false ) {
 			this.htmlCache = html;
 		}
 		this.$content = this.$el.find( '[data-vc-pageable-content="true"]' );
@@ -142,10 +144,10 @@ var vcGridStylePagination = null;
 						+ that.settings.paging_design
 						+ ' vc_grid-pagination-color-' + that.settings.paging_color,
 						nextClass: 'vc_grid-next',
-						first: 20 < items ? ' ' : false,
-						last: 20 < items ? ' ' : false,
-						prev: 5 < items ? ' ' : false,
-						next: 5 < items ? ' ' : false, // window.vcGrid_i18nLocale.next : false,
+						first: items > 20 ? ' ' : false,
+						last: items > 20 ? ' ' : false,
+						prev: items > 5 ? ' ' : false,
+						next: items > 5 ? ' ' : false, // window.vcGrid_i18nLocale.next : false,
 						prevClass: 'vc_grid-prev',
 						lastClass: 'vc_grid-last',
 						loop: that.settings.loop,
@@ -184,10 +186,10 @@ var vcGridStylePagination = null;
 					+ this.settings.arrows_design.replace( '_left',
 						'_right' ) + ' vc_grid-nav-next-' + this.settings.arrows_position
 				],
-				animateIn: 'none' !== this.settings.animation_in ? this.settings.animation_in : false,
-				animateOut: 'none' !== this.settings.animation_out ? this.settings.animation_out : false,
+				animateIn: this.settings.animation_in != 'none' ? this.settings.animation_in : false,
+				animateOut: this.settings.animation_out != 'none' ? this.settings.animation_out : false,
 				autoHeight: true,
-				autoplay: true === this.settings.auto_play,
+				autoplay: this.settings.auto_play === true,
 				autoplayTimeout: this.settings.speed,
 				callbacks: true,
 				onTranslated: function () {
@@ -206,12 +208,12 @@ var vcGridStylePagination = null;
 			// set key up.
 			/*$(document).off('keyup').on('keyup', function (e) {
 			 var $el;
-			 if (e.which === 39) {
+			 if (e.which == 39) {
 			 $el = $('.vc_hook_hover.vc_grid-owl-theme.vc_is-hover');
 			 if ($el.is(':visible')) {
 			 $el.data('owl.carousel').next();
 			 }
-			 } else if (e.which === 37) {
+			 } else if (e.which == 37) {
 			 $el = $('.vc_hook_hover.vc_grid-owl-theme.vc_is-hover');
 			 if ($el.is(':visible')) {
 			 $el.data('owl.carousel').prev();

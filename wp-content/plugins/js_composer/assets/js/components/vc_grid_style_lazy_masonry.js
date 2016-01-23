@@ -7,6 +7,7 @@
  * ========================================================= */
 var vcGridStyleLazyMasonry;
 (function ( $ ) {
+	// vcGridStyleAllMasonry = vcGridStyleAll.bind(); // IE 8 not supported
 	vcGridStyleLazyMasonry = function ( grid ) {
 		this.grid = grid;
 		this.settings = grid.settings;
@@ -22,7 +23,7 @@ var vcGridStyleLazyMasonry;
 	};
 	vcGridStyleLazyMasonry.prototype = _.extend( {}, vcGridStyleLazy.prototype, {
 		showItems: function () {
-			if ( true === this.isLoading ) {
+			if ( this.isLoading === true ) {
 				return false;
 			}
 			this.setIsLoading();
@@ -38,7 +39,7 @@ var vcGridStyleLazyMasonry;
 					window.vc_prettyPhoto();
 				}
 				self.unsetIsLoading();
-				jQuery( window ).trigger( 'grid:items:added', self.$el );
+				jQuery(window).trigger( 'grid:items:added', self.$el );
 			} );
 		},
 		setIsLoading: function () {
@@ -46,14 +47,14 @@ var vcGridStyleLazyMasonry;
 			this.isLoading = true;
 		},
 		filter: function ( filter ) {
-			filter = _.isUndefined( filter ) || '*' === filter ? '' : filter;
+			filter = _.isUndefined( filter ) || filter === '*' ? '' : filter;
 			if ( this.filterValue == filter ) {
 				return false; // already filtred
 			}
 			this.$content.data( 'masonry' ) && this.$content.masonry( 'destroy' );
 			this.masonryEnabled = false;
 			this.$content.find( '.vc_visible-item, .vc_grid_filter-item' ).removeClass( 'vc_visible-item vc_grid_filter-item '
-			+ ( 'none' !== vcGridSettings.addItemsAnimation ? vcGridSettings.addItemsAnimation + ' animated' : '') );
+			+ ( vcGridSettings.addItemsAnimation != 'none' ? vcGridSettings.addItemsAnimation + ' animated' : '') );
 			this.filterValue = filter;
 			this.$content
 				.find( '.vc_grid-item' + this.filterValue )

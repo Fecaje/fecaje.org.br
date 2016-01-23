@@ -7,11 +7,17 @@ get_header();
 
 $template_vars = array(
 	'layout_type' => us_get_option( 'blog_layout', 'large' ),
-	'metas' =>  us_get_option( 'blog_meta', array() ),
+	'metas' => array(),
 	'content_type' => us_get_option( 'blog_content_type', 'excerpt' ),
-	'show_read_more' => in_array( 'read_more', us_get_option( 'blog_meta', array() ) ),
+	'show_read_more' => ! ! us_get_option( 'blog_read_more', TRUE ),
 	'pagination' => us_get_option( 'blog_pagination', 'regular' ),
 );
+foreach ( array( 'date', 'author', 'categories', 'comments', 'tags' ) as $meta_key ) {
+	if ( us_get_option( 'blog_meta_' . $meta_key, TRUE ) ) {
+		$template_vars['metas'][] = $meta_key;
+	}
+}
+
 ?>
 <!-- MAIN -->
 <div class="l-main">

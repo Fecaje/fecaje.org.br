@@ -79,16 +79,16 @@ a.ubtn-link:hover {
 a.ubtn-link .ubtn {
     margin: 0
 }
-button.ubtn-mini {
+.ubtn-mini {
     padding: 5px 10px
 }
-button.ubtn-small {
+.ubtn-small {
     padding: 8px 16px
 }
-button.ubtn-normal {
+.ubtn-normal {
     padding: 15px 30px
 }
-button.ubtn-large {
+.ubtn-large {
     padding: 21px 42px
 }
 .ubtn-block {
@@ -99,7 +99,7 @@ button.ubtn-large {
     padding-left: 0;
     padding-right: 0
 }
-button.ubtn-custom {
+.ubtn-custom {
     padding: 0
 }
 @media(max-width:768px) {
@@ -331,7 +331,7 @@ button.ubtn-custom {
     -webkit-transition: all .3s;
     -moz-transition: all .3s;
     transition: all .3s;
-    border-radius:inherit;
+    border-radius: 0;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box
@@ -1523,10 +1523,4 @@ button.ubtn-custom {
 .ubtn-img-container .ubtn-data.ubtn-text {
     left: 15px;
     /*Left to align space for icon*/
-}
-.ubtn-hover {
-    opacity: 0;
-}
-.ubtn-hover-active {
-    opacity: 1;
 }

@@ -9,33 +9,33 @@
 return array(
 	'fields' => array(
 		'name' => array(
-			'type' => 'textfield',
 			'title' => __( 'Name', 'us' ),
-			'placeholder' => '',
+			'icon' => 'mdfi_social_person',
+			'type' => 'text',
 			'error' => __( 'Please enter your Name', 'us' ),
 		),
 		'email' => array(
-			'type' => 'email',
 			'title' => __( 'Email', 'us' ),
-			'placeholder' => '',
+			'icon' => 'mdfi_communication_email',
+			'type' => 'email',
 			'error' => __( 'Please enter your Email', 'us' ),
 		),
 		'phone' => array(
-			'type' => 'textfield',
 			'title' => __( 'Phone Number', 'us' ),
-			'placeholder' => '',
+			'icon' => 'mdfi_communication_phone',
+			'type' => 'text',
 			'error' => __( 'Please enter your Phone Number', 'us' ),
 		),
 		'message' => array(
-			'type' => 'textarea',
 			'title' => __( 'Message', 'us' ),
-			'placeholder' => '',
+			'icon' => 'mdfi_content_create',
+			'type' => 'textarea',
 			'error' => __( 'Please enter a Message', 'us' ),
 		),
 		'captcha' => array(
-			'type' => 'captcha',
 			'title' => __( 'Just to prove you are a human, please solve the equation: ', 'us' ),
-			'placeholder' => '',
+			'icon' => 'mdfi_action_help',
+			'type' => 'captcha',
 			'error' => __( 'Please enter the equation result', 'us' ),
 		),
 	),

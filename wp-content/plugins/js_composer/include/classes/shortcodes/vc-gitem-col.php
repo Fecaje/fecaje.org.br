@@ -1,14 +1,11 @@
 <?php
 require_once vc_path_dir( 'SHORTCODES_DIR', 'vc-column.php' );
 
-class WPBakeryShortCode_VC_Gitem_Col extends WPBakeryShortCode_VC_Column {
-	public $nonDraggableClass = 'vc-non-draggable-column';
+Class WPBakeryShortCode_VC_Gitem_Col extends WPBakeryShortCode_VC_Column {
 	public function mainHtmlBlockParams( $width, $i ) {
-		$sortable = ( vc_user_access_check_shortcode_all( $this->shortcode ) ? ' wpb_sortable ' : ' '. $this->nonDraggableClass . ' ' );
-
-		return 'data-element_type="' . $this->settings['base'] . '" data-vc-column-width="'
+		return 'data-element_type="' . $this->settings["base"] . '" data-vc-column-width="'
 		       . wpb_vc_get_column_width_indent( $width[ $i ] )
-		       . '" class="wpb_vc_column wpb_' . $this->settings['base'] . $sortable
+		       . '" class="wpb_vc_column wpb_' . $this->settings['base'] . ' wpb_sortable '
 		       . $this->templateWidth() . ' wpb_content_holder"'
 		       . $this->customAdminBlockParams();
 	}
@@ -17,7 +14,7 @@ class WPBakeryShortCode_VC_Gitem_Col extends WPBakeryShortCode_VC_Column {
 		$alignment = array(
 			array( 'name' => 'left', 'label' => __( 'Left', 'js_composer' ) ),
 			array( 'name' => 'center', 'label' => __( 'Center', 'js_composer' ) ),
-			array( 'name' => 'right', 'label' => __( 'Right', 'js_composer' ) ),
+			array( 'name' => 'right', 'label' => __( 'Right', 'js_composer' ) )
 		);
 		$output = '<span class="vc_control vc_control-align"><span class="vc_control-wrap">';
 		foreach ( $alignment as $data ) {

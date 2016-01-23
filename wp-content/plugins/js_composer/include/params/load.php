@@ -1,5 +1,4 @@
 <?php
-
 /**
  * WPBakery Visual Composer shortcode attributes fields loader
  *

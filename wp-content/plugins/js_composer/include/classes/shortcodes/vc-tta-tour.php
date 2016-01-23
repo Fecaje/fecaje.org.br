@@ -1,5 +1,5 @@
 <?php
-VcShortcodeAutoloader::getInstance()->includeClass( 'WPBakeryShortCode_VC_Tta_Accordion' );
+require_once "vc-tta-tabs.php";
 
 class WPBakeryShortCode_VC_Tta_Tour extends WPBakeryShortCode_VC_Tta_Tabs {
 
@@ -8,7 +8,7 @@ class WPBakeryShortCode_VC_Tta_Tour extends WPBakeryShortCode_VC_Tta_Tabs {
 	public function getTtaGeneralClasses() {
 		$classes = parent::getTtaGeneralClasses();
 
-		if ( isset( $this->atts['controls_size'] ) ) {
+		if ( $this->atts['controls_size'] ) {
 			$classes .= ' ' . $this->getTemplateVariable( 'controls_size' );
 		}
 
@@ -36,7 +36,7 @@ class WPBakeryShortCode_VC_Tta_Tour extends WPBakeryShortCode_VC_Tta_Tabs {
 	 * @return string|null
 	 */
 	public function getParamTabsListLeft( $atts, $content ) {
-		if ( empty( $atts['tab_position'] ) || 'left' !== $atts['tab_position'] ) {
+		if ( empty( $atts['tab_position'] ) || $atts['tab_position'] !== 'left' ) {
 			return null;
 		}
 
@@ -50,7 +50,7 @@ class WPBakeryShortCode_VC_Tta_Tour extends WPBakeryShortCode_VC_Tta_Tabs {
 	 * @return string|null
 	 */
 	public function getParamTabsListRight( $atts, $content ) {
-		if ( empty( $atts['tab_position'] ) || 'right' !== $atts['tab_position'] ) {
+		if ( empty( $atts['tab_position'] ) || $atts['tab_position'] !== 'right' ) {
 			return null;
 		}
 

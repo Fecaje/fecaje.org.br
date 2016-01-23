@@ -3,21 +3,34 @@
 /**
  * Shortcode: us_testimonial
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['style'] string Quote style: '1' / '2'
- * @param $atts ['author'] string Author name
- * @param $atts ['company'] string Author subtitle
- * @param $atts ['img'] int Author photo (ID from WP media library)
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_testimonial' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Quote style: '1' / '2'
+	 */
+	'style' => '1',
+	/**
+	 * @var string Author name
+	 */
+	'author' => __( 'Jon Show', 'us' ),
+	/**
+	 * @var string Author subtitle
+	 */
+	'company' => __( 'Lord Commander', 'us' ),
+	/**
+	 * @var int Author photo (ID from WP media library)
+	 */
+	'img' => '',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 $classes = '';
 

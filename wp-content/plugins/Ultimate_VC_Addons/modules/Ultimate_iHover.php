@@ -499,8 +499,7 @@
 							  "heading" => __("Description", 'ultimate_vc'),
 							  "param_name" => "content",
 							  "value" => "",
-							  "description" => __("Provide the description for the iHover.", 'ultimate_vc'),
-							  "edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
+							  "description" => __("Provide the description for the iHover.", 'ultimate_vc')
 						  ),
 
 						  //	Effects

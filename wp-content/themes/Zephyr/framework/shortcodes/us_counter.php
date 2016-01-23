@@ -3,25 +3,50 @@
 /**
  * Shortcode: us_counter
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['initial'] mixed The initial number value (integer or float)
- * @param $atts ['target'] mixed The target number value (integer or float)
- * @param $atts ['color'] string number color: 'text' / 'primary' / 'secondary' / 'custom'
- * @param $atts ['custom_color'] string Custom color value
- * @param $atts ['size'] string Number size: 'small' / 'medium' / 'large'
- * @param $atts ['title'] string Title for the counter
- * @param $atts ['prefix'] string Number prefix
- * @param $atts ['suffix'] string Number suffix
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_counter' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var mixed The initial number value (integer or float)
+	 */
+	'initial' => '0',
+	/**
+	 * @var mixed The target number value (integer or float)
+	 */
+	'target' => '99',
+	/**
+	 * @var string number color: 'text' / 'primary' / 'secondary' / 'custom'
+	 */
+	'color' => 'text',
+	/**
+	 * @var string Custom color value
+	 */
+	'custom_color' => '',
+	/**
+	 * @var string Number size: 'small' / 'medium' / 'large'
+	 */
+	'size' => 'medium',
+	/**
+	 * @var string Title for the counter
+	 */
+	'title' => __( 'Projects completed', 'us' ),
+	/**
+	 * @var string Number prefix
+	 */
+	'prefix' => '',
+	/**
+	 * @var string Number suffix
+	 */
+	'suffix' => '',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 $classes = '';
 $elm_atts = '';
@@ -49,8 +74,8 @@ $elm_atts .= ' data-suffix="' . $atts['suffix'] . '"';
 		<div class="w-counter-number"<?php echo $number_atts ?>>
 			<?php echo $atts['prefix'] . $atts['initial'] . $atts['suffix'] ?>
 		</div>
-		<?php if ( ! empty ( $atts['title'] ) ): ?>
-			<h6 class="w-counter-title"><?php echo $atts['title'] ?></h6>
-		<?php endif; ?>
+<?php if ( ! empty ( $atts['title'] ) ): ?>
+		<h6 class="w-counter-title"><?php echo $atts['title'] ?></h6>
+<?php endif; ?>
 	</div>
 </div>

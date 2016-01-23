@@ -33,7 +33,7 @@
 			return false;
 		},
 		setting: function ( name ) {
-			if ( false === this.settings ) {
+			if ( this.settings === false ) {
 				this.settings = vc.getMapped( this.get( 'shortcode' ) ) || {};
 			}
 			return this.settings[ name ];
@@ -102,13 +102,12 @@
 					function ( model ) {
 						return model.get( 'order' );
 					} ), state );
-				var mapped = vc.getMapped( tag );
 				data = {
 					tag: tag,
 					attrs: paramsForString,
 					content: content,
 					type: _.isUndefined( vc.getParamSettings( tag,
-						'content' ) ) && ! mapped.is_container && _.isEmpty( mapped.as_parent ) ? 'single' : ''
+						'content' ) ) && ! vc.getMapped( tag ).is_container ? 'single' : ''
 				};
 				if ( _.isUndefined( state ) ) {
 					model.trigger( 'stringify', model, data );

@@ -44,7 +44,7 @@
 			}, 700 );
 		},
 		content: function () {
-			if ( false === this.$content ) {
+			if ( this.$content === false ) {
 				this.$content = this.$el.find( '.vc_container-anchor:first' ).parent();
 				this.$el.find( '.vc_container-anchor:first' ).remove();
 			}
@@ -57,10 +57,8 @@
 			return this;
 		},
 		changed: function () {
-			if ( this.allowAddControlOnEmpty() ) {
-				(0 === this.$el.find( '.vc_element[data-tag]' ).length && this.$el.addClass( 'vc_empty' ).find( '> :first' ).addClass( 'vc_empty-element' ))
-				|| this.$el.removeClass( 'vc_empty' ).find( '> .vc_empty-element' ).removeClass( 'vc_empty-element' );
-			}
+			(this.$el.find( '.vc_element[data-tag]' ).length == 0 && this.$el.addClass( 'vc_empty' ).find( '> :first' ).addClass( 'vc_empty-element' ))
+			|| this.$el.removeClass( 'vc_empty' ).find( '> .vc_empty-element' ).removeClass( 'vc_empty-element' );
 		},
 		prependElement: function ( e ) {
 			_.isObject( e ) && e.preventDefault();
@@ -72,38 +70,19 @@
 			vc.add_element_block_view.render( this.model );
 		},
 		addControls: function () {
-			var shortcodeTag, parentShortcodeTag, allAccess, editAccess, parentAllAccess, parentEditAccess, template, parent, data;
-			shortcodeTag = this.model.get( 'shortcode' );
-			template = $( this.controls_selector ).html();
-			parent = vc.shortcodes.get( this.model.get( 'parent_id' ) );
-			parentShortcodeTag = parent.get( 'shortcode' );
-
-			allAccess = vc_user_access().shortcodeAll( shortcodeTag );
-			editAccess = vc_user_access().shortcodeEdit( shortcodeTag );
-			parentAllAccess = vc_user_access().shortcodeAll( parentShortcodeTag );
-			parentEditAccess = vc_user_access().shortcodeEdit( parentShortcodeTag );
-
-			data = {
-				name: vc.getMapped( shortcodeTag ).name,
-				tag: shortcodeTag,
-				parent_name: vc.getMapped( parent.get( 'shortcode' ) ).name,
-				parent_tag: parentShortcodeTag,
-				can_edit: editAccess,
-				can_all: allAccess,
-				parent_can_edit: parentEditAccess,
-				parent_can_all: parentAllAccess,
-				state: vc_user_access().getState( 'shortcodes' ),
-				allowAdd: this.allowAddControl(),
-				switcherPrefix: ! parentAllAccess || ! allAccess ? '-disable-switcher' : ''
-			};
-			this.$controls = $( _.template( template, data, _.extend( {},
-				vc.template_options,
-				{ evaluate: /\{#([\s\S]+?)#}/g } ) ).trim() ).addClass( 'vc_controls' );
-
+			var template = $( this.controls_selector ).html(),
+				parent = vc.shortcodes.get( this.model.get( 'parent_id' ) ),
+				data = {
+					name: vc.getMapped( this.model.get( 'shortcode' ) ).name,
+					tag: this.model.get( 'shortcode' ),
+					parent_name: vc.getMapped( parent.get( 'shortcode' ) ).name,
+					parent_tag: parent.get( 'shortcode' )
+				};
+			this.$controls = $( _.template( template, data, vc.template_options ).trim() ).addClass( 'vc_controls' );
+			if ( ! this.hasUserAccess() ) {
+				this.$controls.find( '.vc_control-btn:not(.vc_element-move)' ).remove();
+			}
 			this.$controls.appendTo( this.$el );
-		},
-		allowAddControl: function () {
-			return vc_user_access().getState( 'shortcodes' ) !== 'edit';
 		},
 		multi_edit: function ( e ) {
 			var models = [], parent, children;
@@ -118,9 +97,6 @@
 			} else {
 				vc.edit_element_block_view.render( this.model );
 			}
-		},
-		allowAddControlOnEmpty: function () {
-			return vc_user_access().getState( 'shortcodes' ) !== 'edit';
 		}
 	} );
 	window.InlineShortcodeViewContainerWithParent = window.InlineShortcodeViewContainer.extend( {
@@ -167,13 +143,8 @@
 			var $control = $( e.currentTarget ),
 				$parent = $control.parent(),
 				$current;
-			// $parentAdvanced = $parent.find( '.vc_advanced' );
-			//$parentAdvanced.width( 30 * $parentAdvanced.find( '.vc_control-btn' ).length );
 			$parent.addClass( 'vc_active' );
-
-			$current = $parent.siblings( '.vc_active' );
-			//$current.find( '.vc_advanced' ).width( 0 );
-			$current.removeClass( 'vc_active' );
+			$current = $parent.siblings( '.vc_active' ).removeClass( 'vc_active' );
 			! $current.hasClass( 'vc_element' ) && window.setTimeout( this.holdActive, 500 );
 		}
 	} );
@@ -226,7 +197,7 @@
 		},
 		layoutEditor: function () {
 			if ( _.isUndefined( vc.row_layout_editor ) ) {
-				vc.row_layout_editor = new vc.RowLayoutUIPanelFrontendEditor( { el: $( '#vc_ui-panel-row-layout' ) } );
+				vc.row_layout_editor = new vc.RowLayoutEditorPanelView( { el: $( '#vc_row-layout-panel' ) } );
 			}
 			return vc.row_layout_editor;
 		},
@@ -242,7 +213,7 @@
 			this.addLayoutClass();
 		},
 		content: function () {
-			if ( false === this.$content ) {
+			if ( this.$content === false ) {
 				this.$content = this.$el.find( '.vc_container-anchor:first' ).parent();
 			}
 			this.$el.find( '.vc_container-anchor:first' ).remove();
@@ -319,12 +290,6 @@
 				vc.layout_change_shortcodes = [];
 			} );
 			return columns;
-		},
-		allowAddControl: function () {
-			return vc_user_access().getState( 'shortcodes' ) !== 'edit';
-		},
-		allowAddControlOnEmpty: function () {
-			return vc_user_access().getState( 'shortcodes' ) !== 'edit';
 		}
 	} );
 	window.InlineShortcodeView_vc_column = window.InlineShortcodeViewContainerWithParent.extend( {
@@ -405,15 +370,15 @@
 			}
 			this._x = parseInt( e.pageX );
 			old_width = '' + this.css_class_width;
-			if ( 0 < diff ) {
+			if ( diff > 0 ) {
 				this.css_class_width += 1;
-			} else if ( 0 > diff ) {
+			} else if ( diff < 0 ) {
 				this.css_class_width -= 1;
 			}
-			if ( 12 < this.css_class_width ) {
+			if ( this.css_class_width > 12 ) {
 				this.css_class_width = 12;
 			}
-			if ( 1 > this.css_class_width ) {
+			if ( this.css_class_width < 1 ) {
 				this.css_class_width = 1;
 			}
 			params.width = vc.getColumnSize( this.css_class_width );
@@ -427,17 +392,14 @@
 					1
 				],
 				range = _.range( 1, 13 ),
-				num = ! _.isUndefined( numbers[ 0 ] ) && 0 <= _.indexOf( range,
-					parseInt( numbers[ 0 ], 10 ) ) ? parseInt( numbers[ 0 ], 10 ) : false,
-				dev = ! _.isUndefined( numbers[ 1 ] ) && 0 <= _.indexOf( range,
-					parseInt( numbers[ 1 ], 10 ) ) ? parseInt( numbers[ 1 ], 10 ) : false;
-			if ( false !== num && false !== dev ) {
+				num = ! _.isUndefined( numbers[ 0 ] ) && _.indexOf( range,
+					parseInt( numbers[ 0 ], 10 ) ) >= 0 ? parseInt( numbers[ 0 ], 10 ) : false,
+				dev = ! _.isUndefined( numbers[ 1 ] ) && _.indexOf( range,
+					parseInt( numbers[ 1 ], 10 ) ) >= 0 ? parseInt( numbers[ 1 ], 10 ) : false;
+			if ( num !== false && dev !== false ) {
 				return prefix + (12 * num / dev);
 			}
 			return prefix + '12';
-		},
-		allowAddControl: function () {
-			return vc_user_access().shortcodeAll( 'vc_column' );
 		}
 	} );
 	window.InlineShortcodeView_vc_row_inner = window.InlineShortcodeView_vc_row.extend( {
@@ -467,7 +429,7 @@
 			} );
 		},
 		changed: function () {
-			if ( this.allowAddControlOnEmpty() && 0 === this.$el.find( '.vc_element[data-tag]' ).length ) {
+			if ( this.$el.find( '.vc_element[data-tag]' ).length == 0 ) {
 				this.$el.addClass( 'vc_empty' ).find( '> :first > div' ).addClass( 'vc_empty-element' );
 			} else {
 				this.$el.removeClass( 'vc_empty' ).find( '> :first > div' ).removeClass( 'vc_empty-element' );
@@ -486,7 +448,7 @@
 				this.active_model_id = active_model.get( 'id' );
 				this.active = this.tabsControls().find( '[data-m-id=' + this.active_model_id + ']' ).index();
 			}
-			if ( false === this.active_model_id ) {
+			if ( this.active_model_id === false ) {
 				var active_el = this.tabsControls().find( 'li:first' );
 				this.active = active_el.index();
 				this.active_model_id = active_el.data( 'm-id' );
@@ -591,7 +553,7 @@
 			this.changed();
 		},
 		removeTab: function ( model ) {
-			if ( 1 === vc.shortcodes.where( { parent_id: this.model.get( 'id' ) } ).length ) {
+			if ( vc.shortcodes.where( { parent_id: this.model.get( 'id' ) } ).length == 1 ) {
 				return this.model.destroy();
 			}
 			var $tab = this.tabsControls().find( '[data-m-id=' + model.get( 'id' ) + ']' ),
@@ -651,7 +613,7 @@
 			this.$el.attr( 'id', tab_id );
 			this.$tab.attr( 'id', tab_id + '-real' );
 			if ( ! this.$tab.find( '.vc_element[data-tag]' ).length ) {
-				this.$tab.empty();
+				this.$tab.html( '' );
 			}
 			this.$el.addClass( 'ui-tabs-panel wpb_ui-tabs-hide' );
 			this.$tab.removeClass( 'ui-tabs-panel wpb_ui-tabs-hide' );
@@ -664,16 +626,13 @@
 			this.parent_view.buildTabs( active );
 			return this;
 		},
-		allowAddControl: function () {
-			return vc_user_access().shortcodeAll( 'vc_tab' );
-		},
 		doSetAsActive: function () {
 			var active_before_cloned = this.model.get( 'active_before_cloned' );
 			if ( ! this.model.get( 'from_content' ) && ! this.model.get( 'default_content' ) && _.isUndefined( active_before_cloned ) ) {
 				return this.model;
 			} else if ( ! _.isUndefined( active_before_cloned ) ) {
 				this.model.unset( 'active_before_cloned' );
-				if ( true === active_before_cloned ) {
+				if ( active_before_cloned === true ) {
 					return this.model;
 				}
 			}
@@ -687,7 +646,7 @@
 		},
 		clone: function ( e ) {
 			_.isObject( e ) && e.preventDefault() && e.stopPropagation();
-			vc.clone_index /= 10;
+			vc.clone_index = vc.clone_index / 10;
 			var clone = this.model.clone(),
 				params = clone.get( 'params' ),
 				builder = new vc.ShortcodesBuilder();
@@ -718,10 +677,10 @@
 			return this;
 		},
 		changed: function () {
-			if ( this.allowAddControlOnEmpty() && 0 === this.$el.find( '.vc_element[data-tag]' ).length ) {
+			if ( this.$el.find( '.vc_element[data-tag]' ).length == 0 ) {
 				this.$el.addClass( 'vc_empty' ).find( '> :first' ).addClass( 'vc_empty-element' );
 			} else {
-				this.allowAddControlOnEmpty() && this.$el.removeClass( 'vc_empty' ).find( '> .vc_empty-element' ).removeClass( 'vc_empty-element' );
+				this.$el.removeClass( 'vc_empty' ).find( '> .vc_empty-element' ).removeClass( 'vc_empty-element' );
 				this.setSorting();
 			}
 		},
@@ -778,7 +737,7 @@
 			'mouseleave': 'holdActive'
 		},
 		changed: function () {
-			if ( this.allowAddControlOnEmpty() && 0 === this.$el.find( '.vc_element[data-tag]' ).length ) {
+			if ( this.$el.find( '.vc_element[data-tag]' ).length == 0 ) {
 				this.$el.addClass( 'vc_empty' );
 				this.content().addClass( 'vc_empty-element' );
 			} else {
@@ -789,7 +748,7 @@
 		render: function () {
 			window.InlineShortcodeView_vc_tab.__super__.render.call( this );
 			if ( ! this.content().find( '.vc_element[data-tag]' ).length ) {
-				this.content().empty();
+				this.content().html( '' );
 			}
 			this.parent_view.buildAccordion( ! this.model.get( 'from_content' ) && ! this.model.get( 'default_content' ) ? this.model : false );
 			return this;
@@ -805,9 +764,6 @@
 			if ( ! vc.shortcodes.where( { parent_id: parent_id } ).length ) {
 				vc.shortcodes.get( parent_id ).destroy();
 			}
-		},
-		allowAddControl: function () {
-			return vc_user_access().shortcodeAll( 'vc_accordion_tab' );
 		}
 	} );
 	vc.cloneMethod_vc_tab = function ( data, model ) {
@@ -888,29 +844,6 @@
 			if ( id && undefined !== vc.frame_window.Chart.instances[ id ] ) {
 				delete vc.frame_window.Chart.instances[ id ];
 			}
-		}
-	} );
-	window.InlineShortcodeView_vc_single_image = window.InlineShortcodeView.extend( {
-		render: function () {
-			var model_id = this.model.get( 'id' );
-			window.InlineShortcodeView_vc_single_image.__super__.render.call( this );
-			vc.frame_window.vc_iframe.addActivity( function () {
-				if ( 'undefined' !== typeof(this.vc_image_zoom) ) {
-					this.vc_image_zoom( model_id );
-				}
-
-			} );
-			return this;
-		},
-		parentChanged: function () {
-			var modelId = this.model.get( 'id' );
-			window.InlineShortcodeView_vc_single_image.__super__.parentChanged.call( this );
-			if ( 'undefined' !== typeof(vc.frame_window.vc_image_zoom) ) {
-				_.defer( function () {
-					vc.frame_window.vc_image_zoom( modelId );
-				} );
-			}
-			return this;
 		}
 	} );
 	window.InlineShortcodeView_vc_images_carousel = window.InlineShortcodeView.extend( {
@@ -1015,7 +948,9 @@
 	window.InlineShortcodeView_vc_masonry_media_grid = window.InlineShortcodeView_vc_basic_grid.extend();
 
 	window.InlineShortcodeView_vc_tta_accordion = window.InlineShortcodeViewContainer.extend( {
-		events: {},
+		events: {
+			// 'click > .vc_controls [data-vc-control="append"]': 'addElement'
+		},
 		childTag: 'vc_tta_section',
 		activeClass: 'vc_active',
 		// controls_selector: '#vc_controls-template-vc_tta_accordion',
@@ -1024,6 +959,7 @@
 			window.InlineShortcodeView_vc_tta_accordion.__super__.initialize.call( this );
 		},
 		render: function () {
+			// window.InlineShortcodeView_vc_tta_accordion.__super__.render.call( this );
 			window.InlineShortcodeViewContainer.__super__.render.call( this );
 			_.bindAll( this, 'buildSortable', 'updateSorting' );
 			this.content(); // just to remove span inline-container anchor..
@@ -1050,45 +986,20 @@
 			return this.addElement( e );
 		},
 		addSection: function ( prepend ) {
-			var shortcode, params, i;
-
-			shortcode = this.childTag;
-
-			params = {
-				shortcode: shortcode,
+			var params = {
+				shortcode: this.childTag,
 				parent_id: this.model.get( 'id' ),
 				isActiveSection: true,
 				params: {
 					title: this.defaultSectionTitle
 				}
 			};
-
 			if ( prepend ) {
 				vc.activity = 'prepend';
 				params.order = this.getSiblingsFirstPositionIndex();
 			}
 
-			vc.builder.create( params );
-
-			// extend default params with settings presets if there are any
-			for ( i = vc.builder.models.length - 1;
-				  i >= 0;
-				  i -- ) {
-				shortcode = vc.builder.models[ i ].get( 'shortcode' );
-				if ( 'undefined' !== typeof(window.vc_settings_presets[ shortcode ]) ) {
-					vc.builder.models[ i ].attributes.params = _.extend(
-						vc.builder.models[ i ].attributes.params,
-						window.vc_settings_presets[ shortcode ]
-					);
-
-					// generate new random tab_id if needed
-					if ( 'vc_tta_section' === shortcode && 'undefined' !== typeof(vc.builder.models[ i ].attributes.params.tab_id ) ) {
-						vc.builder.models[ i ].attributes.params.tab_id = vc_guid() + '-cl';
-					}
-				}
-			}
-
-			vc.builder.render();
+			vc.builder.create( params ).render();
 		},
 		getSiblingsFirstPositionIndex: function () {
 			var order,
@@ -1115,14 +1026,14 @@
 			if ( this.$el ) {
 				this.$el.find( '.vc_tta-panels' ).sortable( {
 					forcePlaceholderSize: true,
-					placeholder: 'vc_placeholder-row', // TODO: fix placeholder
+					placeholder: 'vc_placeholder-row', // todo: fix placeholder
 					start: this.startSorting,
 					over: function ( event, ui ) {
 						ui.placeholder.css( { maxWidth: ui.placeholder.parent().width() } );
 						ui.placeholder.removeClass( 'vc_hidden-placeholder' );
 					},
 					items: '> .vc_element',
-					handle: '.vc_tta-panel-heading, .vc_child-element-move',// TODO: change vc_column to vc_tta_section
+					handle: '.vc_tta-panel-heading, .vc_child-element-move',// todo: change vc_column to vc_tta_section
 					update: this.updateSorting
 				} );
 			}
@@ -1161,9 +1072,12 @@
 			}
 		},
 		buildPagination: function () {
+			// In accordion we considered that no pagination will available
+			//this.removePagination();
+			//this.$el.find( '.vc_tta-panels-container' ).append( this.getPaginationList() );
 		},
 		removePagination: function () {
-			this.$el.find( '.vc_tta-panels-container' ).find( ' > .vc_pagination' ).remove(); // TODO: check this
+			this.$el.find( '.vc_tta-panels-container' ).find( ' > .vc_pagination' ).remove(); // todo check this
 		},
 		getPaginationList: function () {
 			var $accordions,
@@ -1207,7 +1121,7 @@
 					}
 
 					selector = $this.attr( 'href' );
-					if ( 0 !== selector.indexOf( '#' ) ) {
+					if ( selector.indexOf( '#' ) !== 0 ) {
 						selector = '';
 					}
 					if ( $this.attr( 'data-vc-target' ) ) {
@@ -1362,7 +1276,7 @@
 			$tabs.find( '> .vc_tta-tab' ).each( function () {
 				var shortcode, modelId, $li;
 
-				$li = $( this ).removeAttr( 'style' ); // TODO: Attensiton maybe e need to create method with filter
+				$li = $( this ).removeAttr( 'style' ); // @todo Attensiton maybe e need to create method with filter
 				modelId = $li.data( 'vcTargetModelId' );
 				shortcode = vc.shortcodes.get( modelId );
 				shortcode.save( { 'order': self.getIndex( $li ) }, { silent: true } );
@@ -1412,7 +1326,7 @@
 				if ( 'top' === params.tab_position ) {
 					this.$el.find( '.vc_tta-panels-container' ).append( this.getPaginationList() );
 				} else {
-					this.getPaginationList().insertBefore( this.$el.find( '.vc_tta-container .vc_tta-panels' ) ); // TODO: change this
+					this.getPaginationList().insertBefore( this.$el.find( '.vc_tta-container .vc_tta-panels' ) ); // todo change this
 				}
 			}
 		}
@@ -1423,12 +1337,10 @@
 			this.removePagination();
 			var params = this.model.get( 'params' );
 			if ( ! _.isUndefined( params.pagination_style ) && params.pagination_style.length ) {
-				this.$el.find( '.vc_tta-panels-container' ).append( this.getPaginationList() ); // TODO: change this
+				this.$el.find( '.vc_tta-panels-container' ).append( this.getPaginationList() ); // todo change this
 			}
 		}
 	} );
-	window.InlineShortcodeView_vc_tta_pageable = window.InlineShortcodeView_vc_tta_tour.extend( {} );
-
 	vc.ttaSectionActivateOnClone = false;
 	window.InlineShortcodeView_vc_tta_section = window.InlineShortcodeViewContainerWithParent.extend( {
 		events: {
@@ -1465,9 +1377,6 @@
 			}
 			return this;
 		},
-		allowAddControl: function () {
-			return vc_user_access().shortcodeAll( 'vc_tta_section' );
-		},
 		clone: function ( e ) {
 			vc.ttaSectionActivateOnClone = true;
 			window.InlineShortcodeView_vc_tta_section.__super__.clone.call( this, e );
@@ -1481,7 +1390,7 @@
 			return this;
 		},
 		changed: function () {
-			if ( this.allowAddControlOnEmpty() && 0 === this.$el.find( '.vc_element[data-tag]' ).length ) {
+			if ( 0 === this.$el.find( '.vc_element[data-tag]' ).length ) {
 				this.$el.addClass( 'vc_empty' ).find( '.vc_tta-panel-body > [data-js-panel-body]' ).addClass( 'vc_empty-element' );
 			} else {
 				this.$el.removeClass( 'vc_empty' ).find( '.vc_tta-panel-body > [data-js-panel-body].vc_empty-element' ).removeClass( 'vc_empty-element' );
@@ -1509,7 +1418,7 @@
 				paramsMap = vc.getDefaultsAndDependencyMap( parentModel.get( 'shortcode' ) );
 				parentParams = _.extend( {}, paramsMap.defaults, parentModel.get( 'params' ) );
 				$controlsIcon = this.$el.find( '.vc_tta-controls-icon' );
-				if ( parentParams && ! _.isUndefined( parentParams.c_icon ) && 0 < parentParams.c_icon.length ) {
+				if ( parentParams && ! _.isUndefined( parentParams.c_icon ) && parentParams.c_icon.length > 0 ) {
 					if ( $controlsIcon.length ) {
 						$controlsIcon.attr( 'data-vc-tta-controls-icon', parentParams.c_icon );
 					} else {
@@ -1517,7 +1426,7 @@
 							$( '<i class="vc_tta-controls-icon" data-vc-tta-controls-icon="' + parentParams.c_icon + '"></i>' )
 						);
 					}
-					if ( ! _.isUndefined( parentParams.c_position ) && 0 < parentParams.c_position.length ) {
+					if ( ! _.isUndefined( parentParams.c_position ) && parentParams.c_position.length > 0 ) {
 						$controlsIconsPositionEl = this.$el.find( '[data-vc-tta-controls-icon-position]' );
 						if ( $controlsIconsPositionEl.length ) {
 							$controlsIconsPositionEl.attr( 'data-vc-tta-controls-icon-position',
@@ -1561,7 +1470,7 @@
 			}
 		}
 	} );
-	function TTaMapChildEvents( model ) {
+	var TTaMapChildEvents = function ( model ) {
 		var childTag = 'vc_tta_section';
 		vc.events.on(
 			'shortcodes:' + childTag + ':add:parent:' + model.get( 'id' ),
@@ -1569,7 +1478,7 @@
 				var activeTabIndex, models, parentModel;
 				parentModel = vc.shortcodes.get( model.get( 'parent_id' ) );
 				activeTabIndex = parseInt( parentModel.getParam( 'active_section' ) );
-				if ( 'undefined' === typeof(activeTabIndex) ) {
+				if ( undefined === activeTabIndex ) {
 					activeTabIndex = 1;
 				}
 				models = _.pluck( _.sortBy( vc.shortcodes.where( { parent_id: parentModel.get( 'id' ) } ),
@@ -1587,12 +1496,10 @@
 				vc.ttaSectionActivateOnClone && model.set( 'isActiveSection', true );
 				vc.ttaSectionActivateOnClone = false;
 			} );
-	}
-
+	};
 	vc.events.on( 'shortcodes:vc_tta_accordion:add', TTaMapChildEvents );
 	vc.events.on( 'shortcodes:vc_tta_tabs:add', TTaMapChildEvents );
 	vc.events.on( 'shortcodes:vc_tta_tour:add', TTaMapChildEvents );
-	vc.events.on( 'shortcodes:vc_tta_pageable:add', TTaMapChildEvents );
 
 	vc.events.on( 'shortcodeView:updated', function ( model ) {
 		var modelId, settings;

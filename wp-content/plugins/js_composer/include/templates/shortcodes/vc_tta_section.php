@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Shortcode attributes
  * @var $atts

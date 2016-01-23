@@ -1,4 +1,4 @@
-<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
+<?php defined('ABSPATH') OR die('This script cannot be accessed directly.');
 
 /**
  * Header logo
@@ -10,44 +10,32 @@
  */
 
 $class_name = '';
-$images_html = '';
-$logo_alt = get_bloginfo( 'name' );
 if ( us_get_option( 'logo_type', 'text' ) == 'text' ) {
 	$class_name .= ' with_title';
-} else {
-	// Logo type => option name
-	$images_config = array(
-		'default' => 'logo_image',
-		'transparent' => 'logo_image_transparent',
-	);
-	global $usof_options;
-	foreach ( $images_config as $logo_type => $option_name ) {
-		if ( ! ( $logo = us_get_option( $option_name ) ) ) {
-			continue;
-		}
-		if ( ! empty( $logo ) AND $logo_type != 'default' ) {
-			$class_name = ' with_' . $logo_type;
-		}
-		$img = usof_get_image_src( $logo );
-		if ( $img ) {
-			$images_html .= '<img class="for_' . $logo_type . '" src="' . esc_url( $img[0] ) . '"';
-			if ( ! empty( $img[1] ) AND ! empty( $img[2] ) ) {
-				// Image sizes may be missing when logo is a direct URL
-				$images_html .= ' width="' . $img[1] . '" height="' . $img[2] . '"';
-			}
-			$images_html .= ' alt="' . esc_attr( $logo_alt ) . '" />';
-		}
+	$logo_text = us_get_option( 'logo_text' ) ? us_get_option( 'logo_text' ) : bloginfo( 'name' );
+}else{
+	if ( us_get_option( 'logo_image_transparent' ) ) {
+		$class_name = ' with_transparent';
 	}
+	$default_logo_url = us_get_option( 'logo_image' );
+	$transparent_logo_url = us_get_option( 'logo_image_transparent' );
 }
 $home_url = function_exists( 'icl_get_home_url' ) ? icl_get_home_url() : esc_url( home_url( '/' ) );
+?>
 
-$output = '<div class="w-logo ' . $class_name . '"><a class="w-logo-link" href="' . $home_url . '">';
-if ( us_get_option( 'logo_type', 'text' ) == 'img' ) {
-	$output .= '<span class="w-logo-img">' . $images_html . '</span>';
-} else {
-	$logo_text = us_get_option( 'logo_text' ) ? us_get_option( 'logo_text' ) : $logo_alt;
-	$output .= '<span class="w-logo-title">' . $logo_text . '</span>';
-}
-$output .= '</a></div>';
-
-echo $output;
+<div class="w-logo <?php echo $class_name ?>">
+	<a class="w-logo-link" href="<?php echo $home_url ?>">
+<?php if ( us_get_option( 'logo_type', 'text' ) == 'img' ): ?>
+		<span class="w-logo-img">
+<?php if ( $default_logo_url ): ?>
+			<img class="for_default" src="<?php echo esc_url( $default_logo_url ); ?>" alt="<?php bloginfo('name'); ?>">
+<?php endif; ?>
+<?php if ( $transparent_logo_url ): ?>
+			<img class="for_transparent" src="<?php echo esc_url( $transparent_logo_url ); ?>" alt="<?php bloginfo('name'); ?>">
+<?php endif; ?>
+		</span>
+<?php else: ?>
+		<span class="w-logo-title"><?php echo $logo_text ?></span>
+<?php endif; ?>
+	</a>
+</div>

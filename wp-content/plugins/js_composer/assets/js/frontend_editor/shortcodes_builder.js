@@ -38,8 +38,7 @@
 		build: function ( shortcodes, callback ) {
 			this.ajax( {
 					action: 'vc_load_shortcode',
-					shortcodes: shortcodes,
-					_vcnonce: window.vcAdminNonce
+					shortcodes: shortcodes
 				},
 				vc.frame_window.location.href ).done( function ( html ) {
 					_.each( $( html ), function ( block ) {
@@ -52,6 +51,7 @@
 					vc.activity = false;
 					this.checkNoContent();
 					vc.frame_window.vc_iframe.loadScripts();
+					//vc.frame_window.vc_js(); // causes bug #1499 with tour
 					this.last() && vc.frame.scrollTo( this.first() );
 					this.models = [];
 					this.showResultMessage();
@@ -71,6 +71,10 @@
 			return this.models.length ? _.first( this.models ) : false;
 		},
 		buildFromContent: function () {
+			/*var content = JSON.parse(vc.frame_window.jQuery('#vc_template-post-content').html())
+			 .replace(/\<style([^\>]*)\>\/\*\* vc_js\-placeholder \*\*\//g, '<script$1>')
+			 .replace(/\<\/style([^\>]*)\>\<\!\-\- vc_js\-placeholder \-\-\>/g, '</script$1>');
+			 */
 			var content = decodeURIComponent( vc.frame_window.jQuery( '#vc_template-post-content' ).html() + '' )
 				.replace( /\<style([^\>]*)\>\/\*\* vc_js\-placeholder \*\*\//g, '<script$1>' )
 				.replace( /\<\/style([^\>]*)\>\<\!\-\- vc_js\-placeholder \-\-\>/g, '</script$1>' );
@@ -102,6 +106,7 @@
 			} catch ( e ) {
 				window.console && window.console.error && console.error( e );
 			}
+			//vc.frame_window.vc_js(); // causes bug #1499 with tour element, added in https://github.com/mmihey/js_composer/commit/1b0efa1460c7336da60530cfa330b9d62e71fa7b
 		},
 		buildFromTemplate: function ( html, data ) {
 			var templateShortcodesHasId;
@@ -122,7 +127,7 @@
 
 				if ( ! templateShortcodesHasId ) {
 					id_param = vc.shortcodeHasIdParam( shortcode.tag );
-					if ( id_param && ! _.isUndefined( params ) && ! _.isUndefined( params[ id_param.param_name ] ) && 0 < params[ id_param.param_name ].length ) {
+					if ( id_param && ! _.isUndefined( params ) && ! _.isUndefined( params[ id_param.param_name ] ) && params[ id_param.param_name ].length > 0 ) {
 						templateShortcodesHasId = true;
 					}
 				}
@@ -152,7 +157,7 @@
 		},
 		_renderBlockCallback: function ( block ) {
 			var $this = $( block ), $html, model;
-			if ( 'files' === $this.data( 'type' ) ) {
+			if ( $this.data( 'type' ) === 'files' ) {
 				vc.frame_window.vc_iframe.addScripts( $this.find( 'script,link' ) ); // src remove to fix loading inernal scripts.
 				vc.frame_window.vc_iframe.addStyles( $this.find( 'style' ) ); // add internal css styles.
 			} else {
@@ -178,6 +183,7 @@
 					update_inner = true;
 				} else {
 					var key_inline = vc.frame.addInlineScriptBody( $( this ) );
+					//$(this).html('<span class="js_placeholder_inline_' + key_inline + '"></span>');
 					$( '<span class="js_placeholder_inline_' + key_inline + '"></span>' ).insertAfter( $( this ) );
 					update_inner = true;
 				}
@@ -215,8 +221,7 @@
 						string: shortcode,
 						tag: tag
 					}
-				],
-				_vcnonce: window.vcAdminNonce
+				]
 			}, vc.frame_window.location.href ).done( function ( html ) {
 				var old_view;
 				old_view = model.view;
@@ -230,6 +235,7 @@
 					}
 					old_view.remove();
 					vc.frame_window.vc_iframe.loadScripts();
+					//vc.frame_window.vc_js(); // causes bug #1499 with tour! ,added in https://github.com/mmihey/js_composer/commit/1b0efa1460c7336da60530cfa330b9d62e71fa7b
 					model.view.changed();
 					vc.frame.setSortable();
 					model.view.updated();
@@ -241,7 +247,7 @@
 				url: url || vc.admin_ajax,
 				type: 'POST',
 				dataType: 'html',
-				data: _.extend( { post_id: vc.post_id, vc_inline: true, _vcnonce: window.vcAdminNonce }, data ),
+				data: _.extend( { post_id: vc.post_id, vc_inline: true }, data ),
 				context: this
 			} );
 		},
@@ -254,11 +260,12 @@
 		_getContainer: function ( model ) {
 			var container, parent_model,
 				parent_id = model.get( 'parent_id' );
-			if ( false !== parent_id ) {
+			if ( parent_id !== false ) {
 				parent_model = vc.shortcodes.get( parent_id );
 				if ( _.isUndefined( parent_model ) ) {
 					return vc.app;
 				}
+				// parent_model.view === false && this.addShortcode(parent_model);
 				container = parent_model.view;
 			} else {
 				container = vc.app;
@@ -304,7 +311,7 @@
 				paramsForString = {};
 				mergedParams = vc.getMergedParams( tag, params );
 				content += this.modelsToString( vc.shortcodes.where( { parent_id: model.get( 'id' ) } ) );
-				isContainer = _.isObject( vc.getMapped( tag ) ) && ( ( _.isBoolean( vc.getMapped( tag ).is_container ) && true === vc.getMapped( tag ).is_container ) || ! _.isEmpty( vc.getMapped( tag ).as_parent ) );
+				isContainer = _.isObject( vc.getMapped( tag ) ) && ( ( _.isBoolean( vc.getMapped( tag ).is_container ) && vc.getMapped( tag ).is_container === true ) || ! _.isEmpty( vc.getMapped( tag ).as_parent ) );
 				_.each( mergedParams, function ( value, key ) {
 					if ( 'content' !== key ) {
 						paramsForString[ key ] = this.escapeParam( value );
@@ -404,20 +411,20 @@
 				}
 				if ( _.isString( sub_content ) && sub_content.match( sub_regexp ) &&
 					(
-					(map_settings.is_container && _.isBoolean( map_settings.is_container ) && true === map_settings.is_container) ||
-					(! _.isEmpty( map_settings.as_parent ) && false !== map_settings.as_parent)
+					(map_settings.is_container && _.isBoolean( map_settings.is_container ) && map_settings.is_container === true) ||
+					(! _.isEmpty( map_settings.as_parent ) && map_settings.as_parent !== false)
 					) ) {
 					data = this.parseContent( data, sub_content, data[ id ] );
-				} else if ( _.isString( sub_content ) && sub_content.length && 'vc_row' === sub_matches[ 2 ] ) {
+				} else if ( _.isString( sub_content ) && sub_content.length && sub_matches[ 2 ] === 'vc_row' ) {
 					data = this.parseContent( data,
 						'[vc_column width="1/1"][vc_column_text]' + sub_content + '[/vc_column_text][/vc_column]',
 						data[ id ] );
-				} else if ( _.isString( sub_content ) && sub_content.length && 'vc_column' === sub_matches[ 2 ] ) {
+				} else if ( _.isString( sub_content ) && sub_content.length && sub_matches[ 2 ] === 'vc_column' ) {
 					data = this.parseContent( data,
 						'[vc_column_text]' + sub_content + '[/vc_column_text]',
 						data[ id ] );
 				} else if ( _.isString( sub_content ) ) {
-					data[ id ].params.content = sub_content;
+					data[ id ].params.content = sub_content; // sub_content.match(/\n/) && !_.isUndefined(window.switchEditors) ? window.switchEditors.wpautop(sub_content) : sub_content;
 				}
 			}, this );
 			return data;
@@ -468,7 +475,7 @@
 			this.message = string;
 		},
 		showResultMessage: function () {
-			if ( false !== this.message ) {
+			if ( this.message !== false ) {
 				vc.showMessage( this.message );
 			}
 			this.message = false;

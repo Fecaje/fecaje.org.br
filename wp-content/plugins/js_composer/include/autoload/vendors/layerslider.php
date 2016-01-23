@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @since 4.4 vendors initialization moved to hooks in autoload/vendors.
  *

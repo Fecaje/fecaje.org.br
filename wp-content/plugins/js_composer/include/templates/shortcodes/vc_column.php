@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Shortcode attributes
  * @var $atts
@@ -11,7 +10,6 @@
  * Shortcode class
  * @var $this WPBakeryShortCode_VC_Column
  */
-$el_class = $width = $css = $offset = '';
 $output = '';
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
@@ -35,7 +33,7 @@ $wrapper_attributes[] = 'class="' . esc_attr( trim( $css_class ) ) . '"';
 $output .= '<div ' . implode( ' ', $wrapper_attributes ) . '>';
 $output .= '<div class="wpb_wrapper">';
 $output .= wpb_js_remove_wpautop( $content );
-$output .= '</div>';
-$output .= '</div>';
+$output .= '</div>' . $this->endBlockComment( '.wpb_wrapper' );
+$output .= '</div>' . $this->endBlockComment( $this->getShortcode() );
 
 echo $output;

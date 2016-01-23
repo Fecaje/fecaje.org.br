@@ -3,22 +3,38 @@
 /**
  * Shortcode: us_message
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['color'] string Message box color: 'info' / 'attention' / 'success' / 'error' / 'custom'
- * @param $atts ['bg_color'] string Background color
- * @param $atts ['text_color'] string Text color
- * @param $atts ['icon'] string Icon
- * @param $atts ['closing'] bool Enable closing?
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'us_message' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Message box color: 'info' / 'attention' / 'success' / 'error' / 'custom'
+	 */
+	'color' => 'info',
+	/**
+	 * @var string Background color
+	 */
+	'bg_color' => '',
+	/**
+	 * @var string Text color
+	 */
+	'text_color' => '',
+	/**
+	 * @var string Icon
+	 */
+	'icon' => '',
+	/**
+	 * @var bool Enable closing?
+	 */
+	'closing' => FALSE,
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 $classes = '';
 $inner_css = '';

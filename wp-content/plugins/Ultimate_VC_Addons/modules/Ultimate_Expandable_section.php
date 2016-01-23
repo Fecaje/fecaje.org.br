@@ -2,8 +2,8 @@
 /*
 * Add-on Name: Expandable Section for Visual Composer
 * Add-on URI: http://dev.brainstormforce.com
-*/
-if(!class_exists('AIO_ultimate_exp_section'))
+*/ 
+if(!class_exists('AIO_ultimate_exp_section')) 
 {
 	class AIO_ultimate_exp_section
 
@@ -28,11 +28,11 @@ if(!class_exists('AIO_ultimate_exp_section'))
 				$css_path = '../assets/min-css/';
 				$ext = '.min';
 			}
-			wp_register_style( 'style_ultimate_expsection', plugins_url($css_path.'expandable-section'.$ext.'.css', __FILE__),array(),ULTIMATE_VERSION,FALSE);
+			wp_register_style( 'style_ultimate_expsection', plugins_url($css_path.'expandable-secton'.$ext.'.css', __FILE__),array(),ULTIMATE_VERSION,FALSE);
 			wp_register_script("jquery_ultimate_expsection",plugins_url($js_path."expandable-section".$ext.".js",__FILE__),array('jquery','jquery_ui'),ULTIMATE_VERSION);
 			wp_register_script("jquery_ui",plugins_url($js_path."jquery-ui".$ext.".js",__FILE__),array('jquery'),ULTIMATE_VERSION);
 
-		}
+		} 
 
 		// Shortcode handler function for stats Icon
 		function ultimate_exp_section_shortcode($atts ,$content)
@@ -44,8 +44,8 @@ if(!class_exists('AIO_ultimate_exp_section'))
 			$icon_border_style=$icon_color_border=$icon_color_hoverborder=
 			$icon_border_size=$icon_border_radius=$icon_border_spacing=$map_override=
 			$icon_align=$el_class=$css_editor='';
-
-			extract(shortcode_atts( array(
+	
+			extract(shortcode_atts( array(	
 
 				'title'					=>' ',
 				'heading_style'			=>' ',
@@ -102,7 +102,7 @@ if(!class_exists('AIO_ultimate_exp_section'))
 				),$atts));
 
 				//echo $exp_effect;
-
+				
 				/*---------- data attribute-----------------------------*/
 				//echo $title_margin.$title_padding;
 				$data='';
@@ -127,7 +127,7 @@ if(!class_exists('AIO_ultimate_exp_section'))
 				if($new_title==' '){
 					$new_title=$title;
 				}
-
+				
 				$data.='data-newtitle="'.$new_title.'"';
 				//echo $new_icon;
 				$data.='data-icon="'.$icon.'"';
@@ -140,13 +140,13 @@ if(!class_exists('AIO_ultimate_exp_section'))
 				}
 				$data.='data-newicon="'.$new_icon.'"';
 				/*----active icon --------*/
-
+				
 				if($icon_active_color==''){
 					$icon_active_color=$icon_hover_color;
 				}
 				$data.='data-activeicon="'.$icon_active_color.'"';
-
-
+				
+				
 				if($icon_style!= 'none'){
 					$data.='data-icnbg="'.$icon_color_bg.'"';
 					$data.='data-icnhvrbg="'.$icon_color_hoverbg.'"';
@@ -154,7 +154,7 @@ if(!class_exists('AIO_ultimate_exp_section'))
 					$icon_active_color_bg=$icon_color_hoverbg;
 					}
 					$data.='data-activeiconbg="'.$icon_active_color_bg.'"';
-
+				
 				}
 				if($icon_style== 'advanced'){
 					$data.='data-icnbg="'.$icon_color_bg.'"';
@@ -168,34 +168,34 @@ if(!class_exists('AIO_ultimate_exp_section'))
 					$icon_active_color_bg=$bghovercolor;
 					}
 					$data.='data-activeiconbg="'.$icon_active_color_bg.'"';
-
+				
 					if($icon_color_activeborder==' '){
 					$icon_color_activeborder=$icnhvrborder;
 					}
 					$data.='data-activeborder="'.$icon_color_activeborder.'"';
-
+				
 				}
 				$data.='data-effect="'.$exp_effect.'"';
 				$data.='data-override="'.$map_override.'"';
-
+				
 				/*---active color ----------*/
 				if($title_active==''){
 					$title_active=$text_hovercolor;
 				}
 				$data.='data-activetitle="'.$title_active.'"';
-
+				
 				if($title_active_bg==' '){
 					$title_active_bg=$bghovercolor;
 				}
 				$data.='data-activebg="'.$title_active_bg.'"';
-
+				
 				/*----active icon --------*/
-
+				
 				/*if($icon_active_color==''){
 					$icon_active_color=$bghovercolor;
 				}
 				$data.='data-activeicon="'.$icon_active_color.'"';
-
+				
 				if($icon_active_color_bg==''){
 					$icon_active_color_bg=$bghovercolor;
 				}
@@ -243,7 +243,7 @@ if($icon_type == 'custom'){
 						$style .= 'display:inline-block;';
 					}
 					$iconoutput .= "\n".'<span class="aio-icon-img '.$el_class.' '.'ult_expsection_icon " style="font-size:'.$img_width.'px;'.$style.'" '.$css_trans.'>';
-					$iconoutput .= "\n\t".'<img class="img-icon ult_exp_img '.$img_ext.'" alt="'.$alt.'" src="'.$img.'" />';
+					$iconoutput .= "\n\t".'<img class="img-icon ult_exp_img '.$img_ext.'" alt="'.$alt.'" src="'.$img.'" />';	
 					$iconoutput .= "\n".'</span>';
 				}
 				if(!empty($img)){
@@ -254,7 +254,7 @@ if($icon_type == 'custom'){
 			    	$iconoutput = '';
 			    }
 
-			}
+			} 
 		}else {
 			if($icon!=='')
 			{
@@ -279,8 +279,8 @@ if($icon_type == 'custom'){
 					$style .= 'display:inline-block;';
 				}
 				if($icon !== ""){
-					$iconoutput .= "\n".'<span class="aio-icon  '.$icon_style.' '.$el_class.' ult_expsection_icon " '.$css_trans.' style="'.$style.'">';
-					$iconoutput .= "\n\t".'<i class="'.$icon.' ult_ex_icon"  ></i>';
+					$iconoutput .= "\n".'<span class="aio-icon  '.$icon_style.' '.$el_class.' ult_expsection_icon " '.$css_trans.' style="'.$style.'">';				
+					$iconoutput .= "\n\t".'<i class="'.$icon.' ult_ex_icon"  ></i>';	
 					$iconoutput .= "\n".'</span>';
 				}
 				if($icon !== "" && $icon!=="none"){
@@ -415,7 +415,7 @@ $output.='
 				</div>';
 
 		}else{
-
+			
 		$output.='<div class="ult_exp_section-main '.$position.'">
 					<div class="ult_expheader" align="'.$icon_align.'" >'.$title.'
 					 </div>'.$icon_output.'</div>
@@ -423,7 +423,7 @@ $output.='
 		}
 		if($content!=''){
 		$output.='<div class="ult_exp_content '.$desc_css_class.'" style="'.$cnt_style.'">';
-
+		
 		$output.='<div class="ult_ecpsub_cont" style="'.$section_style.'" >';
 		$output.=	do_shortcode($content);
 		$output.='</div>';
@@ -433,12 +433,12 @@ $output.='
 
 			</div>';
 	//<!--end of exp_content-->
-
+		
 	 if($title!=' '|| $new_title!=' '){
 	  	return $output;
 	  }
-
-
+	 	 	
+	 	  
 
 		}
 
@@ -451,18 +451,17 @@ $output.='
 					array(
 					    "name" => __("Expandable Section"),
 					    "base" => "ultimate_exp_section",
-					    "icon"=> "uvc_expandable",
-					    "class" => "uvc_expandable",
+					    "icon"=>plugins_url("../admin/img/collapsable.png",__FILE__),
 					    "as_parent" => array('except' => 'ultimate_exp_section'),
 					    "category" => __("Ultimate VC Addons","ultimate_vc"),
 					    "description" => __("Add a Expandable Section.","ultimate_vc"),
 					    "content_element" => true,
-					    'front_enqueue_css' => plugins_url('../assets/css/expandable-section.css', __FILE__),
-					    "front_enqueue_js"=>plugins_url("../assets/js/expandable-section.js",__FILE__),
+					    'front_enqueue_css' => plugins_url('../assets/css/expandable-secton.css', __FILE__),
+					    "front_enqueue_js"=>plugins_url("../assets/js/expandable-secton.js",__FILE__),
 						"controls" => "full",
 						"show_settings_on_create" => true,
 						//"is_container"    => true,
-					    "params" => array(
+					    "params" => array(							
 							// Play with icon selector
 					   		array(
 								"type" => "textfield",
@@ -484,18 +483,18 @@ $output.='
 								//"group" => "Title Setting",
 
 							),
-
-
+							
+							
 							/*-----------general------------*/
-
+					
 							array(
 								"type" => "colorpicker",
 								"class" => "",
 								"heading" => __("Title Color", "ultimate_vc"),
 								"param_name" => "text_color",
 								"value" => "",
-								//"description" => __("Select text color for Link.", "ultimate_vc"),
-								"group" => "Color",
+								//"description" => __("Select text color for Link.", "ultimate_vc"),	
+								"group" => "Color",							
 							),
 							array(
 								"type" => "colorpicker",
@@ -505,17 +504,17 @@ $output.='
 								"value" => "",
 								"group" => "Color",
 								"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
-
+								
 							),
 							array(
 								"type" => "colorpicker",
 								"class" => "",
 								"heading" => __("Title Hover Color", "ultimate_vc"),
 								"param_name" => "text_hovercolor",
-								"value" => "",
+								"value" => "",											
 								"group" => "Color",
 							),
-
+							
 							array(
 								"type" => "colorpicker",
 								"class" => "",
@@ -524,14 +523,14 @@ $output.='
 								"value" => "",
 								"group" => "Color",
 								"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
-
+								
 							),
 							array(
 								"type" => "colorpicker",
 								"class" => "",
 								"heading" => __("Title Active Color", "ultimate_vc"),
 								"param_name" => "title_active",
-								"value" => "",
+								"value" => "",											
 								"group" => "Color",
 							),
 							array(
@@ -542,7 +541,7 @@ $output.='
 								"value" => "",
 								"group" => "Color",
 								"edit_field_class" => "vc_col-sm-12 vc_column ult_space_border",
-
+								
 							),
 							/*--container bg color---*/
 							array(
@@ -552,9 +551,9 @@ $output.='
 								"param_name" => "cnt_bg_color",
 								"value" => "",
 								"group" => "Color",
-
+								
 							),
-
+							
 							/*---icon---*/
 							array(
 									"type" => "ult_param_heading",
@@ -578,7 +577,7 @@ $output.='
 								"description" => __("Use existing font icon or upload a custom image.", "ultimate_vc"),
 								"group" => __("Icon","ultimate_vc"),
 							),
-
+						
 							array(
 								"type" => "icon_manager",
 								"class" => "",
@@ -675,7 +674,7 @@ $output.='
 								"heading" => __("Icon Color", "ultimate_vc"),
 								"param_name" => "icon_color",
 								"value" => "",
-								"dependency" => Array("element" => "icon_type","value" => array("selector")),
+								"dependency" => Array("element" => "icon_type","value" => array("selector")),						
 								"group" => __("Icon","ultimate_vc"),
 							),
 							array(
@@ -685,7 +684,7 @@ $output.='
 								"param_name" => "icon_hover_color",
 								"value" => "",
 								"dependency" => Array("element" => "icon_type","value" => array("selector")
-													),
+													),						
 								"group" => __("Icon","ultimate_vc"),
 							),
 							array(
@@ -694,7 +693,7 @@ $output.='
 								"heading" => __("Icon Active Color", "ultimate_vc"),
 								"param_name" => "icon_active_color",
 								"value" => "",
-								"dependency" => Array("element" => "icon_type","value" => array("selector")	),
+								"dependency" => Array("element" => "icon_type","value" => array("selector")	),						
 								"group" => __("Icon","ultimate_vc"),
 							),
 							array(
@@ -822,10 +821,10 @@ $output.='
 								"description" => __("Spacing from center of the icon till the boundary of border / background", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_border_style", "not_empty" => true),
 								"group" => __("Icon","ultimate_vc"),
-
+								
 							),
-
-
+							
+							
 							array(
 								"type" => "dropdown",
 								"class" => "",
@@ -834,11 +833,11 @@ $output.='
 								"value" => array(
 									"Slide" => "",
 									"Fade" => "fadeToggle",
-
+									
 								),
-
+								
 							),
-
+							
 							array(
 								"type" => "textfield",
 								"class" => "",
@@ -866,8 +865,8 @@ $output.='
 									"Full Width "=>"full",
 									"Maximum Full Width"=>"ex-full",
 								),
-								"description" => __("By default, the section will be given to the Visual Composer row. However, in some cases depending on your theme's CSS - it may not fit well to the container you are wishing it would. In that case you will have to select the appropriate value here that gets you desired output..", "ultimate_vc"),
-								'group' => __( 'Design ', 'ultimate_vc' ),
+								"description" => __("By default, the secton will be given to the Visual Composer row. However, in some cases depending on your theme's CSS - it may not fit well to the container you are wishing it would. In that case you will have to select the appropriate value here that gets you desired output..", "ultimate_vc"),
+								'group' => __( 'Design ', 'ultimate_vc' ),								
 								),
 							array(
 								"type" => "number",
@@ -901,7 +900,7 @@ $output.='
 									"class" => "",
 									 'group' => __( 'Design ', 'ultimate_vc' ),
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
-
+									
 								),
 						/*	array(
 					            'type' => 'css_editor',
@@ -950,9 +949,9 @@ $output.='
 									 'group' => __( 'Design ', 'ultimate_vc' ),
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
 
-
+									
 								),
-
+					     
 							array(
 						            "type" => "ultimate_spacing",
 						            "heading" => " Content Margin ",
@@ -992,9 +991,9 @@ $output.='
 									 'group' => __( 'Design ', 'ultimate_vc' ),
 									'edit_field_class' => 'ult-param-heading-wrapper vc_column vc_col-sm-12',
 
-
+									
 								),
-
+					    
 							array(
 						            "type" => "ultimate_spacing",
 						            "heading" => " Icon Margin ",
@@ -1010,25 +1009,25 @@ $output.='
 									 'group' => __( 'Design ', 'ultimate_vc' ),
 									 "description" => __("Add spacing to icon.", "ultimate_vc"),
 						        ),
-
+							
 
 					        /*---typography-------*/
-
+	
 							array(
 								"type" => "ultimate_google_fonts",
 								"heading" => __("Title Font Family", "ultimate_vc"),
 								"param_name" => "font_family",
 								"description" => __("Select the font of your choice. ","ultimate_vc").", ".__("you can","ultimate_vc")." <a href='admin.php?page=ultimate-font-manager' target='_blank'>".__("add new in the collection here","ultimate_vc")."</a>.",
 								"group" => "Typography ",
-								),
+								),	
 
 							array(
 								"type" => "ultimate_google_fonts_style",
 								"heading" 		=>	__("Font Style", "ultimate_vc"),
 								"param_name"	=>	"heading_style",
-
+								
 								"group" => "Typography ",
-							),
+							),	
 							array(
 								"type" => "number",
 								"param_name" => "title_font_size",
@@ -1037,7 +1036,7 @@ $output.='
 								"suffix" => "px",
 								"group" => "Typography ",
 							),
-
+							
 							array(
 								"type" => "number",
 								"param_name" => "title_line_ht",
@@ -1045,7 +1044,7 @@ $output.='
 								"value" => "",
 								"suffix" => "px",
 								"group" => "Typography ",
-
+								
 							),
 						),
 					"js_view" => 'VcColumnView'
@@ -1054,12 +1053,12 @@ $output.='
 				);
 			}
 		}
-
+		
 	}
 }
 if(class_exists('AIO_ultimate_exp_section'))
 {
-
+	
 $AIO_ultimate_exp_section = new AIO_ultimate_exp_section;
 
 }

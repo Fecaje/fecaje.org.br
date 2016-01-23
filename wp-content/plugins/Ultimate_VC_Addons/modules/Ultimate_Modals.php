@@ -12,7 +12,7 @@ if(!class_exists('Ultimate_Modals'))
 			// Add shortcode for modal popup
 			add_shortcode('ultimate_modal', array(&$this, 'modal_shortcode' ) );
 			// Initialize the modal popup component for Visual Composer
-			add_action('init', array( $this, 'ultimate_modal_init' ) );
+			add_action('init', array( &$this, 'ultimate_modal_init' ) );
 			add_action("wp_enqueue_scripts", array($this, "register_modal_assets"),1);
 		}
 		function register_modal_assets()
@@ -244,8 +244,7 @@ if(!class_exists('Ultimate_Modals'))
 									__("Font Icon Manager","ultimate_vc") => "selector",
 									__("Custom Image Icon","ultimate_vc") => "custom",
 								),
-								"description" => __("Use existing font icon or upload a custom image.", "ultimate_vc"),
-								"group" => "General",
+								"description" => __("Use existing font icon or upload a custom image.", "ultimate_vc")
 							),
 							array(
 								"type" => "icon_manager",
@@ -255,7 +254,6 @@ if(!class_exists('Ultimate_Modals'))
 								"value" => "",
 								"description" => __("Click and select icon of your choice. If you can't find the one that suits for your purpose","ultimate_vc").", ".__("you can","ultimate_vc")." <a href='admin.php?page=font-icon-Manager' target='_blank'>".__("add new here","ultimate_vc")."</a>.",
 								"dependency" => Array("element" => "icon_type","value" => array("selector")),
-								"group" => "General",
 							),
 							array(
 								"type" => "ult_img_single",
@@ -265,30 +263,29 @@ if(!class_exists('Ultimate_Modals'))
 								"value" => "",
 								"description" => __("Upload the custom image icon.", "ultimate_vc"),
 								"dependency" => Array("element" => "icon_type","value" => array("custom")),
-								"group" => "General",
 							),
 							// Modal Title
 							array(
 								"type" => "textfield",
+								"class" => "",
 								"heading" => __("Modal Box Title", "ultimate_vc"),
 								"param_name" => "modal_title",
 								"admin_label" => true,
 								"value" => "",
 								"description" => __("Provide the title for modal box.", "ultimate_vc"),
-								"group" => "General",
 							),
 							// Add some description
 							array(
 								"type" => "textarea_html",
+								"class" => "",
 								"heading" => __("Modal Content", "ultimate_vc"),
 								"param_name" => "content",
 								"value" => "",
-								"description" => __("Content that will be displayed in Modal Popup.", "ultimate_vc"),
-								"group" => "General",
-								"edit_field_class" => "ult_hide_editor_fullscreen vc_col-xs-12 vc_column wpb_el_type_textarea_html vc_wrapper-param-type-textarea_html vc_shortcode-param",
+								"description" => __("Content that will be displayed in Modal Popup.", "ultimate_vc")
 							),
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("What's in Modal Popup?", "ultimate_vc"),
 								"param_name" => "modal_contain",
 								"value" => array(
@@ -296,10 +293,11 @@ if(!class_exists('Ultimate_Modals'))
 									__("Youtube Video","ultimate_vc") => "ult-youtube",
 									__("Vimeo Video","ultimate_vc") => "ult-vimeo",
 								),
-								"group" => "General",
+								"description" => ""
 							),
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Display Modal On -", "ultimate_vc"),
 								"param_name" => "modal_on",
 								"value" => array(
@@ -308,31 +306,31 @@ if(!class_exists('Ultimate_Modals'))
 									__("Text","ultimate_vc") => "text",
 									__("On Page Load","ultimate_vc") => "onload",
 								),
-								"description" => __("When should the popup be initiated?", "ultimate_vc"),
-								"group" => "General",
+								"description" => __("When should the popup be initiated?", "ultimate_vc")
 							),
 							array(
 								"type"=>"number",
+								"class"=>'',
 								"heading"=>__("Delay in Popup Display","ultimate_vc"),
 								"param_name"=>"onload_delay",
 								"value"=>"2",
 								"suffix"=>"seconds",
 								"description"=>__("Time delay before modal popup on page load (in seconds)","ultimate_vc"),
-								"dependency"=>Array("element"=>"modal_on","value"=>array("onload")),
-								"group" => "General",
+								"dependency"=>Array("element"=>"modal_on","value"=>array("onload"))
 								),
 							array(
 								"type" => "ult_img_single",
+								"class" => "",
 								"heading" => __("Upload Image", "ultimate_vc"),
 								"param_name" => "btn_img",
 								"admin_label" => true,
 								"value" => "",
 								"description" => __("Upload the custom image / image banner.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("image")),
-								"group" => "General",
 							),
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Button Size", "ultimate_vc"),
 								"param_name" => "btn_size",
 								"value" => array(
@@ -343,30 +341,28 @@ if(!class_exists('Ultimate_Modals'))
 								),
 								"description" => __("How big the button would you like?", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("ult-button")),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Button Background Color", "ultimate_vc"),
 								"param_name" => "btn_bg_color",
 								"value" => "#333333",
-								"group" => "General",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("ult-button")),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Button Text Color", "ultimate_vc"),
 								"param_name" => "btn_txt_color",
 								"value" => "#FFFFFF",
-								"group" => "General",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("ult-button")),
-								"group" => "General",
 							),
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Alignment", "ultimate_vc"),
 								"param_name" => "modal_on_align",
 								"value" => array(
@@ -375,29 +371,28 @@ if(!class_exists('Ultimate_Modals'))
 									__("Right","ultimate_vc") => "right",
 								),
 								"dependency"=>Array("element"=>"modal_on","value"=>array("ult-button","image","text")),
-								"description" => __("Selector the alignment of button/text/image", "ultimate_vc"),
-								"group" => "General",
+								"description" => __("Selector the alignment of button/text/image", "ultimate_vc")
 							),
 							array(
 								"type" => "textfield",
+								"class" => "",
 								"heading" => __("Text on Button", "ultimate_vc"),
 								"param_name" => "btn_text",
 								"admin_label" => true,
 								"value" => "",
 								"description" => __("Provide the title for this button.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("ult-button")),
-								"group" => "General",
 							),
 						
 							// Custom text for modal trigger
 							array(
 								"type" => "textfield",
+								"class" => "",
 								"heading" => __("Enter Text", "ultimate_vc"),
 								"param_name" => "read_text",
 								"value" => "",
 								"description" => __("Enter the text on which the modal box will be triggered.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("text")),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
@@ -411,6 +406,7 @@ if(!class_exists('Ultimate_Modals'))
 							// Modal box size
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Modal Size", "ultimate_vc"),
 								"param_name" => "modal_size",
 								"value" => array(
@@ -420,11 +416,11 @@ if(!class_exists('Ultimate_Modals'))
 									__("Block","ultimate_vc") => "block",
 								),
 								"description" => __("How big the modal box would you like?", "ultimate_vc"),
-								"group" => "General",
 							),
 							// Modal Style
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Modal Box Style","ultimate_vc"),
 								"param_name" => "modal_style",
 								"value" => array(
@@ -446,18 +442,18 @@ if(!class_exists('Ultimate_Modals'))
 									__("Zoom in","ultimate_vc") => "overlay-zoomin",
 									__("Zoom out","ultimate_vc") => "overlay-zoomout",
 								),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Overlay Background Color", "ultimate_vc"),
 								"param_name" => "overlay_bg_color",
 								"value" => "#333333",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "number",
+								"class" => "",
 								"heading" => __("Overlay Background Opacity", "ultimate_vc"),
 								"param_name" => "overlay_bg_opacity",
 								"value" => 80,
@@ -465,43 +461,43 @@ if(!class_exists('Ultimate_Modals'))
 								"max" => 100,
 								"suffix" => "%",
 								"description" => __("Select opacity of overlay background.", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Content Background Color", "ultimate_vc"),
 								"param_name" => "content_bg_color",
 								"value" => "",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Content Text Color", "ultimate_vc"),
 								"param_name" => "content_text_color",
 								"value" => "",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Header Background Color", "ultimate_vc"),
 								"param_name" => "header_bg_color",
 								"value" => "",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Header Text Color", "ultimate_vc"),
 								"param_name" => "header_text_color",
 								"value" => "#333333",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
-								"group" => "General",
 							),
 							// Modal box size
 							array(
 								"type" => "dropdown",
+								"class" => "",
 								"heading" => __("Modal Box Border", "ultimate_vc"),
 								"param_name" => "modal_border_style",
 								"value" => array(
@@ -514,10 +510,10 @@ if(!class_exists('Ultimate_Modals'))
 									__("Outset","ultimate_vc") => "outset",
 								),
 								"description" => __("Do you want to give border to the modal content box?", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "number",
+								"class" => "",
 								"heading" => __("Border Width", "ultimate_vc"),
 								"param_name" => "modal_border_width",
 								"value" => 2,
@@ -526,19 +522,19 @@ if(!class_exists('Ultimate_Modals'))
 								"suffix" => "px",
 								"description" => __("Select size of border.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_border_style","not_empty" => true),
-								"group" => "General",
 							),
 							array(
 								"type" => "colorpicker",
+								"class" => "",
 								"heading" => __("Border Color", "ultimate_vc"),
 								"param_name" => "modal_border_color",
 								"value" => "#333333",
 								"description" => __("Give it a nice paint!", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_border_style","not_empty" => true),
-								"group" => "General",
 							),
 							array(
 								"type" => "number",
+								"class" => "",
 								"heading" => __("Border Radius", "ultimate_vc"),
 								"param_name" => "modal_border_radius",
 								"value" => 0,
@@ -547,33 +543,31 @@ if(!class_exists('Ultimate_Modals'))
 								"suffix" => "px",
 								"description" => __("Want to shape the modal content box?.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_border_style","not_empty" => true),
-								"group" => "General",
 							),
 							array(
 								"type" => "textfield",
+								"class" => "",
 								"heading" => __("Extra Class (Button/Image)", "ultimate_vc"),
 								"param_name" => "init_extra_class",
 								"admin_label" => true,
 								"value" => "",
 								"description" => __("Provide ex class for this button/image.", "ultimate_vc"),
 								"dependency" => Array("element" => "modal_on","value" => array("ult-button","image")),
-								"group" => "General",
 							),
 							// Customize everything
 							array(
 								"type" => "textfield",
+								"class" => "",
 								"heading" => __("Extra Class (Modal)", "ultimate_vc"),
 								"param_name" => "el_class",
 								"value" => "",
 								"description" => __("Add extra class name that will be applied to the modal popup, and you can use this class for your customizations.", "ultimate_vc"),
-								"group" => "General",
 							),
 							array(
 								"type" => "ult_param_heading",
 								"text" => "<span style='display: block;'><a href='http://bsf.io/ei2r5' target='_blank'>".__("Watch Video Tutorial","ultimate_vc")." &nbsp; <span class='dashicons dashicons-video-alt3' style='font-size:30px;vertical-align: middle;color: #e52d27;'></span></a></span>",
 								"param_name" => "notification",
 								'edit_field_class' => 'ult-param-important-wrapper ult-dashicon ult-align-right ult-bold-font ult-blue-font vc_column vc_col-sm-12',
-								"group" => "General",
 							),
 						) // end params array
 					) // end vc_map array

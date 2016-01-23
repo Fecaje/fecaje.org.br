@@ -1,17 +1,17 @@
-if ( 'undefined' !== typeof(jQuery.fn.bxSlider) ) {
+if ( jQuery.fn.bxSlider !== undefined ) {
 	jQuery( '.bxslider' ).each( function () {
 		var $slider = jQuery( this );
 		$slider.bxSlider( $slider.data( 'settings' ) );
 	} );
 }
-if ( 'undefined' !== typeof(window.Swiper) ) {
+if ( window.Swiper !== undefined ) {
 
 	jQuery( '.swiper-container' ).each( function () {
 		var $this = jQuery( this ),
 			my_swiper,
 			max_slide_size = 0,
 			options = jQuery( this ).data( 'settings' );
-		if ( 'vertical' === options.mode ) {
+		if ( options.mode === 'vertical' ) {
 			$this.find( '.swiper-slide' ).each( function () {
 				var height = jQuery( this ).outerHeight( true );
 				if ( height > max_slide_size ) {
@@ -32,17 +32,17 @@ if ( 'undefined' !== typeof(window.Swiper) ) {
 		} );
 		my_swiper = jQuery( this ).swiper( jQuery.extend( options, {
 			onFirstInit: function ( swiper ) {
-				if ( 2 > swiper.slides.length ) {
+				if ( swiper.slides.length < 2 ) {
 					$this.find( '.vc_arrow-left,.vc_arrow-right' ).hide();
-				} else if ( 0 === swiper.activeIndex && true !== swiper.params.loop ) {
+				} else if ( swiper.activeIndex === 0 && swiper.params.loop !== true ) {
 					$this.find( '.vc_arrow-left' ).hide();
 				} else {
 					$this.find( '.vc_arrow-left' ).show();
 				}
 			},
 			onSlideChangeStart: function ( swiper ) {
-				if ( 1 < swiper.slides.length && true !== swiper.params.loop ) {
-					if ( 0 === swiper.activeIndex ) {
+				if ( swiper.slides.length > 1 && swiper.params.loop !== true ) {
+					if ( swiper.activeIndex === 0 ) {
 						$this.find( '.vc_arrow-left' ).hide();
 					} else {
 						$this.find( '.vc_arrow-left' ).show();

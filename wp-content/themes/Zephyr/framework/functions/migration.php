@@ -7,9 +7,6 @@ class US_Migration {
 	 */
 	protected static $instance;
 
-	protected $migration_needed_message = '';
-	protected $migration_completed_message = '';
-
 	/**
 	 * Singleton pattern: US_Migration::instance()->do_something()
 	 *
@@ -33,7 +30,12 @@ class US_Migration {
 		global $us_template_directory;
 
 		// Checking if the theme was just installed
-		if ( ! get_option( 'usof_options_' . US_THEMENAME ) AND ! get_option( US_THEMENAME . '_options' ) ) {
+		$theme = wp_get_theme();
+		if ( is_child_theme() ) {
+			$theme = wp_get_theme( $theme->get( 'Template' ) );
+		}
+		$theme_name = $theme->get( 'Name' );
+		if ( ! get_option( $theme_name . '_options' ) ) {
 			$this->set_db_version();
 
 			return;
@@ -44,7 +46,7 @@ class US_Migration {
 
 		// Get available migrations (should be set by the theme's us_config_migrations filter) and keep only the needed ones
 		$migrations = array();
-		foreach ( us_config( 'migrations', array() ) as $migration_version => $migration_file ) {
+		foreach ( us_config( 'migrations' ) as $migration_version => $migration_file ) {
 			if ( version_compare( $db_version, $migration_version, '<' ) ) {
 				$class = basename( $migration_file, '.php' );
 				if ( file_exists( $us_template_directory . '/' . $migration_file ) ) {
@@ -87,20 +89,9 @@ class US_Migration {
 	 */
 	protected function should_be_manual() {
 		$should_be_manual = FALSE;
-		$migration_needed_message = '';
-		$migration_completed_message = '';
 		foreach ( $this->translators as $version => $translator ) {
-			if ( method_exists( $translator, 'migration_needed_message' ) ) {
-				$migration_needed_message .= $translator->migration_needed_message();
-			}
-			if ( method_exists( $translator, 'migration_completed_message' ) ) {
-				$migration_completed_message .= $translator->migration_completed_message();
-			}
 			$should_be_manual = ( $should_be_manual OR $translator->should_be_manual );
 		}
-
-		$this->migration_needed_message = $migration_needed_message;
-		$this->migration_completed_message = $migration_completed_message;
 
 		return $should_be_manual;
 	}
@@ -124,9 +115,18 @@ class US_Migration {
 	 */
 	public function set_db_version( $version = NULL ) {
 		if ( $version === NULL ) {
-			$version = US_THEMEVERSION;
+			$version = $this->get_theme_version();
 		}
 		update_option( 'us_db_version', $version, TRUE );
+	}
+
+	public function get_theme_version() {
+		$theme = wp_get_theme();
+		if ( is_child_theme() ) {
+			$theme = wp_get_theme( $theme->get( 'Template' ) );
+		}
+
+		return $theme->get( 'Version' );
 	}
 
 	public function provide_fallback( $migrations ) {
@@ -137,9 +137,6 @@ class US_Migration {
 			// For frontend requests only
 			add_filter( 'theme_mod_nav_menu_locations', array( $this, 'fallback_menus' ), 5 );
 			add_filter( 'the_content', array( $this, 'fallback_content' ), 5 );
-		}
-		if ( $this->has_widgets_translators() ) {
-			$this->fallback_widgets();
 		}
 	}
 
@@ -164,17 +161,14 @@ class US_Migration {
 	 * Method for providing live fallback compatibility for options migrations
 	 */
 	public function fallback_theme_options() {
-
-		global $usof_options;
-		usof_load_options_once();
-
+		global $smof_data, $of_options;
 		foreach ( $this->translators as $version => $translator ) {
 			if ( method_exists( $translator, 'translate_theme_options' ) ) {
-				$translator->translate_theme_options( $usof_options );
+				$translator->translate_theme_options( $smof_data );
 			}
 		}
-
-		$usof_options = array_merge( usof_defaults(), $usof_options );
+		$options_machine = new Options_Machine( $of_options );
+		$smof_data = array_merge( $options_machine->Defaults, $smof_data );
 
 		$smof_data['generate_css_file'] = FALSE;
 	}
@@ -216,142 +210,45 @@ class US_Migration {
 	 * @return mixed
 	 */
 	public function fallback_content( $content ) {
-		global $post;
 		foreach ( $this->translators as $version => $translator ) {
 			if ( method_exists( $translator, 'translate_content' ) ) {
-				$translator->translate_content( $content, $post->ID );
+				$translator->translate_content( $content );
 			}
 		}
 
 		return $content;
 	}
 
-	public function has_widgets_translators() {
-		foreach ( $this->translators as $version => $translator ) {
-			if ( method_exists( $translator, 'translate_widgets' ) ) {
-				return TRUE;
-			}
-		}
-
-		return FALSE;
-	}
-
-	public $sidebars_widgets = array();
-	public $widgets_instances = array();
-
-	public function fallback_widgets() {
-		$this->sidebars_widgets = array();
-		$this->widgets_instances = array();
-		$filters_added = array();
-		foreach ( get_option( 'sidebars_widgets', array() ) as $sidebar => $widgets ) {
-			if ( ! is_array( $widgets ) ) {
-				// For non-widgets additional option data
-				$this->sidebars_widgets[ $sidebar ] = $widgets;
-				continue;
-			}
-			foreach ( $widgets as $index => $widget_binding ) {
-				if ( ! preg_match( '@^(.+)\-(\d+)$@', $widget_binding, $matches ) ) {
-					continue;
-				}
-				$widget_name = $original_widget_name = $matches[1];
-				$instance_id = $matches[2];
-
-				$this->widgets_instances[ $widget_name ] = get_option( 'widget_' . $widget_name, array() );
-				if ( ! isset( $this->widgets_instances[ $widget_name ][ $instance_id ] ) ) {
-					continue;
-				}
-
-				foreach ( $this->translators as $version => $translator ) {
-					if ( ! method_exists( $translator, 'translate_widgets' ) ) {
-						continue;
-					}
-
-					if ( $translator->translate_widgets( $widget_name, $this->widgets_instances[ $widget_name ][ $instance_id ] ) ) {
-						if ( $widget_name != $original_widget_name ) {
-							if ( ! isset( $this->widgets_instances[ $widget_name ] ) ) {
-								// Widget name has changed
-								$this->widgets_instances[ $widget_name ] = isset( $this->widgets_instances[ $original_widget_name ] ) ? $this->widgets_instances[ $original_widget_name ] : array();
-							} else {
-								$this->widgets_instances[ $widget_name ][ $instance_id ] = $this->widgets_instances[ $original_widget_name ][ $instance_id ];
-							}
-						}
-						if ( ! in_array( $widget_name, $filters_added ) ) {
-							// Binding each widget once
-							add_filter( 'pre_option_widget_' . $widget_name, array(
-								$this,
-								'fallback_widgets_instance',
-							) );
-							$filters_added[] = $widget_name;
-						}
-					}
-				}
-
-				$widgets[ $index ] = $widget_name . '-' . $instance_id;
-			}
-			$this->sidebars_widgets[ $sidebar ] = $widgets;
-		}
-
-		if ( count( $filters_added ) > 0 ) {
-			add_filter( 'option_sidebars_widgets', array( $this, 'fallback_sidebars_widgets' ) );
-		}
-	}
-
-	public function fallback_sidebars_widgets() {
-		return $this->sidebars_widgets;
-	}
-
-	public function fallback_widgets_instance() {
-		if ( ! preg_match( '@^pre_option_widget_(.+)$@', current_filter(), $matches ) OR ! isset( $this->widgets_instances[ $matches[1] ] ) ) {
-			return FALSE;
-		}
-
-		return $this->widgets_instances[ $matches[1] ];
-	}
-
 	public function display_migration_needed() {
-		if ( $this->migration_needed_message != '' ) {
-			$output = $this->migration_needed_message;
-		} else {
-			$output = '<div class="error us-migration">';
-			$output .= '<h2>Your website data needs to be migrated to be compatible with <strong>' . US_THEMENAME . ' ' . US_THEMEVERSION . '</strong></h2>';
-			$output .= '<p><strong>Important</strong>: Do not save any changes before the migration, as doing this you may loose some of your website data.';
-			$output .= '<br>Please <a href="https://help.us-themes.com/' . strtolower( US_THEMENAME ) . '/update20/" target="_blank">read the manual ';
-			$output .= 'how to migrate the website</a> (or how to rollback to the previous version of the theme, if you don\'t want to migrate) carefully.</p>';
-			$output .= '<p><label><input type="checkbox" name="allow_migration" id="allow_migration"> I\'ve read the manual, made a full backup and checked the website: everything works fine!</p>';
-			$output .= '<p><input disabled type="submit" value="Start the Migration" class="button button-large" id="migration-start"></p>';
-			$output .= '</div>';
-			$output .= '<script>';
-			$output .= 'jQuery(function($){
-				$(".us-migration input.button").attr("disabled", "");
-				$(".us-migration input[type=\"checkbox\"]").removeAttr("checked").on("click", function(){
-					if ($(this).is(":checked")){
-						$(".us-migration input.button").removeAttr("disabled");
-					}else{
-						$(".us-migration input.button").attr("disabled", "");
-					}
-				});
-				$(".us-migration input.button").click(function(){
-					if ( ! $(".us-migration input[type=\"checkbox\"]").is(":checked")) return;
-					location.assign("' . admin_url( 'admin.php?page=us-home' ) . '&us-migration=' . wp_create_nonce( 'us-migration' ) . '");
-				});
-			});';
-			$output .= '</script>';
-		}
+		$output = '<div class="error us-migration">';
+		$output .= '<h2>You need to migrate your website data to be compatible with <strong>Zephyr ' . $this->get_theme_version() . '</strong></h2>';
+		$output .= '<p><strong>Important</strong>: Do not save any changes before the migration, as doing this you may loose some of your website data.<br>Please <a href="https://help.us-themes.com/zephyr/update20/" target="_blank">read the manual how to migrate the website</a> (or how to rollback to the previous version of the theme, if you don\'t want to migrate) carefully.</p>';
+		$output .= '<p><label><input type="checkbox" name="allow_migration" id="allow_migration"> I\'ve read the manual, made a full backup and checked the website: everything works fine!</p>';
+		$output .= '<p><input disabled type="submit" value="Start the Migration" class="button button-large" id="migration-start"></p>';
+		$output .= '</div>';
+		$output .= '<script>';
+		$output .= 'jQuery(function($){
+			$(".us-migration input.button").attr("disabled", "");
+			$(".us-migration input[type=\"checkbox\"]").removeAttr("checked").on("click", function(){
+				if ($(this).is(":checked")){
+					$(".us-migration input.button").removeAttr("disabled");
+				}else{
+					$(".us-migration input.button").attr("disabled", "");
+				}
+			});
+			$(".us-migration input.button").click(function(){
+				if ( ! $(".us-migration input[type=\"checkbox\"]").is(":checked")) return;
+				location.assign("?us-migration=' . wp_create_nonce( 'us-migration' ) . '");
+			});
+		});';
+		$output .= '</script>';
 		echo $output;
 	}
 
 	public function display_migration_completed() {
-		if ( $this->migration_completed_message != '' ) {
-			$output = $this->migration_completed_message;
-		} else {
-			$output = '<div class="updated us-migration">';
-			$output .= '<p><strong>Congratulations</strong>: Migration to ' . US_THEMENAME . ' ' . US_THEMEVERSION . ' ';
-			$output .= 'is completed! Now please regenerate thumbnails and check your website once again. If you notice ';
-			$output .= 'some issues, <a href="https://help.us-themes.com/' . strtolower( US_THEMENAME ) . '/update20/" ';
-			$output .= 'target="_blank">follow the manual</a>.</p>';
-			$output .= '</div>';
-		}
-
+		$output = '<div class="updated us-migration">';
+		$output .= '<p><strong>Congratulations</strong>: Migration to Zephyr ' . $this->get_theme_version() . ' is completed! Now please regenerate thumbnails and check your website once again. If you notice some issues, <a href="https://help.us-themes.com/zephyr/update20/" target="_blank">follow the manual</a>.</p>';
+		$output .= '</div>';
 		echo $output;
 	}
 
@@ -361,7 +258,6 @@ class US_Migration {
 	public function perform_migration() {
 		$this->migrate_menus();
 		$this->migrate_theme_options();
-		$this->migrate_widgets();
 		$this->migrate_content_and_meta();
 		$this->set_db_version();
 	}
@@ -383,80 +279,29 @@ class US_Migration {
 
 	public function migrate_theme_options() {
 		// Getting Options
-		global $usof_options;
-		$updated_options = $usof_options;
+		global $smof_data, $of_options;
 
-		usof_load_options_once();
+		if ( ! isset( $of_options ) OR empty( $of_options ) ) {
+			// Forcing options to be loaded even before the main init
+			remove_action( 'init', 'of_options' );
+			of_options();
+		}
 
 		$options_changed = FALSE;
 		foreach ( $this->translators as $version => $translator ) {
 			if ( method_exists( $translator, 'translate_theme_options' ) ) {
-				$options_changed = ( $translator->translate_theme_options( $updated_options ) OR $options_changed );
+				$options_changed = ( $translator->translate_theme_options( $smof_data ) OR $options_changed );
 			}
 		}
 		if ( $options_changed ) {
 			// Filling the missed options with default values
-			$updated_options = array_merge( usof_defaults(), $updated_options );
-			$updated_options['generate_css_file'] = FALSE;
+			$options_machine = new Options_Machine( $of_options );
+			$smof_data = array_merge( $options_machine->Defaults, $smof_data );
+			$smof_data['generate_css_file'] = FALSE;
 			// Saving the changed options
-			usof_save_options( $updated_options );
-		}
-	}
-
-	public function migrate_widgets() {
-		$sidebars_widgets = array();
-		$widgets_instances = array();
-		// Name of changed widgets
-		$changed_widgets = array();
-		foreach ( get_option( 'sidebars_widgets', array() ) as $sidebar => $widgets ) {
-			if ( ! is_array( $widgets ) ) {
-				// For non-widgets additional option data
-				$sidebars_widgets[ $sidebar ] = $widgets;
-				continue;
-			}
-			foreach ( $widgets as $index => $widget_binding ) {
-				if ( ! preg_match( '@^(.+)\-(\d+)$@', $widget_binding, $matches ) ) {
-					continue;
-				}
-				$widget_name = $original_widget_name = $matches[1];
-				$instance_id = $matches[2];
-
-				$widgets_instances[ $widget_name ] = get_option( 'widget_' . $widget_name, array() );
-				if ( ! isset( $widgets_instances[ $widget_name ][ $instance_id ] ) ) {
-					continue;
-				}
-
-				foreach ( $this->translators as $version => $translator ) {
-					if ( ! method_exists( $translator, 'translate_widgets' ) ) {
-						continue;
-					}
-
-					if ( $translator->translate_widgets( $widget_name, $widgets_instances[ $widget_name ][ $instance_id ] ) ) {
-						if ( $widget_name != $original_widget_name ) {
-							if ( ! isset( $widgets_instances[ $widget_name ] ) ) {
-								// Widget name has changed
-								delete_option( 'widget_' . $original_widget_name );
-								$widgets_instances[ $widget_name ] = isset( $widgets_instances[ $original_widget_name ] ) ? $widgets_instances[ $original_widget_name ] : array();
-							} else {
-								$widgets_instances[ $widget_name ][ $instance_id ] = $widgets_instances[ $original_widget_name ][ $instance_id ];
-							}
-						}
-						if ( ! in_array( $widget_name, $changed_widgets ) ) {
-							$changed_widgets[] = $widget_name;
-						}
-					}
-				}
-
-				$widgets[ $index ] = $widget_name . '-' . $instance_id;
-			}
-			$sidebars_widgets[ $sidebar ] = $widgets;
-		}
-
-		if ( count( $changed_widgets ) > 0 ) {
-			update_option( 'sidebars_widgets', $sidebars_widgets );
-			foreach ( $changed_widgets as $widget_name ) {
-				update_option( 'widget_' . $widget_name, $widgets_instances[ $widget_name ], TRUE );
-			}
+			of_save_options( $smof_data );
+			//update_option( OPTIONS, $smof_data );
+			us_save_styles( $smof_data );
 		}
 	}
 
@@ -471,7 +316,7 @@ class US_Migration {
 		// Iterating thru needed post types
 		foreach ( $posts_types as $post_type ) {
 			$args = array(
-				'posts_per_page' => - 1,
+				'posts_per_page' => -1,
 				'post_type' => $post_type,
 				'post_status' => 'any',
 			);
@@ -499,7 +344,7 @@ class US_Migration {
 				$content_changed = FALSE;
 				foreach ( $this->translators as $version => $translator ) {
 					if ( method_exists( $translator, 'translate_content' ) ) {
-						$content_changed = ( $translator->translate_content( $content, $post->ID ) OR $content_changed );
+						$content_changed = ( $translator->translate_content( $content ) OR $content_changed );
 					}
 				}
 				if ( $content_changed ) {
@@ -548,13 +393,16 @@ abstract class US_Migration_Translator {
 	 */
 	protected function _translate_menus( &$locations, $rules ) {
 		$changed = FALSE;
-		// Obtaining the valid menu ids
-		$menu_ids = wp_get_nav_menus( array( 'fields' => 'ids' ) );
+		$menus = wp_get_nav_menus();
 		foreach ( $rules as $old => $new ) {
-			if ( isset( $locations[ $old ] ) AND in_array( $locations[ $old ], $menu_ids ) ) {
-				$locations[ $new ] = $locations[ $old ];
-				unset( $locations[ $old ] );
-				$changed = TRUE;
+			if ( isset( $locations[ $old ] ) AND $locations[ $old ] != 0 ) {
+				foreach ( $menus as $menu ) {
+					if ( $menu->term_id == $locations[ $old ] ) {
+						$locations[ $new ] = $locations[ $old ];
+						unset( $locations[ $old ] );
+						$changed = TRUE;
+					}
+				}
 			}
 		}
 
@@ -646,10 +494,8 @@ abstract class US_Migration_Translator {
 					}
 				}
 
-				if ( isset( $params[ $param ] ) AND isset( $rule['new_name'] ) ) {
-					if ( $rule['new_name'] !== NULL ) {
-						$params[ $rule['new_name'] ] = $params[ $param ];
-					}
+				if ( isset( $rule['new_name'] ) ) {
+					$params[ $rule['new_name'] ] = $params[ $param ];
 					unset( $params[ $param ] );
 					$params_changed = TRUE;
 				}
@@ -718,12 +564,7 @@ abstract class US_Migration_Translator {
 							$new_shortcode_string .= '[/' . $shortcode_name . ']';
 						}
 
-						// Doing str_replace only once to avoid collisions
-						$pos = strpos( $content, $shortcode_string );
-						if ( $pos !== FALSE ) {
-							$content = substr_replace( $content, $new_shortcode_string, $pos, strlen( $shortcode_string ) );
-						}
-
+						$content = str_replace( $shortcode_string, $new_shortcode_string, $content );
 						$content_changed = TRUE;
 					}
 				}
@@ -733,52 +574,42 @@ abstract class US_Migration_Translator {
 		return $content_changed;
 	}
 
-	public $shortcode_tagnames = NULL;
-
 	public function get_shortcode_regex( $tagnames = NULL ) {
-
 		if ( empty( $tagnames ) OR ! is_array( $tagnames ) ) {
-			if ( $this->shortcode_tagnames === NULL ) {
-				// Retrieving list of possible shortcode translations from the class methods
-				$this->shortcode_tagnames = array();
-				foreach ( get_class_methods( $this ) as $method_name ) {
-					if ( substr( $method_name, 0, 10 ) != 'translate_' ) {
-						continue;
-					}
-					$tagname = substr( $method_name, 10 );
-					if ( ! in_array( $tagname, explode( '|', 'menus|params|content|theme_options|meta|widgets' ) ) ) {
-						$this->shortcode_tagnames[] = $tagname;
-					}
+			// Retrieving list of possible shortcode translations from the class methods
+			$tagnames = array();
+			foreach ( get_class_methods( $this ) as $method_name ) {
+				if ( substr( $method_name, 0, 10 ) != 'translate_' ) {
+					continue;
+				}
+				$tagname = substr( $method_name, 10 );
+				if ( ! in_array( $tagname, array( 'menus', 'params', 'content', 'theme_options', 'meta' ) ) ) {
+					$tagnames[] = $tagname;
 				}
 			}
-			$tagnames = $this->shortcode_tagnames;
 		}
 
-		$tagregexp = implode( '|', array_map( 'preg_quote', $tagnames ) );
+		$tagregexp = join( '|', array_map( 'preg_quote', $tagnames ) );
 
 		// WARNING! Do not change this regex without changing do_shortcode_tag() and strip_shortcode_tag()
 		// Also, see shortcode_unautop() and shortcode.js.
-		$this->shortcode_regex = '\\[' // Opening bracket
-		                         . '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
-		                         . "($tagregexp)" // 2: Shortcode name
-		                         . '(?![\\w-])' // Not followed by word character or hyphen
-		                         . '(' // 3: Unroll the loop: Inside the opening shortcode tag
-		                         . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		                         . '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
-		                         . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		                         . ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
-		                         . '\\]' // ... and closing bracket
-		                         . '|' . '\\]' // Closing bracket
-		                         . '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
-		                         . '[^\\[]*+' // Not an opening bracket
-		                         . '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
-		                         . '[^\\[]*+' // Not an opening bracket
-		                         . ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
-		                         . ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
-
-		return $this->shortcode_regex;
+		return '\\[' // Opening bracket
+		       . '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
+		       . "($tagregexp)" // 2: Shortcode name
+		       . '(?![\\w-])' // Not followed by word character or hyphen
+		       . '(' // 3: Unroll the loop: Inside the opening shortcode tag
+		       . '[^\\]\\/]*' // Not a closing bracket or forward slash
+		       . '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
+		       . '[^\\]\\/]*' // Not a closing bracket or forward slash
+		       . ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
+		       . '\\]' // ... and closing bracket
+		       . '|' . '\\]' // Closing bracket
+		       . '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
+		       . '[^\\[]*+' // Not an opening bracket
+		       . '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
+		       . '[^\\[]*+' // Not an opening bracket
+		       . ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
+		       . ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
 	}
 
 }
-
-US_Migration::instance();

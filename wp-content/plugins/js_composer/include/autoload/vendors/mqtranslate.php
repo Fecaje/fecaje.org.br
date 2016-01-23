@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @since 4.4 vendors initialization moved to hooks in autoload/vendors.
  *
@@ -13,7 +12,7 @@ function vc_init_vendor_mqtranslate() {
 		$vendor = new Vc_Vendor_Mqtranslate();
 		add_action( 'vc_after_set_mode', array(
 			$vendor,
-			'load',
+			'load'
 		) );
 	}
 }

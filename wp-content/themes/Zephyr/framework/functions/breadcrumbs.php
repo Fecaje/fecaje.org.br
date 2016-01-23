@@ -35,19 +35,6 @@ function us_breadcrumbs() {
 		return;
 	}
 
-	// bbPress breadcrumbs
-	if ( function_exists( 'bbp_get_breadcrumb' ) AND in_array( get_post_type(), array( 'topic', 'forum' ) ) ) {
-		echo bbp_get_breadcrumb( array(
-			'before' => '<div class="g-breadcrumbs" xmlns:v="http://rdf.data-vocabulary.org/#">',
-			'after' => '</div>',
-			'sep' => $delimiter,
-			'crumb_before' => $before,
-			'crumb_after' => $after,
-		) );
-
-		return;
-	}
-
 	global $post;
 	$homeLink = home_url() . '/';
 	$linkBefore = '<span typeof="v:Breadcrumb">';

@@ -56,8 +56,8 @@
     }
     var r = "ulttooltipster",
         i = {
-            /*ultContentSize: "auto",             /* ultimate */
-            /*ultContainerWidth: "auto",*/      /* ultimate */
+        	/*ultContentSize: "auto", 		      /* ultimate */
+        	/*ultContainerWidth: "auto",*/ 		/* ultimate */
             animation: "fade",
             arrow: true,
             arrowColor: "",

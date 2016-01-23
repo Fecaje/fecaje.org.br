@@ -53,20 +53,18 @@ class us_migration_2_1 extends US_Migration_Translator {
 		return $changed;
 	}
 
-	// Content
-	public function translate_content( &$content ) {
-		return $this->_translate_content( $content );
-	}
-
+	// Shortcodes
 	public function translate_vc_blog( &$name, &$params, &$content ) {
 		$name = 'us_blog';
 
 		if ( isset( $params['show_excerpt'] ) AND ! $params['show_excerpt'] ) {
 			$params['content_type'] = 'none';
 			unset( $params['show_excerpt'] );
+
+			return TRUE;
 		}
 
-		return TRUE;
+		return FALSE;
 	}
 
 }

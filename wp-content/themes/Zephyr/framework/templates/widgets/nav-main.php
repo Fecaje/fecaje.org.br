@@ -1,4 +1,4 @@
-<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
+<?php defined('ABSPATH') OR die('This script cannot be accessed directly.');
 
 /**
  * Header navigation menu block
@@ -17,20 +17,18 @@ if ( ! has_nav_menu( $menu_location ) ) {
 $us_layout = US_Layout::instance();
 
 $classes = '';
-$list_classes = ' level_1 hover_' . us_get_option( 'menu_hover_effect', 'none' );
 $classes .= ' layout_' . ( ( $us_layout->header_layout != 'sided' ) ? 'hor' : 'ver' );
 $classes .= ' type_desktop';
 $classes .= ' animation_' . us_get_option( 'menu_dropdown_effect', 'opacity' );
 if ( us_get_option( 'menu_height' ) ) {
 	$classes .= ' height_' . ( us_get_option( 'menu_height' ) ? 'full' : 'auto' );
 }
-$list_classes .= ' hidden';
 
 ?>
 <!-- NAV -->
 <nav class="w-nav<?php echo $classes ?>">
 	<div class="w-nav-control"></div>
-	<ul class="w-nav-list<?php echo $list_classes ?>">
+	<ul class="w-nav-list level_1 hover_none hidden">
 		<?php wp_nav_menu( array(
 			'theme_location' => $menu_location,
 			'container' => 'ul',

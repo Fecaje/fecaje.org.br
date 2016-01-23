@@ -8,14 +8,14 @@
 
 return array(
 
-	// Size 1: 350x350 - small image blog and gallery medium thumb
+	// Size 1: 350x350 - small blog and gallery medium thumb
 	'tnail-1x1-small' => array(
 		'width' => 350,
 		'height' => 350,
 		'crop' => TRUE,
 	),
 
-	// Size 2: 600x400 - regular grid blog and related posts
+	// Size 2: 600x400 - regular blog and carousel thumb
 	'tnail-3x2' => array(
 		'width' => 600,
 		'height' => 400,
@@ -29,7 +29,7 @@ return array(
 		'crop' => TRUE,
 	),
 
-	// Size 4: 600xAny - masonry grid blog, masonry gallery thumb and carousel thumb
+	// Size 4: 600xAny - masonry blog and masonry gallery thumb
 	'tnail-masonry' => array(
 		'width' => 600,
 		'height' => 0,

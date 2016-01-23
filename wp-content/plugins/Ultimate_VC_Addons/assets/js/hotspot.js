@@ -3,17 +3,15 @@
 	$(document).ready(function(a) {
 
 		init_tooltip();
-		setTimeout(function() {
-			$(window).load(function(){
-				if($('.ult_hotspot_container').length > 0) {
-					var status = $('.ult_hotspot_container').find('.ult-hotspot-tooltip').attr('data-status') || 'hide';
-					if( status === 'show' ) {
-						$(".ult-tooltipstered").ulttooltipster('destroy');
-					}
-					init_tooltip();
+		$(window).load(function(){
+			if($('.ult_hotspot_container').length > 0) {
+				var status = $('.ult_hotspot_container').find('.ult-hotspot-tooltip').attr('data-status') || 'hide';
+				if( status === 'show' ) {
+					$(".ult-hotspot-tooltip[data-link_style='tootip']").ulttooltipster('destroy');
 				}
-			});
-		}, 700);
+				init_tooltip();
+			}
+		});
 
 		$(document).ajaxComplete(function(e, xhr, settings){
 			init_tooltip();

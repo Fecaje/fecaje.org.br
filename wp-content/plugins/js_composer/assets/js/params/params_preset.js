@@ -63,7 +63,11 @@ if ( _.isUndefined( window.vc ) ) {
 
 	vc.atts.params_preset = {
 		parse: function ( param ) {
-			return $( 'select[name=' + param.param_name + ']', this.content() ).val();
+			var $el = $( 'select[name=' + param.param_name + ']', this.content() );
+			if ( $el && $el.data( 'fieldManager' ) ) {
+				return $el.data( 'fieldManager' ).save();
+			}
+			return "";
 		},
 		init: function ( param, $field ) {
 			// Iterate through all params_preset selects and build backbone view

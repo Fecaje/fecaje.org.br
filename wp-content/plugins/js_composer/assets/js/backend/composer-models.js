@@ -51,25 +51,26 @@
 		 * @param options
 		 */
 		sync: function ( method, model, options ) {
-			var response;
+			var resp;
 			// Select action to do with data in you storage
 			switch ( method ) {
 				case "read":
-					response = model.id ? store.find( model ) : store.findAll();
+					resp = model.id ? store.find( model ) : store.findAll();
 					break;
 				case "create":
-					response = store.create( model );
+					resp = store.create( model );
 					break;
 				case "update":
-					response = store.update( model );
+					resp = store.update( model );
 					break;
 				case "delete":
-					response = store.destroy( model );
+					resp = store.destroy( model );
 					break;
 			}
 			// Response
-			if ( response ) {
-				options.success( response );
+			if ( resp ) {
+				options.success( resp );
+
 			} else {
 				options.error( "Record not found" );
 			}
@@ -94,7 +95,7 @@
 			}
 		},
 		setting: function ( name ) {
-			if ( false === this.settings ) {
+			if ( this.settings === false ) {
 				this.settings = vc.getMapped( this.get( 'shortcode' ) ) || {};
 			}
 			return this.settings[ name ];
@@ -111,6 +112,20 @@
 			return model.get( 'order' );
 		},
 		initialize: function () {
+			// this.on('add', this.checkUpdateOrder, this);
+		},
+		/**
+		 * Updates order of other models if new one has not last order value.
+		 */
+		checkUpdateOrder: function ( model ) {
+			var model_order = model.get( 'order' );
+			if ( model_order < this.length ) {
+				_.each( this.filter( function ( shortcode ) {
+					return model.id != shortcode.id && model.get( 'parent_id' ) === shortcode.get( 'parent_id' ) && shortcode.get( 'order' ) >= model_order;
+				} ), function ( shortcode ) {
+					shortcode.save( { order: shortcode.get( 'order' ) + 1 } );
+				} );
+			}
 		},
 		/**
 		 * Create new models from shortcode string.
@@ -135,25 +150,26 @@
 		 * @param options
 		 */
 		sync: function ( method, model, options ) {
-			var response;
+			var resp;
 			// Select action to do with data in you storage
 			switch ( method ) {
 				case "read":
-					response = model.id ? store.find( model ) : store.findAll();
+					resp = model.id ? store.find( model ) : store.findAll();
 					break;
 				case "create":
-					response = store.create( model );
+					resp = store.create( model );
 					break;
 				case "update":
-					response = store.update( model );
+					resp = store.update( model );
 					break;
 				case "delete":
-					response = store.destroy( model );
+					resp = store.destroy( model );
 					break;
 			}
 			// Response
-			if ( response ) {
-				options.success( response );
+			if ( resp ) {
+				options.success( resp );
+
 			} else {
 				options.error( "Record not found" );
 			}
@@ -182,13 +198,12 @@
 					function ( model ) {
 						return model.get( 'order' );
 					} ), state );
-				var mapped = vc.getMapped( tag );
 				data = {
 					tag: tag,
 					attrs: paramsForString,
 					content: content,
 					type: _.isUndefined( vc.getParamSettings( tag,
-						'content' ) ) && ! mapped.is_container && _.isEmpty( mapped.as_parent ) ? 'single' : ''
+						'content' ) ) && ! vc.getMapped( tag ).is_container ? 'single' : ''
 				};
 				if ( _.isUndefined( state ) ) {
 					model.trigger( 'stringify', model, data );

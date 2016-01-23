@@ -72,11 +72,9 @@ class AS3CF_Notices {
 			'dismissible'           => true,
 			'inline'                => false,
 			'flash'                 => true,
-			'only_show_to_user'     => true, // The user who has initiated an action resulting in notice. Otherwise show to all users.
+			'only_show_to_user'     => true,
 			'only_show_in_settings' => false,
 			'custom_id'             => '',
-			'auto_p'                => true, // Automatically wrap the message in a <p>
-			'class'                 => '', // Extra classes for the notice
 		);
 
 		$notice                 = array_intersect_key( array_merge( $defaults, $args ), $defaults );
@@ -129,7 +127,7 @@ class AS3CF_Notices {
 	 *
 	 * @param array $notice
 	 */
-	public function remove_notice( $notice ) {
+	protected function remove_notice( $notice ) {
 		$user_id = get_current_user_id();
 
 		if ( $notice['only_show_to_user'] ) {
@@ -146,9 +144,17 @@ class AS3CF_Notices {
 			unset( $notices[ $notice['id'] ] );
 
 			if ( $notice['only_show_to_user'] ) {
-				$this->update_user_meta( $user_id, 'as3cf_notices', $notices );
+				if ( ! empty( $notices ) ) {
+					update_user_meta( $user_id, 'as3cf_notices', $notices );
+				} else {
+					delete_user_meta( $user_id, 'as3cf_notices' );
+				}
 			} else {
-				$this->set_site_transient( 'as3cf_notices', $notices );
+				if ( ! empty( $notices ) ) {
+					set_site_transient( 'as3cf_notices', $notices );
+				} else {
+					delete_site_transient( 'as3cf_notices' );
+				}
 			}
 		}
 	}
@@ -176,12 +182,17 @@ class AS3CF_Notices {
 		$notice = $this->find_notice_by_id( $notice_id );
 		if ( $notice ) {
 			if ( $notice['only_show_to_user'] ) {
-				$notices = get_user_meta( $user_id, 'as3cf_notices', true );
-				unset( $notices[ $notice['id'] ] );
-
-				$this->update_user_meta( $user_id, 'as3cf_notices', $notices );
+				if ( ! empty( $notices ) ) {
+					unset( $notices[ $notice['id'] ] );
+					update_user_meta( $user_id, 'as3cf_notices', $notices );
+				} else {
+					delete_user_meta( $user_id, 'as3cf_notices' );
+				}
 			} else {
-				$dismissed_notices = $this->get_dismissed_notices( $user_id );
+				$dismissed_notices = get_user_meta( $user_id, 'as3cf_dismissed_notices', true );
+				if ( ! is_array( $dismissed_notices ) ) {
+					$dismissed_notices = array();
+				}
 
 				if ( ! in_array( $notice['id'], $dismissed_notices ) ) {
 					$dismissed_notices[] = $notice['id'];
@@ -192,74 +203,13 @@ class AS3CF_Notices {
 	}
 
 	/**
-	 * Check if a notice has been dismissed for the current user
-	 *
-	 * @param null|int $user_id
-	 *
-	 * @return array
-	 */
-	public function get_dismissed_notices( $user_id = null ) {
-		if ( is_null( $user_id ) ) {
-			$user_id = get_current_user_id();
-		}
-
-		$dismissed_notices = get_user_meta( $user_id, 'as3cf_dismissed_notices', true );
-		if ( ! is_array( $dismissed_notices ) ) {
-			$dismissed_notices = array();
-		}
-
-		return $dismissed_notices;
-	}
-
-	/**
-	 * Un-dismiss a notice for a user
-	 *
-	 * @param string     $notice_id
-	 * @param null|int   $user_id
-	 * @param null|array $dismissed_notices
-	 */
-	public function undismiss_notice_for_user( $notice_id, $user_id = null, $dismissed_notices = null ) {
-		if ( is_null( $user_id ) ) {
-			$user_id = get_current_user_id();
-		}
-
-		if ( is_null( $dismissed_notices ) ) {
-			$dismissed_notices = $this->get_dismissed_notices( $user_id );
-		}
-
-		$key = array_search( $notice_id, $dismissed_notices );
-		unset( $dismissed_notices[ $key ] );
-
-		$this->update_user_meta( $user_id, 'as3cf_dismissed_notices', $dismissed_notices );
-	}
-
-	/**
-	 * Un-dismiss a notice for all users that have dismissed it
-	 *
-	 * @param string $notice_id
-	 */
-	public function undismiss_notice_for_all( $notice_id ) {
-		$args = array(
-			'meta_key'     => 'as3cf_dismissed_notices',
-			'meta_value'   => $notice_id,
-			'meta_compare' => 'LIKE',
-		);
-
-		$users = get_users( $args );
-
-		foreach( $users as $user ) {
-			$this->undismiss_notice_for_user( $notice_id, $user->ID );
-		}
-	}
-
-	/**
 	 * Find a notice by it's ID
 	 *
 	 * @param string $notice_id
 	 *
-	 * @return array|null
+	 * @return mixed
 	 */
-	public function find_notice_by_id( $notice_id ) {
+	protected function find_notice_by_id( $notice_id ) {
 		$user_id = get_current_user_id();
 
 		$user_notices = get_user_meta( $user_id, 'as3cf_notices', true );
@@ -291,7 +241,6 @@ class AS3CF_Notices {
 		}
 
 		$user_notices = get_user_meta( $user_id, 'as3cf_notices', true );
-		$user_notices = $this->cleanup_corrupt_user_notices( $user_id, $user_notices );
 		if ( is_array( $user_notices ) && ! empty( $user_notices ) ) {
 			foreach ( $user_notices as $notice ) {
 				$this->maybe_show_notice( $notice, $dismissed_notices );
@@ -304,32 +253,6 @@ class AS3CF_Notices {
 				$this->maybe_show_notice( $notice, $dismissed_notices );
 			}
 		}
-	}
-
-	/**
-	 * Cleanup corrupt user notices. Corrupt notices start with a
-	 * numerically indexed array, opposed to string ID
-	 *
-	 * @param int   $user_id
-	 * @param array $notices
-	 *
-	 * @return array
-	 */
-	protected function cleanup_corrupt_user_notices( $user_id, $notices ) {
-		if ( ! is_array( $notices ) || empty( $notices ) ) {
-			return $notices;
-		}
-
-		foreach ( $notices as $key => $notice ) {
-			if ( is_int( $key ) ) {
-				// Corrupt, remove
-				unset( $notices[ $key ] );
-
-				$this->update_user_meta( $user_id, 'as3cf_notices', $notices );
-			}
-		}
-
-		return $notices;
 	}
 
 	/**
@@ -396,35 +319,6 @@ class AS3CF_Notices {
 			'success' => '1',
 		);
 		$this->as3cf->end_ajax( $out );
-	}
-
-	/**
-	 * Helper to update/delete user meta
-	 *
-	 * @param int    $user_id
-	 * @param string $key
-	 * @param array  $value
-	 */
-	protected function update_user_meta( $user_id, $key, $value ) {
-		if ( empty( $value ) ) {
-			delete_user_meta( $user_id, $key);
-		} else {
-			update_user_meta( $user_id, $key, $value );
-		}
-	}
-
-	/**
-	 * Helper to update/delete site transient
-	 *
-	 * @param string $key
-	 * @param array  $value
-	 */
-	protected function set_site_transient( $key, $value ) {
-		if ( empty( $value ) ) {
-			delete_site_transient( $key );
-		} else {
-			set_site_transient( $key, $value );
-		}
 	}
 
 }

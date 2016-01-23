@@ -10,8 +10,7 @@ class WPBakeryShortCode_VC_gallery extends WPBakeryShortCode {
 
 	public function shortcodeScripts() {
 		wp_register_script( 'vc_grid-js-imagesloaded',
-			vc_asset_url( 'lib/bower/imagesloaded/imagesloaded.pkgd.min.js' )
-		);
+			vc_asset_url( 'lib/bower/imagesloaded/imagesloaded.pkgd.min.js' ) );
 	}
 
 	public function singleParamHtmlHolder( $param, $value ) {
@@ -26,7 +25,7 @@ class WPBakeryShortCode_VC_gallery extends WPBakeryShortCode {
 			'button_yellow',
 			'button_blue',
 			'button_red',
-			'button_orange',
+			'button_orange'
 		);
 		$new_names = array(
 			'alert-block',
@@ -37,17 +36,19 @@ class WPBakeryShortCode_VC_gallery extends WPBakeryShortCode {
 			'btn-info',
 			'btn-primary',
 			'btn-danger',
-			'btn-warning',
+			'btn-warning'
 		);
 		$value = str_ireplace( $old_names, $new_names, $value );
+		//$value = __($value, "js_composer");
+		//
 		$param_name = isset( $param['param_name'] ) ? $param['param_name'] : '';
 		$type = isset( $param['type'] ) ? $param['type'] : '';
 		$class = isset( $param['class'] ) ? $param['class'] : '';
 
-		if ( isset( $param['holder'] ) && 'hidden' !== $param['holder'] ) {
+		if ( isset( $param['holder'] ) == true && $param['holder'] !== 'hidden' ) {
 			$output .= '<' . $param['holder'] . ' class="wpb_vc_param_value ' . $param_name . ' ' . $type . ' ' . $class . '" name="' . $param_name . '">' . $value . '</' . $param['holder'] . '>';
 		}
-		if ( 'images' === $param_name ) {
+		if ( $param_name == 'images' ) {
 			$images_ids = empty( $value ) ? array() : explode( ',', trim( $value ) );
 			$output .= '<ul class="attachment-thumbnails' . ( empty( $images_ids ) ? ' image-exists' : '' ) . '" data-name="' . $param_name . '">';
 			foreach ( $images_ids as $image ) {

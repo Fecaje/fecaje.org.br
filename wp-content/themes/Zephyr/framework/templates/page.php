@@ -61,7 +61,7 @@ us_load_template( 'templates/titlebar' );
 
 		<?php if ( $us_layout->sidebar_pos == 'left' OR $us_layout->sidebar_pos == 'right' ): ?>
 			<aside class="l-sidebar at_<?php echo $us_layout->sidebar_pos ?><?php echo generated_dynamic_sidebar_class() ?>">
-				<?php generated_dynamic_sidebar(); ?>
+				<?php generated_dynamic_sidebar() ?>
 			</aside>
 		<?php endif; ?>
 

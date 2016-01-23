@@ -41,12 +41,12 @@
 
 			// If color/highlight is array (of 2 colors), replace it with generated gradient
 			for ( i = data.datasets.length - 1;
-				  0 <= i;
+				  i >= 0;
 				  i -- ) {
 				for ( j = color_keys.length - 1;
-					  0 <= j;
+					  j >= 0;
 					  j -- ) {
-					if ( 'object' === typeof( data[ 'datasets' ][ i ][ color_keys[ j ] ] ) && 2 === data[ 'datasets' ][ i ][ color_keys[ j ] ].length ) {
+					if ( 'object' === typeof( data[ 'datasets' ][ i ][ color_keys[ j ] ] ) && data[ 'datasets' ][ i ][ color_keys[ j ] ].length === 2 ) {
 						gradient = ctx.createLinearGradient( 0, 0, 0, ctx.canvas.height );
 						gradient.addColorStop( 0, data[ 'datasets' ][ i ][ color_keys[ j ] ][ 0 ] );
 						gradient.addColorStop( 1, data[ 'datasets' ][ i ][ color_keys[ j ] ][ 1 ] );

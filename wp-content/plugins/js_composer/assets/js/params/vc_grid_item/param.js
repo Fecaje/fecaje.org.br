@@ -13,20 +13,15 @@ if ( _.isUndefined( window.vc ) ) {
 	"use strict";
 	vc.atts.vc_grid_item = {
 		init: function ( param, $field ) {
-			if ( true === vc_user_access().getState( 'grid_builder' ) || null === vc_user_access().getState( 'grid_builder' ) ) {
-				this.content().find( '[data-vc-shortcode-param-name="' + param.param_name + '"] [data-vc-grid-element="value"]' )
-					.change( function () {
-						var value = $( this ).val(),
-							url = $( this ).find( '[value=' + value + ']' ).data( 'vcLink' );
-						if ( value ) {
-							$( this ).parents( '[data-vc-shortcode-param-name="' + param.param_name + '"]:first' )
-								.find( '[data-vc-grid-item="edit_link"]' ).attr( 'href', url );
-						}
-					} ).trigger( 'change' );
-			} else {
-				this.content().find( '[data-vc-shortcode-param-name="' + param.param_name + '"] .vc_description' ).remove();
-			}
-
+			this.content().find( '[data-param_name="' + param.param_name + '"] [data-vc-grid-element="value"]' )
+				.change( function () {
+					var value = $( this ).val(),
+						url = $( this ).find( '[value=' + value + ']' ).data( 'vcLink' );
+					if ( value ) {
+						$( this ).parents( '[data-param_name="' + param.param_name + '"]:first' )
+							.find( '[data-vc-grid-item="edit_link"]' ).attr( 'href', url );
+					}
+				} ).trigger( 'change' );
 			/*
 			 // Iterate through all params_preset selects and build backbone view
 			 $('[data-vc-grid-element="container"]', $field).each(function () {
@@ -37,7 +32,7 @@ if ( _.isUndefined( window.vc ) ) {
 			 */
 		},
 		parse: function ( param ) {
-			var $field = this.content().find( '[data-vc-shortcode-param-name="' + param.param_name + '"] [data-vc-grid-element="value"]' );
+			var $field = this.content().find( '[data-param_name="' + param.param_name + '"] [data-vc-grid-element="value"]' );
 			/*
 			 fieldManager = $param_container.find('[data-vc-grid-element="container"]').data('vcFieldManager');
 			 return fieldManager ? fieldManager.save() : '';

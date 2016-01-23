@@ -1,6 +1,6 @@
 <?php
 
-class Vc_Gitem_Woocommerce_Shortcode extends WPBakeryShortCode {
+Class Vc_Gitem_Woocommerce_Shortcode extends WPBakeryShortCode {
 	/**
 	 * @param $atts
 	 * @param null $content

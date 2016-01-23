@@ -1,9 +1,10 @@
 <?php
-VcShortcodeAutoloader::getInstance()->includeClass( 'WPBakeryShortCode_VC_Tta_Accordion' );
+require_once vc_path_dir( 'SHORTCODES_DIR', 'vc-tta-accordion.php' );
 
 class WPBakeryShortCode_VC_Tta_Section extends WPBakeryShortCode_VC_Tta_Accordion {
 	protected $controls_css_settings = 'tc vc_control-container';
 	protected $controls_list = array( 'add', 'edit', 'clone', 'delete' );
+	// protected $controls_template_file = 'editors/partials/backend_controls_tab.tpl.php'; // used to remove 'dragabble'
 	protected $backened_editor_prepend_controls = false;
 	/**
 	 * @var WPBakeryShortCode_VC_Tta_Accordion
@@ -13,16 +14,13 @@ class WPBakeryShortCode_VC_Tta_Section extends WPBakeryShortCode_VC_Tta_Accordio
 	public static $section_info = array();
 
 	public function getFileName() {
-		if ( isset( self::$tta_base_shortcode ) && 'vc_tta_pageable' === self::$tta_base_shortcode->getShortcode() ) {
-			return 'vc_tta_pageable_section';
-		} else {
-			return 'vc_tta_section';
-		}
+		return 'vc_tta_section';
 	}
 
 	public function containerContentClass() {
 		return 'wpb_column_container vc_container_for_children vc_clearfix';
 	}
+
 
 	public function getElementClasses() {
 		$classes = array();
@@ -42,6 +40,7 @@ class WPBakeryShortCode_VC_Tta_Section extends WPBakeryShortCode_VC_Tta_Accordio
 
 		return implode( ' ', array_filter( $classes ) );
 	}
+
 
 	/**
 	 * @param $atts
@@ -204,7 +203,7 @@ class WPBakeryShortCode_VC_Tta_Section extends WPBakeryShortCode_VC_Tta_Accordio
 		$output .= ' data-vc-container=".vc_tta-container">';
 		$output .= $this->getTemplateVariable( 'icon-left' );
 		$output .= '<span class="vc_tta-title-text">'
-		           . $this->getTemplateVariable( 'title' )
+		           . esc_html( $this->getTemplateVariable( 'title' ) )
 		           . '</span>';
 		$output .= $this->getTemplateVariable( 'icon-right' );
 		if ( ! $isPageEditable ) {
@@ -215,56 +214,5 @@ class WPBakeryShortCode_VC_Tta_Section extends WPBakeryShortCode_VC_Tta_Accordio
 		$output .= '</h4>'; // close h4 fix #2229
 
 		return $output;
-	}
-
-	/**
-	 * Get basic heading
-	 *
-	 * These are used in Pageable element inside content and are hidden from view
-	 *
-	 * @param $atts
-	 * @param $content
-	 *
-	 * @return string
-	 */
-	public function getParamBasicHeading( $atts, $content ) {
-		$isPageEditable = vc_is_page_editable();
-
-		if ( $isPageEditable ) {
-			$attributes = array(
-				'href' => 'javascript:;',
-				'data-vc-container' => '.vc_tta-container',
-				'data-vc-accordion' => '',
-				'data-vc-target' => '',
-				'data-vc-tta-controls-icon-wrapper' => '',
-				'data-vc-use-cache' => 'false',
-			);
-		} else {
-			$attributes = array(
-				'data-vc-container' => '.vc_tta-container',
-				'data-vc-accordion' => '',
-				'data-vc-target' => esc_attr( '#' . $this->getTemplateVariable( 'tab_id' ) ),
-			);
-		}
-
-		$output = '
-			<span class="vc_tta-panel-title">
-				<a ' . vc_convert_atts_to_string( $attributes ) . '></a>
-			</span>
-		';
-
-		return $output;
-	}
-	/**
-	 * Check is allowed to add another element inside current element.
-	 *
-	 * @since 4.8
-	 *
-	 * @return bool
-	 */
-	public function getAddAllowed() {
-		return  vc_user_access()
-			->part( 'shortcodes' )
-			->checkStateAny( true, 'custom', null )->get();
 	}
 }

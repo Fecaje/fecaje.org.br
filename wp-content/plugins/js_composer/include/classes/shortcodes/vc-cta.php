@@ -1,5 +1,4 @@
 <?php
-
 /**
  * WPBakery Visual Composer shortcodes
  *
@@ -68,10 +67,6 @@ class WPBakeryShortCode_VC_Cta extends WPBakeryShortCode {
 			$main_wrapper_classes[] = $this->getCSSAnimation( $atts['css_animation'] );
 		}
 
-		if ( ! empty( $atts['css'] ) ) {
-			$main_wrapper_classes[] = vc_shortcode_custom_css_class( $atts['css'] );
-		}
-
 		$output['content'] = wpb_js_remove_wpautop( $content, true );
 		$output['heading1'] = $this->getHeading( 'h2', $atts );
 		$output['heading2'] = $this->getHeading( 'h4', $atts );
@@ -83,13 +78,13 @@ class WPBakeryShortCode_VC_Cta extends WPBakeryShortCode {
 
 	public function getHeading( $tag, $atts ) {
 		$inline_css = '';
-		if ( isset( $atts[ $tag ] ) && '' !== trim( $atts[ $tag ] ) ) {
-			if ( isset( $atts[ 'use_custom_fonts_' . $tag ] ) && 'true' === $atts[ 'use_custom_fonts_' . $tag ] ) {
+		if ( isset( $atts[ $tag ] ) && trim( $atts[ $tag ] ) != '' ) {
+			if ( isset( $atts[ 'use_custom_fonts_' . $tag ] ) && 'true' == $atts[ 'use_custom_fonts_' . $tag ] ) {
 				$custom_heading = visual_composer()->getShortCode( 'vc_custom_heading' );
 				$data = vc_map_integrate_parse_atts( $this->shortcode, 'vc_custom_heading', $atts, $tag . '_' );
 				$data['font_container'] = implode( '|', array_filter( array(
 					'tag:' . $tag,
-					$data['font_container'],
+					$data['font_container']
 				) ) );
 				$data['text'] = $atts[ $tag ]; // provide text to shortcode
 
@@ -120,7 +115,7 @@ class WPBakeryShortCode_VC_Cta extends WPBakeryShortCode {
 			}
 		}
 
-		return '';
+		return "";
 	}
 
 	public function getVcIcon( $atts ) {
@@ -136,7 +131,7 @@ class WPBakeryShortCode_VC_Cta extends WPBakeryShortCode {
 			}
 		}
 
-		return '';
+		return "";
 	}
 
 	public function getTemplateVariable( $string ) {
@@ -145,6 +140,6 @@ class WPBakeryShortCode_VC_Cta extends WPBakeryShortCode {
 			return $this->template_vars[ $string ];
 		}
 
-		return '';
+		return "";
 	}
 }

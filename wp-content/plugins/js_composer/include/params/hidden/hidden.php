@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Hidden field param.
  *

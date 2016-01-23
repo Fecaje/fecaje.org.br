@@ -47,7 +47,6 @@ if(!class_exists('Ultimate_Swatch_Book')){
 						"class" => "vc_swatch_container",
 						"icon" => "vc_swatch_container",
 						"category" => "Ultimate VC Addons",
-						"deprecated" => "3.13.5",
 						"as_parent" => array('only' => 'swatch_item'),
 						"description" => __("Interactive swatch strips.","ultimate_vc"),
 						"content_element" => true,

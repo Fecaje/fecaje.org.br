@@ -104,7 +104,7 @@
 			this.$data_field = this.$el.find( '.vc_teaser-data-field' );
 			this.$bgcolor = this.$el.find( '.vc_teaser-bgcolor' );
 			this.$toolbar = this.$contructor_container.find( '.vc_toolbar' );
-			this.$spinner = this.$contructor_container.find( '.vc_teaser_loading_block' );
+			this.$spinner = this.$contructor_container.find( '.vc_teaser_loading_block' )
 			this.renderButtons( this.controls );
 			this.$list = this.$contructor_container.find( '.vc_teaser-list' );
 			this.$list.sortable( {
@@ -140,7 +140,7 @@
 		},
 		toggle: function ( e ) {
 			var $target = $( e.currentTarget );
-			if ( $target[0].checked ) {
+			if ( $target.is( ':checked' ) ) {
 				this.$contructor_container.show();
 			} else {
 				this.$contructor_container.hide();
@@ -159,12 +159,12 @@
 					name: $control.val(),
 					link: 'none'
 				};
-			if ( 'image' === data.name ) {
+			if ( data.name === 'image' ) {
 				data.mode = 'featured';
-			} else if ( 'text' === data.name ) {
+			} else if ( data.name === 'text' ) {
 				data.mode = 'excerpt';
 			}
-			if ( $control[0].checked ) {
+			if ( $control.is( ':checked' ) ) {
 				this.createControl( data );
 			} else {
 				this.$list.find( '[data-control=' + data.name + ']' ).remove();
@@ -175,7 +175,8 @@
 		setLinkControl: function ( e ) {
 			e.preventDefault();
 			var $button = $( e.currentTarget ),
-				$control = $button.closest( '.vc_link-controls' );
+				$control = $button.closest( '.vc_link-controls' ),
+				link_type = $button.data( 'link' );
 			$control.find( '.vc_active-link' ).removeClass( 'vc_active-link' );
 			$button.addClass( 'vc_active-link' );
 			this.save();
@@ -192,23 +193,23 @@
 			this.updateContent( data );
 		},
 		removeData: function ( data ) {
-			if ( 'title' === data.name ) {
+			if ( data.name === 'title' ) {
 				$( '#title' ).unbind( 'keyup.vcTeaserTitle' );
-			} else if ( 'text' === data.name ) {
+			} else if ( data.name === 'text' ) {
 				this.current_text_mode = '';
-			} else if ( 'image' === data.name ) {
+			} else if ( data.name === 'image' ) {
 				this.current_image_mode = '';
 			}
 		},
 		updateContent: function ( data ) {
-			if ( 'title' === data.name ) {
+			if ( data.name === 'title' ) {
 				$( '#title' ).bind( 'keyup.vcTeaserTitle', this.updateTitle ).trigger( 'keyup.vcTeaserTitle' );
 				this.save();
-			} else if ( 'image' === data.name ) {
+			} else if ( data.name === 'image' ) {
 				this.setImageMode( data.mode );
-			} else if ( 'text' === data.name ) {
+			} else if ( data.name === 'text' ) {
 				this.setTextMode( data.mode );
-			} else if ( 'link' === data.name ) {
+			} else if ( data.name === 'link' ) {
 				this.save();
 			}
 		},
@@ -227,11 +228,11 @@
 			if ( new_mode !== this.current_text_mode ) {
 				$vc_text.removeClass( 'vc_text-' + this.current_image_mode ).addClass( 'vc_text-' + new_mode );
 				this.current_text_mode = new_mode;
-				if ( 'excerpt' === new_mode ) {
+				if ( new_mode === 'excerpt' ) {
 					$vc_text.html( '<div class="vc_teaser-text-excerpt">' + this.getExcerpt() + '</div>' );
-				} else if ( 'text' === new_mode ) {
+				} else if ( new_mode === 'text' ) {
 					$vc_text.html( '<div class="vc_teaser-text-text"></div>' ).find( '.vc_teaser-text-text' ).html( $( '#content' ).val() );
-				} else if ( 'custom' === new_mode ) {
+				} else if ( new_mode === 'custom' ) {
 					$vc_text.html( '<textarea name="vc_teaser_text_custom" id="vc_teaser-text-custom"></textarea>' ).find( 'textarea' ).val( this.custom_text );
 				}
 			}
@@ -263,13 +264,13 @@
 				$( '.vc_image',
 					this.$el ).removeClass( 'vc_image-' + this.current_image_mode ).addClass( 'vc_image-' + new_mode );
 				this.current_image_mode = new_mode;
-				if ( 'featured' === new_mode ) {
-					if ( false === this.featured_image_trigger ) {
+				if ( new_mode === 'featured' ) {
+					if ( this.featured_image_trigger === false ) {
 						$( document ).ajaxSuccess( this.triggerFeaturedImageChanges );
 						this.featured_image_trigger = true;
 					}
 					this.setFeaturedImageBlock( $( '#set-post-thumbnail' ).parent().html() );
-				} else if ( 'custom' === new_mode ) {
+				} else if ( new_mode === 'custom' ) {
 					this.setCustomImageBlock();
 				}
 			}
@@ -295,8 +296,7 @@
 					data: {
 						action: 'wpb_single_image_src',
 						content: this.custom_image_attributes.id,
-						size: 'large',
-						_vcnonce: window.vcAdminNonce
+						size: 'large'
 					},
 					dataType: 'html',
 					context: this
@@ -335,7 +335,7 @@
 				$image = '';
 			if ( $vc_image.hasClass( 'vc_image-featured' ) ) {
 				$image = $( data ).find( 'img' ).length ? $( data ).find( 'img' ) : $( '<div>Featured image not set</div>' );
-				$( '.vc_image', this.$el ).empty().append( $image );
+				$( '.vc_image', this.$el ).html( '' ).append( $image );
 			}
 		},
 		updateTitle: function ( e ) {
@@ -351,11 +351,11 @@
 			$( '.vc_teaser-control', this.$el ).each( function () {
 				var $block = $( this ),
 					block_data = { name: $block.data( 'control' ) };
-				if ( 'image' === block_data.name ) {
-					block_data.image = 'featured' !== that.current_image_mode ? that.getCustomTeaserImage() : that.current_image_mode;
-				} else if ( 'text' === block_data.name ) {
+				if ( block_data.name === 'image' ) {
+					block_data.image = that.current_image_mode !== 'featured' ? that.getCustomTeaserImage() : that.current_image_mode;
+				} else if ( block_data.name == 'text' ) {
 					block_data.mode = that.current_text_mode;
-					if ( 'custom' === block_data.mode ) {
+					if ( block_data.mode === 'custom' ) {
 						block_data.text = that.custom_text;
 					}
 				}
@@ -382,17 +382,16 @@
 			}
 			_.each( data, function ( block_data ) {
 				if ( _.isString( block_data.name ) ) {
-					$( '.vc_teaser-btn-' + block_data.name, this.$toolbar ).prop( 'checked', true );
-
-					if ( 'image' === block_data.name && ! _.isUndefined( block_data.image ) ) {
-						if ( 'featured' !== block_data.image ) {
+					var $control = $( '.vc_teaser-btn-' + block_data.name, this.$toolbar ).prop( 'checked', true );
+					if ( block_data.name == 'image' && ! _.isUndefined( block_data.image ) ) {
+						if ( block_data.image !== 'featured' ) {
 							this.custom_image_attributes = { id: block_data.image };
 							block_data.mode = 'custom';
 						} else {
 							block_data.mode = 'featured';
 						}
-					} else if ( 'text' === block_data.name ) {
-						if ( 'custom' === block_data.mode ) {
+					} else if ( block_data.name == 'text' ) {
+						if ( block_data.mode === 'custom' ) {
 							this.custom_text = block_data.text;
 						}
 					}

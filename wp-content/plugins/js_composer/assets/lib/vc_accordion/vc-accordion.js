@@ -25,7 +25,7 @@
 				data = new Accordion( $this, $.extend( true, {}, options ) );
 				$this.data( 'vc.accordion', data );
 			}
-			if ( 'string' === typeof(action) ) {
+			if ( 'string' === typeof action ) {
 				data[ action ].apply( data, args );
 			}
 		} );
@@ -66,7 +66,7 @@
 
 		for ( transition in
 			transitions ) {
-			if ( 'undefined' !== typeof(el.style[ transition ]) ) {
+			if ( el.style[ transition ] !== undefined ) {
 				return transitions[ transition ];
 			}
 		}
@@ -106,14 +106,14 @@
 		var $this;
 		$this = this.$element;
 
-		if ( 'string' !== typeof(action) ) {
+		if ( 'string' !== typeof action ) {
 			action = $this.data( 'vcAction' ) || this.getContainer().data( 'vcAction' );
 		}
-		if ( 'undefined' === typeof(action) ) {
+		if ( undefined === action ) {
 			action = Accordion.DEFAULT_TYPE;
 		}
 
-		if ( 'string' === typeof(action) ) {
+		if ( 'string' === typeof action ) {
 			Plugin.call( $this, action );
 		}
 	};
@@ -129,7 +129,7 @@
 			return false !== that.$element.data( 'vcUseCache' );
 		};
 
-		if ( 'undefined' === typeof(this.useCacheFlag) ) {
+		if ( undefined === this.useCacheFlag ) {
 			this.useCacheFlag = useCache();
 		}
 
@@ -144,7 +144,6 @@
 		var findSelector, $this;
 
 		$this = this.$element;
-
 		findSelector = function () {
 			var selector;
 
@@ -160,7 +159,7 @@
 			return findSelector();
 		}
 
-		if ( 'undefined' === typeof(this.selector) ) {
+		if ( undefined === this.selector ) {
 			this.selector = findSelector();
 		}
 
@@ -189,7 +188,7 @@
 			return this.findContainer();
 		}
 
-		if ( 'undefined' === typeof(this.$container) ) {
+		if ( undefined === this.$container ) {
 			this.$container = this.findContainer();
 		}
 
@@ -201,24 +200,15 @@
 	 * @returns {*}
 	 */
 	Accordion.prototype.getTarget = function () {
-		var selector, that, getTarget;
-		that = this;
-		selector = that.getSelector();
-		getTarget = function () {
-			var element;
-			element = that.getContainer().find( selector );
-			if ( ! element.length ) {
-				element = that.getContainer().filter( selector );
-			}
-			return element;
-		};
+		var selector;
+		selector = this.getSelector();
 
 		if ( ! this.isCacheUsed() ) {
-			return getTarget();
+			return this.getContainer().find( selector );
 		}
 
-		if ( 'undefined' === typeof(this.$target) ) {
-			this.$target = getTarget();
+		if ( undefined === this.$target ) {
+			this.$target = this.getContainer().find( selector );
 		}
 
 		return this.$target;
@@ -241,7 +231,7 @@
 			return $target;
 		}
 
-		if ( 'undefined' === typeof(this.$targetContent) ) {
+		if ( undefined === this.$targetContent ) {
 			$targetContent = $target;
 			if ( $target.data( 'vcContent' ) ) {
 				$targetContent = $target.find( $target.data( 'vcContent' ) );
@@ -266,7 +256,7 @@
 			var accordion, $this;
 			$this = $( this );
 			accordion = $this.data( 'vc.accordion' );
-			if ( 'undefined' === typeof(accordion) ) {
+			if ( undefined === accordion ) {
 				$this.vcAccordion();
 				accordion = $this.data( 'vc.accordion' );
 			}
@@ -295,7 +285,7 @@
 	 */
 	Accordion.prototype.triggerEvent = function ( event ) {
 		var $event;
-		if ( 'string' === typeof(event) ) {
+		if ( 'string' === typeof event ) {
 			$event = $.Event( event );
 			this.$element.trigger( $event );
 		}
@@ -348,51 +338,35 @@
 	};
 
 	/**
-	 * Get animation duration
+	 * Get container
 	 * @returns {*|Number}
 	 */
 	Accordion.prototype.getAnimationDuration = function () {
 		var findAnimationDuration, that;
+
 		that = this;
 
 		findAnimationDuration = function () {
 			var $targetContent, duration;
 
-			if ( 'undefined' === typeof(Accordion.transitionName) ) {
-				return '0s';
-			}
-
 			$targetContent = that.getTargetContent();
 			duration = $targetContent.css( 'transition-duration' );
 			duration = duration.split( ',' )[ 0 ];
-			return duration;
+			if ( parseFloat( duration ) ) {
+				return duration;
+			}
+
+			return false;
 		};
 
 		if ( ! this.isCacheUsed() ) {
 			return findAnimationDuration();
 		}
 
-		if ( 'undefined' === typeof(this.animationDuration) ) {
+		if ( undefined === this.animationDuration ) {
 			this.animationDuration = findAnimationDuration();
 		}
 		return this.animationDuration;
-	};
-
-	/**
-	 * Get animation duration in milliseconds
-	 * @returns {*|Number}
-	 */
-	Accordion.prototype.getAnimationDurationMilliseconds = function () {
-		var duration;
-		duration = this.getAnimationDuration();
-
-		if ( 'ms' === duration.substr( - 2 ) ) {
-			return parseInt( duration );
-		}
-
-		if ( 's' === duration.substr( - 1 ) ) {
-			return Math.round( parseFloat( duration ) * 1000 )
-		}
 	};
 
 	/**
@@ -400,7 +374,7 @@
 	 * @returns {boolean}
 	 */
 	Accordion.prototype.isAnimated = function () {
-		return parseFloat( this.getAnimationDuration() ) > 0;
+		return ! ! this.getAnimationDuration();
 	};
 
 	/**
@@ -427,11 +401,10 @@
 						$targetContent.attr( 'style', '' );
 						that.triggerEvent( 'afterShow.vc.accordion' );
 					} );
-					Accordion.emulateTransitionEnd( $targetContent, that.getAnimationDurationMilliseconds() + 100 );
+					Accordion.emulateTransitionEnd( $targetContent );
 					next();
 				} )
 				.queue( function ( next ) {
-					$targetContent.attr( 'style', '' );
 					$targetContent.css( {
 						position: 'absolute', // Optional if #myDiv is already absolute
 						visibility: 'hidden',
@@ -444,10 +417,8 @@
 				} )
 				.queue( function ( next ) {
 					$targetContent.height( 0 );
-					$targetContent.css( {
-						'padding-top': 0,
-						'padding-bottom': 0
-					} );
+					$targetContent.css( 'padding-top', 0 );
+					$targetContent.css( 'padding-bottom', 0 );
 					next();
 				} )
 				.queue( function ( next ) {
@@ -459,18 +430,9 @@
 				} )
 				.queue( function ( next ) {
 					var height = $targetContent.data( 'vcHeight' );
-					$targetContent.animate( { 'height': height }, {
-						duration: that.getAnimationDurationMilliseconds(),
-						complete: function () {
-							if (!$targetContent.data('events')) {
-								$targetContent.attr( 'style', '' );
-							}
-						}
-					} );
-					$targetContent.css( {
-						'padding-top': '',
-						'padding-bottom': ''
-					} );
+					$targetContent.height( height );
+					$targetContent.css( 'padding-top', '' );
+					$targetContent.css( 'padding-bottom', '' );
 					next();
 				} );
 		} else {
@@ -503,7 +465,7 @@
 						$targetContent.attr( 'style', '' );
 						that.triggerEvent( 'afterHide.vc.accordion' );
 					} );
-					Accordion.emulateTransitionEnd( $targetContent, that.getAnimationDurationMilliseconds() + 100 );
+					Accordion.emulateTransitionEnd( $targetContent );
 					next();
 				} )
 				.queue( function ( next ) {
@@ -518,11 +480,9 @@
 					next();
 				} )
 				.queue( function ( next ) {
-					$targetContent.animate( { 'height': 0 }, that.getAnimationDurationMilliseconds() );
-					$targetContent.css( {
-						'padding-top': 0,
-						'padding-bottom': 0
-					} );
+					$targetContent.height( 0 );
+					$targetContent.css( 'padding-top', 0 );
+					$targetContent.css( 'padding-bottom', 0 );
 					next();
 				} );
 		} else {
@@ -543,29 +503,6 @@
 			Plugin.call( $this, 'hide' );
 		} else {
 			Plugin.call( $this, 'show' );
-		}
-	};
-
-	/**
-	 * Accordion type: dropdown
-	 */
-	Accordion.prototype.dropdown = function () {
-		var $this, that;
-		that = this;
-		$this = this.$element;
-
-		if ( this.isActive() ) {
-			Plugin.call( $this, 'hide' );
-		} else {
-			Plugin.call( $this, 'show' );
-			$( document ).on( 'click.vc.accordion.data-api.dropdown', function ( e ) {
-				var isTarget;
-				isTarget = $( e.target ).closest( that.getTarget() ).length;
-				if ( ! isTarget ) {
-					Plugin.call( $this, 'hide' );
-					$( document ).off( e );
-				}
-			} );
 		}
 	};
 
@@ -703,7 +640,7 @@
 		if ( hash ) {
 			$targetElement = $( hash );
 			if ( $targetElement.length ) {
-				$accordion = $targetElement.find( '[data-vc-accordion][href='+hash+'],[data-vc-accordion][data-vc-target='+hash+']' );
+				$accordion = $targetElement.find( '[data-vc-accordion]' );
 				if ( $accordion.length ) {
 					setTimeout( function () {
 						$( 'html, body' ).animate( {

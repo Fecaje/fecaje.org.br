@@ -5,23 +5,10 @@
  *
  * Overloaded by UpSolution custom implementation.
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['title'] string Section title
- * @param $atts ['icon'] string Icon
- * @param $atts ['i_position'] string Icon position: 'left' / 'right'
- * @param $atts ['active'] bool Tab is opened when page loads
- * @param $atts ['indents'] string Indents type: '' / 'none'
- * @param $atts ['bg_color'] string Background color
- * @param $atts ['text_color'] string Text color
- * @param $atts ['c_position'] string Control position (inherited from wrapping vc_tta_tabs shortcode): 'left' / 'right'
- * @param $atts ['title_tag'] string Title Tag Name (inherited from wrapping vc_tta_tabs shortcode): 'div' / 'h2'/ 'h3'/ 'h4'/ 'h5'/ 'h6'/ 'p'
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
 // .w-tabs-section container additional classes and inner CSS-styles
@@ -37,7 +24,44 @@ if ( isset( $us_tab_index ) AND isset( $us_tabs_atts[ $us_tab_index - 1 ] ) ) {
 	$atts = array_merge( $atts, $us_tabs_atts[ $us_tab_index - 1 ] );
 }
 
-$atts = us_shortcode_atts( $atts, 'vc_tta_section' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Section title
+	 */
+	'title' => '',
+	/**
+	 * @var string Icon
+	 */
+	'icon' => '',
+	/**
+	 * @var string Icon position: 'left' / 'right'
+	 */
+	'i_position' => 'left',
+	/**
+	 * @var bool Tab is opened when page loads
+	 */
+	'active' => FALSE,
+	/**
+	 * @var string Indents type: '' / 'none'
+	 */
+	'indents' => '',
+	/**
+	 * @var string Background color
+	 */
+	'bg_color' => '',
+	/**
+	 * @var string Text color
+	 */
+	'text_color' => '',
+	/**
+	 * @var string Control position (inherited from wrapping vc_tta_tabs shortcode): 'left' / 'right'
+	 */
+	'c_position' => 'right',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 if ( ! empty( $atts['bg_color'] ) ) {
 	$inner_css .= 'background-color: ' . $atts['bg_color'] . ';';
@@ -72,7 +96,7 @@ if ( $atts['c_position'] == 'left' ) {
 if ( $atts['icon'] AND $atts['i_position'] == 'left' ) {
 	$output .= '<i class="' . us_prepare_icon_class( $atts['icon'] ) . '"></i>';
 }
-$output .= '<' . $atts['title_tag'] . ' class="w-tabs-section-title">' . $atts['title'] . '</' . $atts['title_tag'] . '>';
+$output .= '<h5 class="w-tabs-section-title">' . $atts['title'] . '</h5>';
 if ( $atts['icon'] AND $atts['i_position'] == 'right' ) {
 	$output .= '<i class="' . us_prepare_icon_class( $atts['icon'] ) . '"></i>';
 }

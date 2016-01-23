@@ -1,4 +1,4 @@
-<?php defined( 'ABSPATH' ) OR die( 'This script cannot be accessed directly.' );
+<?php defined('ABSPATH') OR die('This script cannot be accessed directly.');
 
 /**
  * Shortcode: vc_row
@@ -6,38 +6,86 @@
  * Overloaded by UpSolution custom implementation to allow creating fullwidth sections and provide lots of additional
  * features.
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['columns_type'] string Columns type: 'small' / 'medium' / 'large' / 'none'
- * @param $atts ['height'] string Height type. Possible values: 'small' / 'medium' / 'large' / 'huge' / 'auto' /  'full'
- * @param $atts ['valign'] string Vertical align for full-height sections: '' / 'center'
- * @param $atts ['width'] string Section width: '' / 'full'
- * @param $atts ['color_scheme'] string Color scheme: '' / 'alternate' / 'primary' / 'secondary' / 'custom'
- * @param $atts ['us_bg_color'] string
- * @param $atts ['us_text_color'] string
- * @param $atts ['us_bg_image'] int Background image ID (from WordPress media)
- * @param $atts ['us_bg_size'] string Background size: 'cover' / 'contain' / 'initial'
- * @param $atts ['us_bg_repeat'] string Background size: 'repeat' / 'repeat-x' / 'repeat-y' / 'no-repeat'
- * @param $atts ['us_bg_pos'] string Background position: 'top left' / 'top center' / 'top right' / 'center left' / 'center center' / 'center right' /  'bottom left' / 'bottom center' / 'bottom right'
- * @param $atts ['us_bg_parallax'] string Parallax type: '' / 'vertical' / 'horizontal' / 'still'
- * @param $atts ['us_bg_parallax_width'] string Parallax background width: '110' / '120' / '130' / '140' / '150'
- * @param $atts ['us_bg_parallax_reverse'] bool Reverse vertival parllax effect?
- * @param $atts ['us_bg_video'] bool Has theme-defined background video?
- * @param $atts ['video_mp4'] string Link to mp4 video file
- * @param $atts ['video_ogg'] string Link to ogg video file
- * @param $atts ['video_webm'] string Link to webm video file
- * @param $atts ['us_bg_overlay_color'] string
- * @param $atts ['el_id'] string
- * @param $atts ['el_class'] string
- * @param $atts ['css'] string
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'vc_row' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Columns type: 'small' / 'medium' / 'large' / 'none'
+	 */
+	'columns_type' => 'medium',
+	/**
+	 * @var string Height type. Possible values: 'small' / 'medium' / 'large' / 'auto' /  'full'
+	 */
+	'height' => 'medium',
+	/**
+	 * @var string Vertical align for full-height sections: '' / 'center'
+	 */
+	'valign' => '',
+	/**
+	 * @var string Section width: '' / 'full'
+	 */
+	'width' => '',
+	/**
+	 * @var string Color scheme: '' / 'alternate' / 'primary' / 'secondary' / 'custom'
+	 */
+	'color_scheme' => '',
+	/**
+	 * @var string
+	 */
+	'us_bg_color' => '',
+	/**
+	 * @var string
+	 */
+	'us_text_color' => '',
+	/**
+	 * @var int Background image ID (from WordPress media)
+	 */
+	'us_bg_image' => '',
+	/**
+	 * @var string Background size: 'cover' / 'contain' / 'initial'
+	 */
+	'us_bg_size' => 'cover',
+	/**
+	 * @var string Parallax type: '' / 'vertical' / 'horizontal' / 'still'
+	 */
+	'us_bg_parallax' => '',
+	/**
+	 * @var bool Has theme-defined background video?
+	 */
+	'us_bg_video' => FALSE,
+	/**
+	 * @var string Link to mp4 video file
+	 */
+	'video_mp4' => '',
+	/**
+	 * @var string Link to ogg video file
+	 */
+	'video_ogg' => '',
+	/**
+	 * @var string Link to webm video file
+	 */
+	'video_webm' => '',
+	/**
+	 * @var string
+	 */
+	'us_bg_overlay_color' => '',
+	/**
+	 * @var string
+	 */
+	'el_id' => '',
+	/**
+	 * @var string
+	 */
+	'el_class' => '',
+	/**
+	 * @var string
+	 */
+	'css' => '',
+), $atts );
 
 // .l-submain container additional classes and inner CSS-styles
 $classes = '';
@@ -66,6 +114,8 @@ if ( $atts['color_scheme'] != '' ) {
 	}
 }
 
+$classes .= ' imgsize_' . $atts['us_bg_size'];
+
 $bg_image_html = '';
 if ( ! empty( $atts['us_bg_image'] ) ) {
 	$bg_image_url = '';
@@ -78,40 +128,29 @@ if ( ! empty( $atts['us_bg_image'] ) ) {
 		$bg_image_url = $atts['img'];
 	}
 	$classes .= ' with_img';
-	$bg_image_inner_css = 'background-image: url(' . $bg_image_url . ');';
-
-	if ( $atts['us_bg_pos'] != 'center center' ) {
-		$bg_image_inner_css .= 'background-position: ' . $atts['us_bg_pos'] . ';';
-	}
-	if ( $atts['us_bg_repeat'] != 'repeat' ) {
-		$bg_image_inner_css .= 'background-repeat: ' . $atts['us_bg_repeat'] . ';';
-	}
-	if ( $atts['us_bg_size'] != 'cover' ) {
-		$bg_image_inner_css .= 'background-size: ' . $atts['us_bg_size'] . ';';
-	}
-	$bg_image_html = '<div class="l-section-img" style="' . $bg_image_inner_css .'"></div>';
+	$bg_image_html = '<div class="l-section-img" style="background-image: url(' . $bg_image_url . ')"></div>';
 }
 
 $bg_video_html = '';
 if ( $atts['us_bg_video'] AND ( $atts['video_mp4'] != '' OR $atts['video_ogg'] != '' OR $atts['video_webm'] != '' ) ) {
 	$classes .= ' with_video';
 	$bg_video_html = '<div class="l-section-video"><video loop="loop" autoplay="autoplay" preload="auto"';
-	if ( isset( $bg_image_url ) AND ! empty( $bg_image_url ) ) {
+	if ( isset($bg_image_url) AND ! empty( $bg_image_url ) ) {
 		$bg_video_html .= ' poster="' . $bg_image_url . '"';
 	}
 	$bg_video_html .= '>';
 
 	// Available video sources
 	if ( ! empty( $atts['video_mp4'] ) ) {
-		$bg_video_html .= '<source type="video/mp4" src="' . $atts['video_mp4'] . '" />';
+		$bg_video_html .= '<source type="video/mp4 " src="' . $atts['video_mp4'] . '"></source>';
 	}
 	if ( ! empty( $atts['video_ogg'] ) ) {
-		$bg_video_html .= '<source type="video/ogg " src="' . $atts['video_ogg'] . '" />';
+		$bg_video_html .= '<source type="video/ogg " src="' . $atts['video_ogg'] . '"></source>';
 	}
 	if ( ! empty( $atts['video_webm'] ) ) {
-		$bg_video_html .= '<source type="video/webm" src="' . $atts['video_webm'] . '" />';
+		$bg_video_html .= '<source type="video/webm" src="' . $atts['video_webm'] . '"></source>';
 	}
-	if ( isset( $bg_image_url ) AND ! empty( $bg_image_url ) ) {
+	if ( isset($bg_image_url) AND ! empty( $bg_image_url ) ) {
 		$bg_video_html .= '<img src="' . $bg_image_url . '" alt="">';
 	}
 
@@ -124,15 +163,11 @@ if ( $atts['us_bg_video'] AND ( $atts['video_mp4'] != '' OR $atts['video_ogg'] !
 	if ( $atts['us_bg_parallax'] == 'vertical' ) {
 		$classes .= ' parallax_ver';
 		wp_enqueue_script( 'us-parallax' );
-		if ( $atts['us_bg_parallax_reverse'] ) {
-			$classes .= ' parallaxdir_reversed';
-		}
 	} elseif ( $atts['us_bg_parallax'] == 'fixed' OR $atts['us_bg_parallax'] == 'still' ) {
 		$classes .= ' parallax_fixed';
 	} elseif ( $atts['us_bg_parallax'] == 'horizontal' ) {
 		$classes .= ' parallax_hor';
 		wp_enqueue_script( 'us-hor-parallax' );
-		$classes .= ' bgwidth_' . $atts['us_bg_parallax_width'];
 	}
 }
 
@@ -142,11 +177,16 @@ if ( ! empty( $atts['us_bg_overlay_color'] ) ) {
 	$bg_overlay_html = '<div class="l-section-overlay" style="background-color: ' . $atts['us_bg_overlay_color'] . '"></div>';
 }
 
+
 // Additional class set by a user in a shortcode attributes
 if ( ! empty( $atts['el_class'] ) ) {
 	$classes .= ' ' . sanitize_html_class( $atts['el_class'] );
 }
 
+// Special VC hooks
+if ( function_exists( 'get_row_css_class' ) ) {
+	$classes .= ' ' . get_row_css_class();
+}
 if ( ! empty( $atts['css'] ) AND preg_match( '~\{([^\}]+?)\;?\}~', $atts['css'], $matches ) ) {
 	// We cannot use VC's method directly for rows: as it uses !important values, so we're moving the defined css
 	// that don't duplicate the theme's features to inline style attribute.

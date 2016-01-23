@@ -369,7 +369,9 @@ if(!class_exists('AIO_Info_list'))
 							"param_name" => "style",
 							"value" => array(
 								__('Square With Background','ultimate_vc') => 'square with_bg',
+								__('Square Without Background','ultimate_vc') => 'square no_bg',
 								__('Circle With Background','ultimate_vc') => 'circle with_bg',
+								__('Circle Without Background','ultimate_vc') => 'circle no_bg',
 								__('Hexagon With Background','ultimate_vc') => 'hexagon',
 								),
 							"description" => __("Select the icon style for icon list.","ultimate_vc")
@@ -417,7 +419,7 @@ if(!class_exists('AIO_Info_list'))
 								__("Outset","ultimate_vc") => "outset",
 							),
 							"description" => __("Select the border style for icon.","ultimate_vc"),
-							"dependency" => Array("element" => "style", "value" => array("square with_bg","circle with_bg")),
+							"dependency" => Array("element" => "style", "value" => array("square no_bg","square with_bg","circle no_bg","circle with_bg")),
 						),
 						array(
 							"type" => "number",

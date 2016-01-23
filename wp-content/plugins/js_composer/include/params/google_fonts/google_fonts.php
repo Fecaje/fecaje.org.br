@@ -12,6 +12,8 @@
  *     'font_family:'.rawurlencode('Exo:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic').'|font_style:'.rawurlencode('900
  *     bold italic:900:italic'),
  *                'settings' => array(
+ *                    //'no_font_style' // Method 1: To disable font style
+ *                    //'no_font_style'=>true // Method 2: To disable font style
  *                    'fields'=>array(
  *                        'font_family'=>'Abril Fatface:regular',//
  *     'Exo:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic',
@@ -54,8 +56,8 @@ class Vc_Google_Fonts {
 	 * vc_filter: vc_google_fonts_get_fonts_filter
 	 * @since 4.3
 	 * @return array List of available fonts as array of objects. {"font_family":"Abril
-	 *     Fatface","font_styles":"regular","font_types":"400 regular:400:normal"}
-	 *
+     *     Fatface","font_styles":"regular","font_types":"400 regular:400:normal"}
+     * 
 	 * @return array
 	 */
 	public function _vc_google_fonts_get_fonts() {
@@ -74,7 +76,7 @@ class Vc_Google_Fonts {
 		if ( is_array( $attr ) && ! empty( $attr ) ) {
 			foreach ( $attr as $key => $val ) {
 				if ( is_numeric( $key ) ) {
-					$fields[ $val ] = '';
+					$fields[ $val ] = "";
 				} else {
 					$fields[ $key ] = $val;
 				}

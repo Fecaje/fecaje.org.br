@@ -6,12 +6,13 @@
  * Visual composer panels & modals for frontend editor
  *
  * ========================================================= */
-/* global vcDefaultGridItemContent, vc */
+/* global vcDefaultGridItemContent */
 (function ( $ ) {
 	vc.gridItemEditor = true;
 	vc.Storage.prototype.getContent = function () {
 		var content;
 		if ( _.isObject( window.tinymce ) && tinymce.editors.content ) {
+			// window.switchEditors.go('content', 'html');
 			tinymce.editors.content.save();
 		}
 		content = window.vc_wpnop( $( '#content' ).val() );
@@ -34,6 +35,13 @@
 		} else {
 			vc.showSpinner();
 			this.sendDataGitemPreview();
+			/*
+			 $('[data-vc-grid-item="preview"]').addClass('vc_visible').html('<iframe src="'
+			 + window.ajaxurl + '?action=vc_gitem_preview&shortcodes_string='
+			 + window.encodeURIComponent(vc.storage.getContent())
+			 + '&post_id=' + window.encodeURIComponent($('#post_ID').val())
+			 + '"></iframe>');
+			 */
 		}
 	};
 	/**
@@ -47,12 +55,11 @@
 			.html( '<iframe name="vc_gitem-preview-iframe"></iframe>' ).addClass( 'vc_visible' );
 		// Create content
 		$form = $( '<form id="vc_gitem-preview-form" action="' + encodeURI( ajaxurl ) + '" method="post"'
-			+ ' target="vc_gitem-preview-iframe" style="position: absolute;visibility: hidden;right: 0; bottom:0">'
-			+ '<input type="hidden" name="action" value="vc_gitem_preview">'
-			+ '<input type="hidden" id="vc_gitem-preview-form-shortcode-string" name="shortcodes_string">'
-			+ '<input type="hidden" name="post_id">'
-			+ '<input type="hidden" name="_vcnonce" value="' + window.vcAdminNonce + '">'
-			+ '<input type="submit" name="submit">' ).prependTo( 'body' );
+		+ ' target="vc_gitem-preview-iframe" style="position: absolute;visibility: hidden;right: 0; bottom:0">'
+		+ '<input type="hidden" name="action" value="vc_gitem_preview">'
+		+ '<input type="hidden" id="vc_gitem-preview-form-shortcode-string" name="shortcodes_string">'
+		+ '<input type="hidden" name="post_id">'
+		+ '<input type="submit" name="submit">' ).prependTo( 'body' );
 		// Set values
 		$form.find( '[name="post_id"]' ).val( $( '#post_ID' ).val() );
 		$form.find( '[name="shortcodes_string"]' ).val( vc.storage.getContent() );
@@ -74,7 +81,7 @@
 	};
 	vc.visualComposerView.prototype.hidePreview = function () {
 		$( '#visual_composer_content' ).show();
-		$( '[data-vc-grid-item="preview"]' ).removeClass( 'vc_visible' ).empty();
+		$( '[data-vc-grid-item="preview"]' ).removeClass( 'vc_visible' ).html( '' );
 		$( '[data-vc-grid-item="navbar_preview_width"]' ).removeClass( 'vc_visible' );
 		this.previewActivated = false;
 		$( '[data-vc-navbar-control="preview"]' ).text( i18nLocaleGItem.preview );
@@ -86,7 +93,7 @@
 		} else if ( e && e.currentTarget ) {
 			iframeWindow.vcSetItemWidth( $( e.currentTarget ).val() );
 		}
-	};
+	}
 	vc.visualComposerView.prototype.openVcGitemEditForm = function ( e ) {
 		e && e.preventDefault();
 		var vcGitemModel = vc.shortcodes.findWhere( { shortcode: 'vc_gitem' } );
@@ -102,8 +109,7 @@
 			forceHelperSize: false,
 			connectWith: ".wpb_column_container",
 			placeholder: "vc_placeholder",
-			items: "> .wpb_sortable.wpb_content_element,> .wpb_content_element.vc-non-draggable", //wpb_sortablee
-			cancel: ".vc-non-draggable", //wpb_sortablee
+			items: "> .wpb_sortable.wpb_content_element", //wpb_sortablee
 			helper: this.renderPlaceholder,
 			distance: 3,
 			scroll: true,
@@ -124,9 +130,9 @@
 				if ( ! vc.check_relevance( parent_tag, tag ) ) {
 					$( this ).sortable( 'cancel' );
 				}
-				var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && true === vc.map[ tag ].is_container ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
-				if ( is_container && ! (true === allowed_container_element || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
-						'' )) ) {
+				var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && vc.map[ tag ].is_container === true ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
+				if ( is_container && ! (allowed_container_element === true || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
+						'' )) ) { // && ui.item.hasClass('wpb_container_block')
 					$( this ).sortable( 'cancel' );
 				}
 				$( '.vc_sorting-empty-container' ).removeClass( 'vc_sorting-empty-container' );
@@ -140,8 +146,8 @@
 					ui.placeholder.addClass( 'vc_hidden-placeholder' );
 					return false;
 				}
-				var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && true === vc.map[ tag ].is_container ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
-				if ( is_container && ! (true === allowed_container_element || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
+				var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && vc.map[ tag ].is_container === true ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
+				if ( is_container && ! (allowed_container_element === true || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
 						'' )) ) {
 					ui.placeholder.addClass( 'vc_hidden-placeholder' );
 					return false;
@@ -149,7 +155,7 @@
 				if ( ui.sender && ui.sender.length && ! ui.sender.find( '[data-element_type]:visible' ).length ) {
 					ui.sender.addClass( 'vc_sorting-empty-container' );
 				}
-				ui.placeholder.removeClass( 'vc_hidden-placeholder' );
+				ui.placeholder.removeClass( 'vc_hidden-placeholder' ); // .parent().removeClass('vc_empty-container');
 				ui.placeholder.css( { maxWidth: ui.placeholder.parent().width() } );
 			}
 		} );
@@ -171,121 +177,65 @@
 		var iframeWindow = $( '#vc_gitem-preview iframe' ).get( 0 ).contentWindow;
 		iframeWindow && iframeWindow.changeAnimation( animation );
 	};
-	vc.visualComposerView.prototype.initializeAccessPolicy = function () {
-		this.accessPolicy = {
-			be_editor: vc_user_access().editor( 'grid_builder' ),
-			fe_editor: false,
-			classic_editor: false
-		};
+	// @todo optimize this function defer or change sometimes to slow.
+	vc.AddElementBlockViewBackendEditor.prototype.createElement = function ( e ) {
+		var model, tag, parent_id = false, cZone, cZoneRow, cZoneCol;
+		this.do_render = true;
+		_.isObject( e ) && e.preventDefault();
+		tag = $( e.currentTarget ).data( 'tag' );
+		if ( false !== this.model && 'vc_gitem_add_c_zone' === this.model.get( 'shortcode' ) ) {
+			this.model.view.setCZonePosition( this.model.getParam( 'position' ) );
+			vc.storage.lock();
+			cZone = vc.shortcodes.create( {
+				shortcode: 'vc_gitem_zone_c',
+				parent_id: this.model.get( 'parent_id' ),
+				params: _.extend( {}, vc.getDefaults( 'vc_gitem_zone_c' ) ),
+				order: this.model.getParam( 'cZonePosition' )
+			} );
+			this.model.view.cZone = cZone;
+			vc.storage.lock();
+			cZoneRow = vc.shortcodes.create( {
+				shortcode: 'vc_gitem_row',
+				params: _.extend( {}, vc.getDefaults( 'vc_gitem_row' ) ),
+				parent_id: cZone.get( 'id' )
+			} );
+			vc.storage.lock();
+			cZoneCol = vc.shortcodes.create( {
+				shortcode: 'vc_gitem_col',
+				params: _.extend( { width: '1/1' }, vc.getDefaults( 'vc_gitem_col' ) ),
+				parent_id: cZoneRow.get( 'id' )
+			} );
+			parent_id = cZoneCol.get( 'id' );
+			cZone = null;
+			cZoneCol = null;
+		} else if ( false !== this.model ) {
+			parent_id = this.model.get( 'id' );
+		}
+		model = vc.shortcodes.create( {
+			shortcode: tag,
+			parent_id: parent_id,
+			params: vc.getDefaults( tag ),
+			root_id: vc.shortcodes.findWhere( { shortcode: 'vc_gitem' } ) || false
+		} );
+		if ( tag === 'vc_gitem_row' ) {
+			vc.shortcodes.create( {
+				shortcode: 'vc_gitem_col',
+				params: { width: '1/1' },
+				parent_id: model.get( 'id' ),
+				root_id: model.get( 'id' )
+			} );
+		}
+		this.show_settings = _.isBoolean( vc.getMapped( tag ).show_settings_on_create ) && vc.getMapped( tag ).show_settings_on_create === false ? false : true;
+		this.model = model;
+		this.$el.modal( 'hide' );
 	};
 	vc.EditElementPanelView.prototype.ajaxData = function () {
-		var params, mergedParams;
-
-		params = this.model.get( 'params' );
-		mergedParams = vc.getMergedParams( this.model.get( 'shortcode' ),
-			_.extend( {}, vc.getDefaults( this.model.get( 'shortcode' ) ), params ) );
-		if ( ! _.isUndefined( params.content ) ) {
-			mergedParams.content = params.content;
-		}
-
 		return {
 			action: 'vc_edit_form',
 			vc_grid_item_editor: 'true',
 			tag: this.model.get( 'shortcode' ),
 			post_id: $( '#post_ID' ).val(),
-			params: mergedParams,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-
-	vc.EditElementPanelView.prototype.fetchSaveSettingsDialogAjaxData = function () {
-		return {
-			action: 'vc_action_render_settings_preset_title_prompt',
-			vc_inline: true,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.saveSettingsAjaxData = function ( shortcode_name, title, is_default, data ) {
-		return {
-			action: 'vc_action_save_settings_preset',
-			shortcode_name: shortcode_name,
-			is_default: is_default ? 1 : 0,
-			vc_inline: true,
-			title: title,
-			data: data,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.fetchSaveSettingsDialogAjaxData = function () {
-		return {
-			action: 'vc_action_render_settings_preset_title_prompt',
-			vc_inline: true,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.loadSettingsAjaxData = function ( id ) {
-		return {
-			action: 'vc_action_get_settings_preset',
-			vc_inline: true,
-			id: id,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.deleteSettingsAjaxData = function ( shortcode_name, id ) {
-		return {
-			action: 'vc_action_delete_settings_preset',
-			shortcode_name: shortcode_name,
-			vc_inline: true,
-			id: id,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		}
-	};
-	vc.EditElementPanelView.prototype.saveAsDefaultSettingsAjaxData = function ( shortcode_name ) {
-		return {
-			action: 'vc_action_set_as_default_settings_preset',
-			shortcode_name: shortcode_name,
-			id: this.settingsPresetId,
-			vc_inline: true,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.restoreDefaultSettingsAjaxData = function ( shortcode_name ) {
-		return {
-			action: 'vc_action_restore_default_settings_preset',
-			shortcode_name: shortcode_name,
-			vc_inline: true,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.reloadSettingsMenuContentAjaxData = function ( shortcode_name ) {
-		return {
-			action: 'vc_action_render_settings_preset_popup',
-			shortcode_name: shortcode_name,
-			vc_inline: true,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
-		};
-	};
-	vc.EditElementPanelView.prototype.renderSettingsPresetAjaxData = function ( params ) {
-		var parent_id;
-
-		parent_id = this.model.get( 'parent_id' );
-
-		return {
-			action: 'vc_edit_form',
-			tag: this.model.get( 'shortcode' ),
-			parent_tag: parent_id ? this.model.collection.get( parent_id ).get( 'shortcode' ) : null,
-			post_id: $( '#post_ID' ).val(),
-			params: params,
-			vc_grid_item_editor: true,
-			_vcnonce: window.vcAdminNonce
+			params: this.model.get( 'params' )
 		};
 	};
 	window.VcGitemView = window.VcColumnView.extend( {
@@ -354,7 +304,7 @@
 		},
 		addCZone: function ( e ) {
 			var $column = $( e.currentTarget ),
-				position = $column.data( 'vcPosition' ), model;
+				position = $column.data( 'vcPosition' ), model
 			if ( this.cZone ) {
 				this.updateCZonePosition( $column, position );
 				return false;
@@ -402,7 +352,7 @@
 		},
 		getCZoneModelOrder: function ( position ) {
 			var animatedBlockOrder = this.animatedBlock.get( 'order' );
-			return 'top' === position || 'left' === position ? animatedBlockOrder - 1 : animatedBlockOrder + 1
+			return position === 'top' || position === 'left' ? animatedBlockOrder - 1 : animatedBlockOrder + 1
 		},
 		cZoneRemoved: function () {
 			this.cZone = false;
@@ -411,7 +361,7 @@
 		},
 		setDraggableC: function () {
 			this.$content.find( '[data-vc-gitem="add-c"]' ).sortable( {
-				items: '[data-element_type="vc_gitem_zone_c"]:not(.vc-non-draggable)',
+				items: '[data-element_type="vc_gitem_zone_c"]',
 				connectWith: '[data-vc-gitem="add-c"]',
 				forcePlaceholderSize: true,
 				forceHelperSize: false,
@@ -436,7 +386,6 @@
 			} );
 			this.setCZonePosition( position );
 			this.setCssPosition( cBlockContainer );
-
 		},
 		setCssPosition: function ( $container ) {
 			this.$content
@@ -448,13 +397,13 @@
 			var tag = view.model.get( 'shortcode' ),
 				position, $zone;
 			view.render();
-			if ( 'vc_gitem_zone_c' === tag ) {
+			if ( tag === 'vc_gitem_zone_c' ) {
 				position = this.model.getParam( 'c_zone_position' ) || 'bottom';
 				$zone = this.$content.find( '[data-vc-gitem="add-c"][data-vc-position="' + position + '"]' );
 				view.$el.appendTo( $zone.addClass( 'vc_zone-added' ) );
 				this.setDraggableC();
 				this.cZone = view.model;
-			} else if ( 'vc_gitem_animated_block' === tag ) {
+			} else if ( tag === 'vc_gitem_animated_block' ) {
 				view.$el.appendTo( $( '[data-vc-gitem="add-ab"]' ) );
 				this.animatedBlock = view.model;
 			}
@@ -531,10 +480,10 @@
 		},
 		addTab: function ( zone, id ) {
 			var $zone = $( '<li class="vc_gitem-animated-block-tab vc_gitem-tab-'
-				+ zone + '"><a href="#" data-vc-gitem-tab-link="' + zone + '"><span class="vc_label">' + this.getZoneLabel( zone )
-				+ '</span></a><a class="vc_control column_edit" data-vc-control="edit" data-vc-zone-model-id="' + id + '"><span class="vc_icon"></span></a></li>' );
+			+ zone + '"><a href="#" data-vc-gitem-tab-link="' + zone + '"><span class="vc_label">' + this.getZoneLabel( zone )
+			+ '</span></a><a class="vc_control column_edit" data-vc-control="edit" data-vc-zone-model-id="' + id + '"><span class="vc_icon"></span></a></li>' );
 			$zone.appendTo( '[data-vc-gitem-animated-block="tabs"]' );
-			'a' === zone && this.switchZone( $zone.find( 'a' ) );
+			zone === 'a' && this.switchZone( $zone.find( 'a' ) );
 		},
 		getZoneLabel: function ( zone ) {
 			var zoneSettings = vc.map[ 'vc_gitem_zone_' + zone ] ? vc.map[ 'vc_gitem_zone_' + zone ] : false;
@@ -591,11 +540,11 @@
 		addShortcode: function ( view ) {
 			var tag = view.model.get( 'shortcode' );
 			view.render();
-			if ( 'vc_gitem_zone_a' === tag ) {
+			if ( tag === 'vc_gitem_zone_a' ) {
 				view.$el.appendTo( this.$el.find( '[data-vc-gitem-animated-block="add-a"]' ) );
 				this.aZone = view.model;
 				this.addTab( 'a', view.model.get( 'id' ) );
-			} else if ( 'vc_gitem_zone_b' === tag ) {
+			} else if ( tag === 'vc_gitem_zone_b' ) {
 				view.$el.appendTo( this.$el.find( '[data-vc-gitem-animated-block="add-b"]' ) );
 				this.bZone = view.model;
 				this.addTab( 'b', view.model.get( 'id' ) );
@@ -619,7 +568,6 @@
 			} );
 		},
 		buildDesignHelpers: function () {
-			var matches;
 			var featuredImage, css = this.model.getParam( 'css' ),
 				$before = this.$el.find( '> .vc_controls' ).get( 0 ),
 				image, color;
@@ -627,27 +575,27 @@
 			this.$el.find( '> [data-vc-helper="color"]' ).remove();
 			this.$el.find( '> [data-vc-helper="image"]' ).remove();
 			this.$el.find( '> [data-vc-helper="image-featured"]' ).remove();
-			matches = css.match( /background\-image:\s*url\(([^\)]+)\)/ );
+			var matches = css.match( /background\-image:\s*url\(([^\)]+)\)/ )
 			if ( matches && ! _.isUndefined( matches[ 1 ] ) ) {
 				image = matches[ 1 ];
 			}
-			matches = css.match( /background\-color:\s*([^\s\;]+)\b/ );
+			var matches = css.match( /background\-color:\s*([^\s\;]+)\b/ )
 			if ( matches && ! _.isUndefined( matches[ 1 ] ) ) {
 				color = matches[ 1 ];
 			}
-			matches = css.match( /background:\s*([^\s]+)\b\s*url\(([^\)]+)\)/ );
+			var matches = css.match( /background:\s*([^\s]+)\b\s*url\(([^\)]+)\)/ )
 			if ( matches && ! _.isUndefined( matches[ 1 ] ) ) {
 				color = matches[ 1 ];
 				image = matches[ 2 ];
 			}
 			if ( image ) {
 				$( '<span class="vc_css-helper vc_image-helper" data-vc-helper="image" style="background-image: url(' + image + ');" title="'
-					+ i18nLocale.column_background_image + '"></span>' )
+				+ i18nLocale.column_background_image + '"></span>' )
 					.insertBefore( $before );
 			}
 			if ( color ) {
 				$( '<span class="vc_css-helper vc_color-helper" data-vc-helper="color" style="background-color: ' + color + '" title="'
-					+ i18nLocale.column_background_color + '"></span>' )
+				+ i18nLocale.column_background_color + '"></span>' )
 					.insertBefore( $before );
 			}
 			if ( 'yes' === featuredImage ) {
@@ -717,7 +665,7 @@
 				_.defer( this.setTextAlign, ($control.data( 'vcAlign' ) || 'left') );
 			} else {
 				this.$el.find( '> .vc_controls [data-vc-align="'
-					+ (this.model.getParam( 'align' ) || 'left') + '"]' )
+				+ (this.model.getParam( 'align' ) || 'left') + '"]' )
 					.addClass( 'vc_active' );
 			}
 		},
@@ -732,87 +680,7 @@
 			return this;
 		}
 	} );
-	vc.AddElementUIPanelBackendEditor.prototype.createElement = function ( e ) {
-		_.isObject( e ) && e.preventDefault();
 
-		var model, tag, parent_id = false, cZone, cZoneRow, cZoneCol, showSettings;
-		tag = $( e.currentTarget ).data( 'tag' );
-
-		if ( false !== this.model && 'vc_gitem_add_c_zone' === this.model.get( 'shortcode' ) ) {
-
-			this.model.view.setCZonePosition( this.model.getParam( 'position' ) );
-
-			vc.storage.lock();
-			cZone = vc.shortcodes.create( {
-				shortcode: 'vc_gitem_zone_c',
-				parent_id: this.model.get( 'parent_id' ),
-				params: _.extend( {}, vc.getDefaults( 'vc_gitem_zone_c' ) ),
-				order: this.model.getParam( 'cZonePosition' )
-			} );
-
-			this.model.view.cZone = cZone;
-
-			vc.storage.lock();
-			cZoneRow = vc.shortcodes.create( {
-				shortcode: 'vc_gitem_row',
-				params: _.extend( {}, vc.getDefaults( 'vc_gitem_row' ) ),
-				parent_id: cZone.get( 'id' )
-			} );
-
-			vc.storage.lock();
-			cZoneCol = vc.shortcodes.create( {
-				shortcode: 'vc_gitem_col',
-				params: _.extend( { width: '1/1' }, vc.getDefaults( 'vc_gitem_col' ) ),
-				parent_id: cZoneRow.get( 'id' )
-			} );
-
-			parent_id = cZoneCol.get( 'id' );
-			cZone = null;
-			cZoneCol = null;
-
-		} else if ( false !== this.model ) {
-			parent_id = this.model.get( 'id' );
-		}
-		model = vc.shortcodes.create( {
-			shortcode: tag,
-			parent_id: parent_id,
-			params: vc.getDefaults( tag ),
-			root_id: vc.shortcodes.findWhere( { shortcode: 'vc_gitem' } ) || false
-		} );
-
-		if ( 'vc_gitem_row' === tag ) {
-			vc.shortcodes.create( {
-				shortcode: 'vc_gitem_col',
-				params: { width: '1/1' },
-				parent_id: model.get( 'id' ),
-				root_id: model.get( 'id' )
-			} );
-		}
-
-		this.model = model;
-
-		showSettings = ! (_.isBoolean( vc.getMapped( tag ).show_settings_on_create ) && false === vc.getMapped( tag ).show_settings_on_create );
-
-		// extend default params with settings presets if there are any
-		shortcode = this.model.get( 'shortcode' );
-		if ( 'undefined' !== typeof(window.vc_settings_presets[ shortcode ]) ) {
-			this.model.save( {
-				params: _.extend( {},
-					this.model.attributes.params,
-					window.vc_settings_presets[ shortcode ]
-				)
-			} );
-		}
-
-		this.hide();
-
-		if ( showSettings ) {
-			this.showEditForm();
-		}
-
-		this.addCustomCssStyleTag();
-	};
-	vc.TemplatesPanelViewBackend.prototype.templateLoadPreviewAction = 'vc_grid_item_editor_load_template_preview';
 	vc.TemplatesPanelViewBackend.prototype.renderTemplate = function ( html ) {
 		// Render template for backend
 		_.each( vc.filters.templates, function ( callback ) {
@@ -821,7 +689,7 @@
 		vc.storage.setContent( html );
 		vc.shortcodes.fetch( { reset: true } );
 		this.hide();
-		// TODO: show message
+		// todo show message
 	};
 	// Show on one column
 	$( document ).ready( function () {

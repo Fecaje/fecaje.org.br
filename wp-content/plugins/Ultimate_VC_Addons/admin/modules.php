@@ -96,20 +96,16 @@
 	);
 	?>
     <div id="ultimate-modules" class="ult-tabs active-tab">
-    <br/>
-    <input type="checkbox" id="ult-all-modules-toggle" data-all="<?php echo count($modules) ?>" value="checkall" /> <label for="ult-all-modules-toggle"><?php echo __('Enable/Disable All', 'ultimate_vc') ?></label>
     <form method="post" id="ultimate_modules">
     	<input type="hidden" name="action" value="update_ultimate_modules" />
     	<table class="form-table">
         	<tbody>
             	<?php
-					$i = 1;
-					$checked_items = 0; 
+					$i = 1; 
 					foreach($modules as $module => $label){
 						if(is_array($ultimate_modules) && !empty($ultimate_modules)){ 
 							if(in_array(strtolower($module),$ultimate_modules)){
 								$checked = 'checked="checked"';
-								$checked_items++;
 							} else {
 								$checked = '';
 							}
@@ -434,30 +430,6 @@
 								 </div>
 							</td>
 						</tr>
-						<?php
-							$ultimate_global_scripts = bsf_get_option('ultimate_global_scripts');
-							if($ultimate_global_scripts == 'enable')
-							{
-								$ultimate_global_scripts = 'checked="checked"';
-							}
-						?>
-						<tr>
-							<th scope="row"><?php echo __("Load scripts globally","ultimate_vc"); ?></th>
-							<td> <div class="onoffswitch">
-							<input type="checkbox" <?php echo $ultimate_global_scripts; ?> id="ultimate_global_scripts" value="enable" class="onoffswitch-checkbox" name="bsf_options[ultimate_global_scripts]" />
-								 <label class="onoffswitch-label" for="ultimate_global_scripts">
-									<div class="onoffswitch-inner">
-										<div class="onoffswitch-active">
-											<div class="onoffswitch-switch"><?php echo __('ON','ultimate_vc'); ?></div>
-										</div>
-										<div class="onoffswitch-inactive">
-											<div class="onoffswitch-switch"><?php echo __('OFF','ultimate_vc'); ?></div>
-										</div>
-									</div>
-								</label>
-								 </div>
-							</td>
-						</tr>
                     </tbody>
               	</table>
             </form>
@@ -599,17 +571,6 @@ jQuery(document).ready(function(e) {
 			$switch.trigger('onUltimateSwitchClick');
 		},300);
 		
-	});
-
-	var checked_items = <?php echo $checked_items ?>;
-	var all_modules = parseInt(jQuery('#ult-all-modules-toggle').data('all'));
-	if(checked_items === all_modules) {
-		jQuery('#ult-all-modules-toggle').attr('checked',true);
-	}
-
-	jQuery('#ult-all-modules-toggle').click(function(){
-		var is_check = (jQuery(this).is(':checked')) ? true : false;
-		jQuery('.onoffswitch').trigger('click').find('.onoffswitch-checkbox').attr('checked',is_check);
 	});
 });
 </script>

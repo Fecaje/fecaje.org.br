@@ -5,24 +5,42 @@
  *
  * Overloaded by UpSolution custom implementation.
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['width'] string Width in format: 1/2 (is set by visual composer renderer)
- * @param $atts ['text_color'] string Text color
- * @param $atts ['animate'] string Animation type: '' / 'fade' / 'afc' / 'afl' / 'afr' / 'afb' / 'aft' / 'hfc' / 'wfc'
- * @param $atts ['animate_delay'] float Animation delay (in seconds)
- * @param $atts ['el_class'] string Additional class
- * @param $atts ['offset'] string Visual Composer classes for responsive behaviour
- * @param $atts ['css'] string Custom CSS
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-// $shorcode_base may be: 'vc_column' / 'vc_column_inner'
-$atts = us_shortcode_atts( $atts, $shortcode_base );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Width in format: 1/2 (is set by visual composer renderer)
+	 */
+	'width' => '1/1',
+	/**
+	 * @var string Text color
+	 */
+	'text_color' => '',
+	/**
+	 * @var string Animation type: '' / 'fade' / 'afc' / 'afl' / 'afr' / 'afb' / 'aft' / 'hfc' / 'wfc'
+	 */
+	'animate' => '',
+	/**
+	 * @var float Animation delay (in seconds)
+	 */
+	'animate_delay' => 0,
+	/**
+	 * @var string Additional class
+	 */
+	'el_class' => '',
+	/**
+	 * @var string Visual Composer classes for responsive behaviour
+	 */
+	'offset' => '',
+	/**
+	 * @var string Custom CSS
+	 */
+	'css' => '',
+), $atts );
 
 $classes = '';
 $inner_css = '';

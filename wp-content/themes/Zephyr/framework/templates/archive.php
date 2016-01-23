@@ -4,7 +4,7 @@
  */
 $us_layout = US_Layout::instance();
 // Needed for canvas class
-$us_layout->titlebar = ( us_get_option( 'titlebar_content', 'all' ) == 'hide' ) ? 'none' : 'default' ;
+$us_layout->titlebar = 'default';
 get_header();
 
 // Creating .l-titlebar
@@ -14,11 +14,16 @@ us_load_template( 'templates/titlebar', array(
 
 $template_vars = array(
 	'layout_type' => us_get_option( 'archive_layout', 'large' ),
-	'metas' => (array) us_get_option( 'archive_meta', array() ),
+	'metas' => array(),
 	'content_type' => us_get_option( 'archive_content_type', 'excerpt' ),
-	'show_read_more' => in_array( 'read_more', us_get_option( 'archive_meta', array() ) ),
+	'show_read_more' => ! ! us_get_option( 'archive_read_more', TRUE ),
 	'pagination' => us_get_option( 'archive_pagination', 'regular' ),
 );
+foreach ( array( 'date', 'author', 'categories', 'comments', 'tags' ) as $meta_key ) {
+	if ( us_get_option( 'archive_meta_' . $meta_key, TRUE ) ) {
+		$template_vars['metas'][] = $meta_key;
+	}
+}
 
 ?>
 <!-- MAIN -->

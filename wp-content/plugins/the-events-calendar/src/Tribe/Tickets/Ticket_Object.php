@@ -102,10 +102,5 @@ if ( ! class_exists( 'Tribe__Events__Tickets__Ticket_Object' ) ) {
 		 */
 		public $end_date;
 
-		/**
-		 * Purchase limite for the ticket
-		 * @var
-		 */
-		public $purchase_limit;
 	}
 }

@@ -72,6 +72,7 @@ _.extend( vc, {
 		vc.$frame.width( size );
 		vc.$frame_wrapper.css( { top: $vc_navbar.height() } );
 		vc.$frame.height( height );
+		// vc.$frame.height(vc.$frame.contents() ? vc.$frame.contents().height() : 1000);
 	};
 	vc.getDefaults = vc.memoizeWrapper( function ( tag ) {
 		var defaults, params;
@@ -160,25 +161,25 @@ _.extend( vc, {
 					if (
 						(
 							// check rule 'not_empty'
-							_.isBoolean( rules.not_empty ) && true === rules.not_empty && isDependedEmpty
+						_.isBoolean( rules.not_empty ) && true === rules.not_empty && isDependedEmpty
 						) ||
 						(
 							// check rule 'is_empty'
-							_.isBoolean( rules.is_empty ) && true === rules.is_empty && ! isDependedEmpty
+						_.isBoolean( rules.is_empty ) && true === rules.is_empty && ! isDependedEmpty
 						) ||
 						(
 							// check rule 'value'
-							rules.value && ! _.intersection( (
-									_.isArray( rules.value ) ? rules.value : [ rules.value ]),
-								(_.isArray( dependedValue ) ? dependedValue : [ dependedValue ] )
-							).length
+						rules.value && ! _.intersection( (
+								_.isArray( rules.value ) ? rules.value : [ rules.value ]),
+							(_.isArray( dependedValue ) ? dependedValue : [ dependedValue ] )
+						).length
 						) ||
 						(
 							// check rule 'value_not_equal_to'
-							rules.value_not_equal_to && _.intersection( (
-									_.isArray( rules.value_not_equal_to ) ? rules.value_not_equal_to : [ rules.value_not_equal_to ] ),
-								(_.isArray( dependedValue ) ? dependedValue : [ dependedValue ])
-							).length
+						rules.value_not_equal_to && _.intersection( (
+								_.isArray( rules.value_not_equal_to ) ? rules.value_not_equal_to : [ rules.value_not_equal_to ] ),
+							(_.isArray( dependedValue ) ? dependedValue : [ dependedValue ])
+						).length
 						)
 					) {
 						paramsDependencies[ key ].failed = true;
@@ -195,10 +196,10 @@ _.extend( vc, {
 					// We need to save it anyway. #93627986
 				} else if (
 					( // add value if it is not same as default
-						! _.isUndefined( paramsMap.defaults[ key ] ) && paramsMap.defaults[ key ] !== value
+					! _.isUndefined( paramsMap.defaults[ key ] ) && paramsMap.defaults[ key ] !== value
 					) || (
 						// or if no defaults exists -> add value if it is not empty
-						_.isUndefined( paramsMap.defaults[ key ] ) && '' !== value
+					_.isUndefined( paramsMap.defaults[ key ] ) && '' !== value
 					) || (
 						// Or it is required to save always
 					! _.isUndefined( paramSettings.save_always ) && true === paramSettings.save_always )
@@ -292,14 +293,14 @@ _.extend( vc, {
 	};
 
 	vc.CloneModel = function ( builder, model, parent_id, child_of_clone ) {
-		vc.clone_index /= 10;
+		vc.clone_index = vc.clone_index / 10;
 		var newOrder,
 			params,
 			tag,
 			data,
 			newModel;
 
-		newOrder = _.isBoolean( child_of_clone ) && true === child_of_clone ? model.get( 'order' ) : parseFloat( model.get( 'order' ) ) + vc.clone_index;
+		newOrder = _.isBoolean( child_of_clone ) && child_of_clone === true ? model.get( 'order' ) : parseFloat( model.get( 'order' ) ) + vc.clone_index;
 		params = _.extend( {}, model.get( 'params' ) );
 		tag = model.get( 'shortcode' );
 
@@ -315,13 +316,14 @@ _.extend( vc, {
 		if ( vc[ 'cloneMethod_' + tag ] ) {
 			data = vc[ 'cloneMethod_' + tag ]( data, model );
 		}
-		if ( ! _.isBoolean( child_of_clone ) || true !== child_of_clone ) {
+		if ( ! _.isBoolean( child_of_clone ) || child_of_clone !== true ) {
 			data.place_after_id = model.get( 'id' );
 		}
 		builder.create( data );
 
 		newModel = builder.last();
 
+		// if(!_.isBoolean(child_of_clone) || child_of_clone !== true) model.view.$el.addClass('vc_place-after');
 		_.each( vc.shortcodes.where( { parent_id: model.get( 'id' ) } ), function ( shortcode ) {
 			vc.CloneModel( builder, shortcode, newModel.get( 'id' ), true );
 		}, this );
@@ -330,12 +332,12 @@ _.extend( vc, {
 	vc.getColumnSize = function ( column ) {
 		var mod = 12 % column,
 			is_odd = function ( n ) {
-				return _.isNumber( n ) && (1 === n % 2);
+				return _.isNumber( n ) && (n % 2 == 1);
 			};
-		if ( 0 < mod && is_odd( column ) && column % 3 ) {
+		if ( mod > 0 && is_odd( column ) && column % 3 ) {
 			return column + '/' + 12;
 		}
-		if ( 0 === mod ) {
+		if ( mod == 0 ) {
 			mod = column;
 		}
 		return column / mod + '/' + (12 / mod);
@@ -361,6 +363,11 @@ _.extend( vc, {
 			'click > .vc_controls .vc_control-btn-edit': 'edit',
 			'click > .vc_controls .vc_control-btn-clone': 'clone',
 			'mousemove': 'checkControlsPosition'
+			//'mousemove': 'setMove',
+			// 'mouseenter': 'resetControlPosition',
+			// 'mouseleave': 'mouseLeave'
+			// 'mouseover .vc_control-btn': 'holdHover',
+			// 'mouseout .controls-cc': 'releaseHover'
 		},
 		controls_set: false,
 		$content: false,
@@ -370,6 +377,7 @@ _.extend( vc, {
 		builder: false,
 		default_controls_template: false,
 		initialize: function () {
+			// _.bindAll(this, 'setControlPosition', 'unsetControlPosition');
 			this.listenTo( this.model, 'destroy', this.removeView );
 			this.listenTo( this.model, 'change:params', this.update );
 			this.listenTo( this.model, 'change:parent_id', this.changeParentId );
@@ -380,7 +388,7 @@ _.extend( vc, {
 			this.$el.attr( 'data-tag', tag );
 			this.$el.addClass( 'vc_' + tag );
 			this.addControls();
-			var is_container = _.isObject( vc.getMapped( tag ) ) && ( ( _.isBoolean( vc.getMapped( tag ).is_container ) && true === vc.getMapped( tag ).is_container ) || ! _.isEmpty( vc.getMapped( tag ).as_parent ) );
+			var is_container = _.isObject( vc.getMapped( tag ) ) && ( ( _.isBoolean( vc.getMapped( tag ).is_container ) && vc.getMapped( tag ).is_container === true ) || ! _.isEmpty( vc.getMapped( tag ).as_parent ) );
 			if ( is_container ) {
 				this.$el.addClass( 'vc_container-block' );
 			}
@@ -399,7 +407,7 @@ _.extend( vc, {
 				control_top = this.$controls_buttons.offset().top;
 				element_position_top = this.$el.offset().top;
 				new_position = (window_top - element_position_top) + vc.$frame.height() / 2;
-				if ( 40 < new_position && new_position < element_height ) {
+				if ( new_position > 40 && new_position < element_height ) {
 					this.$controls_buttons.css( 'top', new_position );
 				} else if ( new_position > element_height ) {
 					this.$controls_buttons.css( 'top', element_height - 40 );
@@ -432,45 +440,47 @@ _.extend( vc, {
 				vc.events.trigger( 'shortcodeView:ready:' + this.model.get( 'id' ), this.model );
 			}, this ) );
 		},
-		/**
-		 * @deprecated since 4.8 should be used vc_user_access
-		 * @returns {boolean}
-		 */
 		hasUserAccess: function () {
-			return true; // vc_user_access should be used.
+			var shortcodeTag;
+
+			shortcodeTag = this.model.get( 'shortcode' );
+			if ( - 1 < _.indexOf( [
+					"vc_row",
+					"vc_column",
+					"vc_row_inner",
+					"vc_column_inner"
+				], shortcodeTag ) ) {
+				return true; // we cannot block controls for these shortcodes;
+			}
+
+			if ( ! _.every( vc.roles.current_user, function ( role ) {
+					return ! (! _.isUndefined( vc.roles[ role ] ) && ! _.isUndefined( vc.roles[ role ][ 'shortcodes' ] ) && _.isUndefined( vc.roles[ role ][ 'shortcodes' ][ shortcodeTag ] ));
+				} ) ) {
+				return false;
+			}
+			return true;
 		},
 		addControls: function () {
-			var shortcodeTag, $controls_el, allAccess, editAccess, template, parent, data;
-			shortcodeTag = this.model.get( 'shortcode' );
-			$controls_el = $( '#vc_controls-template-' + shortcodeTag );
-
+			var shortcodeTag = this.model.get( 'shortcode' );
+			var $controls_el = $( '#vc_controls-template-' + shortcodeTag );
+			var template = $controls_el.length ? $controls_el.html() : this._getDefaultTemplate(),
+				parent = vc.shortcodes.get( this.model.get( 'parent_id' ) ),
+				data = {
+					name: vc.getMapped( shortcodeTag ).name,
+					tag: shortcodeTag,
+					parent_name: parent ? vc.getMapped( parent.get( 'shortcode' ) ).name : '',
+					parent_tag: parent ? parent.get( 'shortcode' ) : ''
+				};
+			this.$controls = $( _.template( template, data, vc.template_options ).trim() ).addClass( 'vc_controls' );
 			// check user role to add controls
-			allAccess = vc_user_access().shortcodeAll( shortcodeTag );
-			editAccess = vc_user_access().shortcodeEdit( shortcodeTag );
-
-			template = $controls_el.length ? $controls_el.html() : this._getDefaultTemplate();
-			parent = vc.shortcodes.get( this.model.get( 'parent_id' ) );
-			data = {
-				name: vc.getMapped( shortcodeTag ).name,
-				tag: shortcodeTag,
-				parent_name: parent ? vc.getMapped( parent.get( 'shortcode' ) ).name : '',
-				parent_tag: parent ? parent.get( 'shortcode' ) : '',
-				can_edit: editAccess,
-				can_all: allAccess,
-				state: vc_user_access().getState('shortcodes'),
-				allowAdd: null
-			};
-			this.$controls = $( _.template( template,
-				data,
-				_.extend( {},
-					vc.template_options,
-					{ evaluate: /\{#([\s\S]+?)#}/g } ) ).trim() ).addClass( 'vc_controls' );
-
+			if ( ! this.hasUserAccess() ) {
+				this.$controls.find( '.vc_control-btn:not(.vc_element-move)' ).remove();
+			}
 			this.$controls.appendTo( this.$el );
 			this.$controls_buttons = this.$controls.find( '> :first' );
 		},
 		content: function () {
-			if ( false === this.$content ) {
+			if ( this.$content === false ) {
 				this.$content = this.$el.find( '> :first' );
 			}
 			return this.$content;
@@ -478,7 +488,7 @@ _.extend( vc, {
 		changeParentId: function () {
 			var parent_id = this.model.get( 'parent_id' ), parent;
 			vc.builder.notifyParent( this.model.get( 'parent_id' ) );
-			if ( false === parent_id ) {
+			if ( parent_id === false ) {
 				app.placeElement( this.$el );
 			} else {
 				parent = vc.shortcodes.get( parent_id );
@@ -504,11 +514,11 @@ _.extend( vc, {
 		},
 		changed: function () {
 			this.$el.removeClass( 'vc_empty-shortcode-element' );
-			0 === this.$el.height() && this.$el.addClass( 'vc_empty-shortcode-element' );
+			this.$el.height() === 0 && this.$el.addClass( 'vc_empty-shortcode-element' );
 		},
 		edit: function ( e ) {
 			_.isObject( e ) && e.preventDefault() && e.stopPropagation();
-			if ( 'edit_element' !== vc.activePanelName() || ! vc.active_panel.model || vc.active_panel.model.get( 'id' ) !== this.model.get( 'id' ) ) {
+			if ( vc.activePanelName() !== 'edit_element' || ! vc.active_panel.model || vc.active_panel.model.get( 'id' ) !== this.model.get( 'id' ) ) {
 				vc.closeActivePanel();
 				vc.edit_element_block_view.render( this.model );
 			}
@@ -554,7 +564,7 @@ _.extend( vc, {
 			if ( model && model.get( 'place_after_id' ) ) {
 				$view.insertAfter( vc.$page.find( '[data-model-id=' + model.get( 'place_after_id' ) + ']' ) );
 				model.unset( 'place_after_id' );
-			} else if ( _.isString( activity ) && 'prepend' === activity ) {
+			} else if ( _.isString( activity ) && activity === 'prepend' ) {
 				$view.prependTo( this.content() );
 			} else {
 				$view.appendTo( this.content() );
@@ -564,20 +574,18 @@ _.extend( vc, {
 	} );
 	vc.FrameView = Backbone.View.extend( {
 		events: {
-			'click [data-vc-element="add-element-action"]': 'addElement',
+			// 'keypress .entry-title': 'updateKeyPress',
+			'click .vc_add-element-action': 'addElement',
 			'click #vc_no-content-add-text-block': 'addTextBlock',
 			'click #vc_templates-more-layouts': 'openTemplatesWindow',
 			'click .vc_template[data-template_unique_id] > .wpb_wrapper': 'loadDefaultTemplate'
 
 		},
 		openTemplatesWindow: function ( e ) {
-			vc.templates_panel_view.once( 'show', function () {
-				$( '[data-vc-ui-element-target="[data-tab=default_templates]"]' ).click();
-			} );
 			vc.app.openTemplatesWindow.call( this, e );
 		},
 		updateKeyPress: function ( e ) {
-			if ( 13 === e.which ) {
+			if ( e.which === 13 ) {
 				e.preventDefault();
 				vc.$title.attr( 'contenteditable', false );
 				$( '.entry-content' ).trigger( 'click' );
@@ -615,19 +623,17 @@ _.extend( vc, {
 			vc.frame_window.vc_iframe.setSortable( vc.app );
 		},
 		render: function () {
-			if ( false !== vc_user_access().getState( 'post_settings' ) ) {
-				vc.$title = $( vc.$frame.get( 0 ).contentWindow.document ).find( 'h1:contains("' + ( vc.title || vc.no_title_placeholder ).replace( /"/g,
-						'\\"' ) + '")' );
-				vc.$title.click( function ( e ) {
-					e.preventDefault();
-					vc.post_settings_view.render().show();
-				} );
-			}
+			vc.$title = $( vc.$frame.get( 0 ).contentWindow.document ).find( 'h1:contains("' + ( vc.title || vc.no_title_placeholder ).replace( /"/g,
+				'\\"' ) + '")' );
+			vc.$title.click( function ( e ) {
+				e.preventDefault();
+				vc.post_settings_view.render().show();
+			} );
 			// there because need to be initialized when content already created.
 			vc.events.off( 'shortcodes:add', vc.atts.addShortcodeIdParam, this ).bind( 'shortcodes:add',
 				vc.atts.addShortcodeIdParam,
 				this );
-			// TODO: create callbacks render on shortcode add with checking on load if shortcode has tab_id, on  creation call sddShortcode atts.
+			// @todo create callbacks render on shortcode add with checking on load if shortcode has tab_id, on  creation call sddShortcode atts.
 			return this;
 		},
 		noContent: function ( no ) {
@@ -638,33 +644,16 @@ _.extend( vc, {
 			vc.add_element_block_view.render( false );
 		},
 		addTextBlock: function ( e ) {
-			var builder, params;
-
-			e.preventDefault();
-
-			params = vc.getDefaults( 'vc_column_text' );
-			if ( 'undefined' !== typeof(window.vc_settings_presets[ 'vc_column_text' ]) ) {
-				params = _.extend( params, window.vc_settings_presets[ 'vc_column_text' ] );
-			}
-
-			builder = new vc.ShortcodesBuilder();
-
-			builder
-				.create( {
-					shortcode: 'vc_row'
-				} )
-				.create( {
-					shortcode: 'vc_column',
-					parent_id: builder.lastID(),
-					params: { width: '1/1' }
-				} )
+			e && e.preventDefault && e.preventDefault();
+			var builder = new vc.ShortcodesBuilder();
+			builder.create( { shortcode: 'vc_row' } )
+				.create( { shortcode: 'vc_column', parent_id: builder.lastID(), params: { width: '1/1' } } )
 				.create( {
 					shortcode: 'vc_column_text',
 					parent_id: builder.lastID(),
-					params: params
+					params: vc.getDefaults( 'vc_column_text' )
 				} )
 				.render();
-
 			vc.edit_element_block_view.render( builder.last() );
 		},
 		scrollTo: function ( model ) {
@@ -685,6 +674,8 @@ _.extend( vc, {
 			'click #vc_add-new-row': 'createRow',
 			'click #vc_add-new-element': 'addElement',
 			'click #vc_post-settings-button': 'editSettings',
+			// 'click .vc_mode-control': 'switchMode',
+			//'click #vc_templates-editor-button': 'openTemplatesEditor', // @deprecated use openTemplatesModal
 			'click #vc_templates-editor-button': 'openTemplatesWindow',
 			'click #vc_guides-toggle-button': 'toggleMode',
 			'click #vc_button-cancel': 'cancel',
@@ -696,6 +687,7 @@ _.extend( vc, {
 		},
 		initialize: function () {
 			_.bindAll( this, 'saveRowOrder', 'saveElementOrder', 'saveColumnOrder', 'resizeWindow' );
+			// vc.shortcodes.bind('reset', this.addAll, this);
 			vc.shortcodes.on( 'change:params', this.changeParamsEvents, this );
 			vc.events.on( 'shortcodes:add', vcAddShortcodeDefaultParams, this );
 		},
@@ -710,7 +702,32 @@ _.extend( vc, {
 			this.$size_control = $( '#vc_screen-size-control' );
 			$( ".vc_element-container", vc.frame_window.document ).droppable( { accept: ".vc_element_button" } );
 			$( window ).resize( this.resizeWindow );
-
+			/*
+			 $('.vc_element_button').draggable({
+			 // iframeFix: true,
+			 helper: 'clone',
+			 revert: true,
+			 cursor:"move",
+			 start: function(event, ui) {
+			 vc.frame_window.vc_iframe.initDroppable();
+			 },
+			 stop: function(event, ui) {
+			 vc.frame_window.vc_iframe.killDroppable();
+			 }
+			 // connectToSortable: vc.frame_window.jQuery('.vc_element-container')
+			 });
+			 */
+			// vc.shortcodes.fetch({reset: true});
+			/*
+			 if(getCookie('vc_inline_mode')) {
+			 var mode = getCookie('vc_inline_mode');
+			 this.$el.find('.vc_mode-control').removeClass('active');
+			 this.$el.find('.vc_mode-control[data-mode=' + mode +']').addClass('active');
+			 this.setMode(mode);
+			 } else {
+			 this.$el.find('.vc_mode-control[data-mode=' + this.mode +']').addClass('active');
+			 }
+			 */
 			/**
 			 * @since 4.5
 			 */
@@ -753,13 +770,14 @@ _.extend( vc, {
 			var $control = $( e.currentTarget );
 			e && e.preventDefault();
 			this.setMode( $control.data( 'mode' ) );
+			// setCookie('vc_inline_mode', this.mode);
 			$control.siblings( '.vc_active' ).removeClass( 'vc_active' );
 			$control.addClass( 'vc_active' );
 		},
 		toggleMode: function ( e ) {
 			var $control = $( e.currentTarget );
 			e && e.preventDefault();
-			if ( 'compose' === this.mode ) {
+			if ( this.mode === 'compose' ) {
 				$control.addClass( 'vc_off' ).text( window.i18nLocale.guides_off );
 				this.setMode( 'view' );
 			} else {
@@ -779,7 +797,7 @@ _.extend( vc, {
 			if ( model && model.get( 'place_after_id' ) ) {
 				$view.insertAfter( vc.$page.find( '[data-model-id=' + model.get( 'place_after_id' ) + ']' ) );
 				model.unset( 'place_after_id' );
-			} else if ( _.isString( activity ) && 'prepend' === activity ) {
+			} else if ( _.isString( activity ) && activity === 'prepend' ) {
 				$view.prependTo( vc.$page );
 			} else {
 				$view.insertBefore( vc.$page.find( '#vc_no-content-helper' ) );
@@ -801,6 +819,7 @@ _.extend( vc, {
 		},
 		createRow: function ( e ) {
 			_.isObject( e ) && e.preventDefault();
+			// e.stopPropagation();
 			var builder = new vc.ShortcodesBuilder();
 			builder
 				.create( { shortcode: 'vc_row' } )
@@ -816,7 +835,7 @@ _.extend( vc, {
 			vc.post_settings_view.render().show();
 		},
 		/**
-		 * @deprecated 4.4 use openTemplatesWindow
+		 * @deprecated Since 4.4 use openTemplatesWindow
 		 * @param e
 		 */
 		openTemplatesEditor: function ( e ) {
@@ -842,9 +861,10 @@ _.extend( vc, {
 					if ( $this.is( '.droppable' ) ) {
 						$this.remove();
 						var row_data = { shortcode: 'vc_row', order: key };
-						if ( 0 === key ) {
+						if ( key === 0 ) {
 							vc.activity = 'prepend';
-						} else if ( key + 1 !== $rows.length ) {
+						} else if ( key + 1 != $rows.length ) {
+							// vc.$page.find('> [data-tag=vc_row]:eq(' + (key - 1) +')').addClass('vc_place-after')
 							row_data.place_after_id = vc.$page.find( '> [data-tag=vc_row]:eq(' + (key - 1) + ')' ).data( 'modelId' );
 						}
 						builder
@@ -870,10 +890,11 @@ _.extend( vc, {
 						if ( $element.is( '.droppable' ) ) {
 							current_parent = vc.shortcodes.get( $column.parents( '.vc_element[data-tag]:first' ).data( 'modelId' ) );
 							$element.remove();
-							if ( 0 === key ) {
+							if ( key === 0 ) {
 								prepend = true;
-							} else if ( key + 1 !== $elements.length ) {
+							} else if ( key + 1 != $elements.length ) {
 								prepend = $column.find( '> [data-tag]:eq(' + (key - 1) + ')' ).data( 'modelId' );
+								// $column.find('> [data-tag]:eq(' + (key - 1) +')').addClass('vc_place-after');
 							}
 							if ( current_parent ) {
 								vc.add_element_block_view.render( current_parent, prepend );

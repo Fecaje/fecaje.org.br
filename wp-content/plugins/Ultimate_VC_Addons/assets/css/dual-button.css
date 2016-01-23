@@ -600,8 +600,6 @@ a.ult_ivan_button {
 }
 .ult_dual_button .dual_img {
     top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
     transform: translateY(-50%);
     position: absolute
 }
@@ -619,9 +617,6 @@ a.ult_ivan_button {
 }
 .btn1icon {
     top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
     transform: translateY(-50%);
     position: relative
 }

@@ -37,18 +37,11 @@ $preview_bg = '';
 if ( $preview_type != 'none' AND ! post_password_required() ) {
 	$post_thumbnail_id = get_post_thumbnail_id();
 	if ( $preview_type == 'basic' ) {
-		if ( $post_format == 'video' ) {
-			$preview_html = us_get_post_preview( $the_content, TRUE );
-			if ( $preview_html == '' AND $post_thumbnail_id ) {
-				$preview_html = wp_get_attachment_image( $post_thumbnail_id, 'large' );
-			}
+		if ( $post_thumbnail_id ) {
+			$preview_html = wp_get_attachment_image( $post_thumbnail_id, 'large' );
 		} else {
-			if ( $post_thumbnail_id ) {
-				$preview_html = wp_get_attachment_image( $post_thumbnail_id, 'large' );
-			} else {
-				// Retreiving preview HTML from the post content
-				$preview_html = us_get_post_preview( $the_content, TRUE );
-			}
+			// Retreiving preview HTML from the post content
+			$preview_html = us_get_post_preview( $the_content, TRUE );
 		}
 	} elseif ( $preview_type == 'modern' ) {
 		if ( $post_thumbnail_id ) {
@@ -64,9 +57,7 @@ if ( $preview_type != 'none' AND ! post_password_required() ) {
 	}
 }
 
-if ( ! post_password_required() ) {
-	$the_content = apply_filters( 'the_content', $the_content );
-}
+$the_content = apply_filters( 'the_content', $the_content );
 
 // The post itself may be paginated via <!--nextpage--> tags
 $pagination = us_wp_link_pages( array(
@@ -77,7 +68,7 @@ $pagination = us_wp_link_pages( array(
 	'previouspagelink' => '<',
 	'link_before' => '<span>',
 	'link_after' => '</span>',
-	'echo' => 0,
+	'echo' => 0
 ) );
 
 // If content has no sections, we'll create them manually
@@ -167,26 +158,8 @@ $meta_html = apply_filters( 'us_single_post_meta_html', $meta_html, get_the_ID()
 	<section class="l-section for_tags">
 		<div class="l-section-h i-cf">
 			<div class="g-tags">
-				<span class="g-tags-title"><?php _e( 'Tags', 'us' ) ?>:</span>
 				<?php echo $the_tags ?>
 			</div>
-		</div>
-	</section>
-<?php endif; ?>
-
-<?php if ( us_get_option( 'post_sharing' ) ) : ?>
-	<section class="l-section for_sharing">
-		<div class="l-section-h i-cf">
-			<?php
-			$sharing_providers = (array) us_get_option( 'post_sharing_providers' );
-			$us_sharing_atts = array(
-				'type' => us_get_option( 'post_sharing_type', 'simple' ),
-			);
-			foreach ( array( 'facebook', 'twitter', 'linkedin', 'gplus', 'pinterest' ) as $provider ) {
-				$us_sharing_atts[ $provider ] = in_array( $provider, $sharing_providers );
-			}
-			us_load_template( 'shortcodes/us_sharing', array( 'atts' => $us_sharing_atts ) );
-			?>
 		</div>
 	</section>
 <?php endif; ?>

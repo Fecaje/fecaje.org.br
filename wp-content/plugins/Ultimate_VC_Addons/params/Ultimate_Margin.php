@@ -1,7 +1,7 @@
 <?php
 /*
 
-# Usage -
+# Usage - 
 	array(
 		"type" => "ultimate_margins",
 		"positions" => array(
@@ -18,24 +18,16 @@ if(!class_exists('Ultimate_Margin_Param'))
 	class Ultimate_Margin_Param
 	{
 		function __construct()
-		{
-			if(defined('WPB_VC_VERSION') && version_compare(WPB_VC_VERSION, 4.8) >= 0) {
-				if(function_exists('vc_add_shortcode_param'))
-				{
-					vc_add_shortcode_param('ultimate_margins', array($this, 'ultimate_margins_param'), plugins_url('../admin/vc_extend/js/vc-headings-param.js',__FILE__));
-				}
-			}
-			else {
-				if(function_exists('add_shortcode_param'))
-				{
-					add_shortcode_param('ultimate_margins', array($this, 'ultimate_margins_param'), plugins_url('../admin/vc_extend/js/vc-headings-param.js',__FILE__));
-				}
+		{	
+			if(function_exists('add_shortcode_param'))
+			{
+				add_shortcode_param('ultimate_margins', array($this, 'ultimate_margins_param'), plugins_url('../admin/vc_extend/js/vc-headings-param.js',__FILE__));
 			}
 		}
-
+	
 		function ultimate_margins_param($settings, $value)
 		{
-			$dependency = (function_exists('vc_generate_dependencies_attributes')) ? vc_generate_dependencies_attributes($settings) : '';
+			$dependency = vc_generate_dependencies_attributes($settings);
 			$positions = $settings['positions'];
 			$html = '<div class="ultimate-margins">
 						<input type="hidden" name="'.$settings['param_name'].'" class="wpb_vc_param_value ultimate-margin-value '.$settings['param_name'].' '.$settings['type'].'_field" value="'.$value.'" '.$dependency.'/>';
@@ -44,7 +36,7 @@ if(!class_exists('Ultimate_Margin_Param'))
 			$html .= '</div>';
 			return $html;
 		}
-
+		
 	}
 }
 

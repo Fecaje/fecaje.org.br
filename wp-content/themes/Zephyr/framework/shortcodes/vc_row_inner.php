@@ -5,20 +5,30 @@
  *
  * Overloaded by UpSolution custom implementation.
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['columns_type'] string Columns type: 'small' / 'medium' / 'large' / 'none'
- * @param $atts ['el_id'] string
- * @param $atts ['el_class'] string
- * @param $atts ['css'] string
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'vc_row_inner' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Columns type: 'small' / 'medium' / 'large' / 'none'
+	 */
+	'columns_type' => 'medium',
+	/**
+	 * @var string
+	 */
+	'el_id' => '',
+	/**
+	 * @var string
+	 */
+	'el_class' => '',
+	/**
+	 * @var string
+	 */
+	'css' => '',
+), $atts );
 
 $class_name = '';
 
@@ -35,6 +45,10 @@ if ( ! empty( $atts['el_class'] ) ) {
 	$class_name .= ' ' . sanitize_html_class( $atts['el_class'] );
 }
 
+// Special VC hooks
+if ( function_exists( 'get_row_css_class' ) ) {
+	$class_name .= ' ' . get_row_css_class();
+}
 if ( function_exists( 'vc_shortcode_custom_css_class' ) ) {
 	$class_name .= ' ' . vc_shortcode_custom_css_class( $atts['css'], ' ' );
 }

@@ -7,30 +7,22 @@ if(!class_exists('Ult_Spacing'))
     function __construct()
     {
       add_action( 'admin_enqueue_scripts', array( $this, 'ultimate_spacing_param_scripts' ) );
-
-      if(defined('WPB_VC_VERSION') && version_compare(WPB_VC_VERSION, 4.8) >= 0) {
-        if(function_exists('vc_add_shortcode_param'))
-        {
-          vc_add_shortcode_param('ultimate_spacing', array($this, 'ultimate_spacing_callback'), plugins_url('../admin/vc_extend/js/ultimate-spacing.js',__FILE__));
-        }
-      }
-      else {
-        if(function_exists('add_shortcode_param'))
-        {
-          add_shortcode_param('ultimate_spacing', array($this, 'ultimate_spacing_callback'), plugins_url('../admin/vc_extend/js/ultimate-spacing.js',__FILE__));
-        }
+     
+      if(function_exists('add_shortcode_param'))
+      {
+        add_shortcode_param('ultimate_spacing', array($this, 'ultimate_spacing_callback'), plugins_url('../admin/vc_extend/js/ultimate-spacing.js',__FILE__));
       }
     }
-
+    
     function ultimate_spacing_callback($settings, $value)
     {
-        $dependency = (function_exists('vc_generate_dependencies_attributes')) ? vc_generate_dependencies_attributes($settings) : '';
+        $dependency = vc_generate_dependencies_attributes($settings);
         $positions = $settings['positions'];
         $mode = $settings['mode'];
-
+        
         $uid = 'ultimate-spacing-'. rand(1000, 9999);
         if(isset($settings['unit'])) { $unit = $settings['unit']; } else { $unit = ''; }
-
+          
           $html  = '<div class="ultimate-spacing" id="'.$uid.'" data-unit="'.$unit.'" >';
 
           //  Expand / Collapse
@@ -109,7 +101,7 @@ if(!class_exists('Ult_Spacing'))
     }
     function ultimate_spacing_param_scripts($hook) {
         if($hook == "post.php" || $hook == "post-new.php"){
-          $bsf_dev_mode = bsf_get_option('dev_mode');
+          $bsf_dev_mode = bsf_get_option('dev_mode'); 
           if($bsf_dev_mode === 'enable') {
             wp_register_style( 'ultimate_spacing_css', plugins_url('../admin/vc_extend/css/ultimate_spacing.css', __FILE__ ));
             wp_enqueue_style( 'ultimate_spacing_css');

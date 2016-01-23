@@ -21,11 +21,6 @@ if ( ! class_exists( 'Tribe__Events__Settings' ) ) {
 		public static $instance;
 
 		/**
-		 * @var Tribe__Events__Admin__Live_Date_Preview
-		 */
-		public $live_date_preview;
-
-		/**
 		 * the tabs that will appear in the settings page
 		 * filtered on class construct
 		 * @var array
@@ -192,9 +187,6 @@ if ( ! class_exists( 'Tribe__Events__Settings' ) ) {
 		 */
 		public function initTabs() {
 			if ( isset( $_GET['page'] ) && $_GET['page'] == $this->adminSlug ) {
-				// Load settings tab-specific helpers and enhancements
-				$this->live_date_preview = new Tribe__Events__Admin__Live_Date_Preview;
-
 				do_action( 'tribe_settings_do_tabs' ); // this is the hook to use to add new tabs
 				$this->tabs       = (array) apply_filters( 'tribe_settings_tabs', array() );
 				$this->allTabs    = (array) apply_filters( 'tribe_settings_all_tabs', array() );
@@ -243,9 +235,9 @@ if ( ! class_exists( 'Tribe__Events__Settings' ) ) {
 			do_action( 'tribe_settings_top' );
 			echo '<div class="tribe_settings wrap">';
 			screen_icon();
-			echo '<h1>';
+			echo '<h2>';
 			printf( __( '%s Settings', 'the-events-calendar' ), $this->menuName );
-			echo '</h1>';
+			echo '</h2>';
 			do_action( 'tribe_settings_above_tabs' );
 			$this->generateTabs( $this->currentTab );
 			do_action( 'tribe_settings_below_tabs' );

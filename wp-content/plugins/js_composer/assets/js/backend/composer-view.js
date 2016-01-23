@@ -65,9 +65,10 @@
 				window_height = $( window ).height();
 			if ( element_height > window_height ) {
 				window_top = $( window ).scrollTop();
+				// control_top = this.$controls_buttons.offset().top;
 				element_position_top = this.$el.offset().top;
 				new_position = (window_top - element_position_top) + $( window ).height() / 2;
-				if ( 40 < new_position && new_position < element_height ) {
+				if ( new_position > 40 && new_position < element_height ) {
 					this.$controls_buttons.css( 'top', new_position );
 				} else if ( new_position > element_height ) {
 					this.$controls_buttons.css( 'top', element_height - 40 );
@@ -82,10 +83,6 @@
 			this.model.bind( 'change_parent_id', this.changeShortcodeParent, this );
 			this.createParams();
 		},
-		/**
-		 * @deprecated since 4.8 vc_user_access should be used
-		 * @returns {boolean}
-		 */
 		hasUserAccess: function () {
 			var shortcodeTag;
 
@@ -106,22 +103,6 @@
 			}
 			return true;
 		},
-		/**
-		 * Check does current user have a access to shortcode via vc_roles.
-		 *
-		 * @since 4.8
-		 * @param action,
-		 */
-		canCurrentUser: function ( action ) {
-			var tag, result = false;
-			tag = this.model.get( 'shortcode' );
-			if ( undefined === action || 'all' === action ) {
-				result = vc_user_access().shortcodeAll( tag );
-			} else {
-				result = vc_user_access().shortcodeEdit( tag );
-			}
-			return result;
-		},
 		createParams: function () {
 			var tag, settings, params;
 
@@ -135,7 +116,7 @@
 		},
 		setContent: function () {
 			this.$content = this.$el.find( '> .wpb_element_wrapper > .vc_container_for_children,'
-				+ ' > .vc_element-wrapper > .vc_container_for_children' );
+			+ ' > .vc_element-wrapper > .vc_container_for_children' );
 		},
 		setEmpty: function () {
 		},
@@ -184,8 +165,7 @@
 					data: {
 						action: 'wpb_get_element_backend_html',
 						data_element: this.model.get( 'shortcode' ),
-						data_width: _.isUndefined( params.width ) ? '1/1' : params.width,
-						_vcnonce: window.vcAdminNonce
+						data_width: _.isUndefined( params.width ) ? '1/1' : params.width
 					},
 					dataType: 'html',
 					context: this
@@ -210,7 +190,7 @@
 
 			tag = this.model.get( 'shortcode' );
 			hasChilds = ! ! vc.shortcodes.where( { parent_id: this.model.get( 'id' ) } ).length;
-			if ( ! hasChilds && true === this.use_default_content && _.isObject( vc.map[ tag ] ) && _.isString( vc.map[ tag ].default_content ) && vc.map[ tag ].default_content.length ) {
+			if ( ! hasChilds && this.use_default_content === true && _.isObject( vc.map[ tag ] ) && _.isString( vc.map[ tag ].default_content ) && vc.map[ tag ].default_content.length ) {
 				this.use_default_content = false;
 				Shortcodes.createFromString( vc.map[ tag ].default_content, this.model );
 			}
@@ -230,8 +210,8 @@
 				vc.app.views[ this.model.get( 'parent_id' ) ].changedContent( this );
 			}
 			_.defer( _.bind( function () {
-				vc.events.trigger( 'shortcodeView:ready', this );
-				vc.events.trigger( 'shortcodeView:ready:' + this.model.get( 'shortcode' ), this );
+				vc.events.trigger( 'shortcodeView:ready' );
+				vc.events.trigger( 'shortcodeView:ready:' + this.model.get( 'shortcode' ) );
 			}, this ) );
 			return this;
 		},
@@ -243,7 +223,7 @@
 			}, view.model ) );
 			if ( before_shortcode ) {
 				view.render().$el.insertAfter( '[data-model-id=' + before_shortcode.id + ']' );
-			} else if ( 'append' === method ) {
+			} else if ( method === 'append' ) {
 				this.$content.append( view.render().el );
 			} else {
 				this.$content.prepend( view.render().el );
@@ -294,8 +274,7 @@
 								data: {
 									action: 'wpb_single_image_src',
 									content: value,
-									size: 'thumbnail',
-									_vcnonce: window.vcAdminNonce
+									size: 'thumbnail'
 								},
 								dataType: 'html',
 								context: this
@@ -311,10 +290,10 @@
 					if ( $admin_label.length ) {
 						var inverted_value;
 
-						if ( '' === value || _.isUndefined( value ) ) {
+						if ( value === '' || _.isUndefined( value ) ) {
 							$admin_label.hide().addClass( 'hidden-label' );
 						} else {
-							if ( _.isObject( param_settings.value ) && ! _.isArray( param_settings.value ) && 'checkbox' === param_settings.type ) {
+							if ( _.isObject( param_settings.value ) && ! _.isArray( param_settings.value ) && param_settings.type == 'checkbox' ) {
 								inverted_value = _.invert( param_settings.value );
 								label_value = _.map( value.split( /[\s]*\,[\s]*/ ), function ( val ) {
 									return _.isString( inverted_value[ val ] ) ? inverted_value[ val ] : val;
@@ -330,18 +309,18 @@
 				}, this );
 			}
 			view = vc.app.views[ model.get( 'parent_id' ) ];
-			if ( false !== model.get( 'parent_id' ) && _.isObject( view ) ) {
+			if ( model.get( 'parent_id' ) !== false && _.isObject( view ) ) {
 				view.checkIsEmpty();
 			}
 		},
 		changeShortcodeParent: function ( model ) {
-			if ( false === this.model.get( 'parent_id' ) ) {
+			if ( this.model.get( 'parent_id' ) === false ) {
 				return model;
 			}
 			var $parent_view = $( '[data-model-id=' + this.model.get( 'parent_id' ) + ']' ),
 				view = vc.app.views[ this.model.get( 'parent_id' ) ];
 			this.$el.appendTo( $parent_view.find( '> .wpb_element_wrapper > .wpb_column_container,'
-				+ ' > .vc_element-wrapper > .wpb_column_container' ) );
+			+ ' > .vc_element-wrapper > .wpb_column_container' ) );
 			view.checkIsEmpty();
 		},
 		// }}
@@ -351,12 +330,13 @@
 				e.preventDefault();
 			}
 			var answer = confirm( i18n.press_ok_to_delete_section );
-			if ( true === answer ) {
+			if ( answer === true ) {
 				this.model.destroy();
 			}
 		},
 		addElement: function ( e ) {
 			_.isObject( e ) && e.preventDefault();
+			// new ElementBlockView({model:{position_to_add:!_.isObject(e) || !$(e.currentTarget).closest('.bottom-controls').hasClass('bottom-controls') ? 'start' : 'end'}}).show(this);
 			vc.add_element_block_view.render( this.model,
 				! _.isObject( e ) || ! $( e.currentTarget ).closest( '.bottom-controls' ).hasClass( 'bottom-controls' ) );
 		},
@@ -373,7 +353,7 @@
 			if ( _.isObject( e ) ) {
 				e.preventDefault();
 			}
-			vc.clone_index /= 10;
+			vc.clone_index = vc.clone_index / 10;
 			return this.cloneModel( this.model, this.model.get( 'parent_id' ) );
 		},
 		cloneModel: function ( model, parent_id, save_order ) {
@@ -382,7 +362,7 @@
 				params,
 				tag;
 
-			new_order = _.isBoolean( save_order ) && true === save_order ? model.get( 'order' ) : parseFloat( model.get( 'order' ) ) + vc.clone_index;
+			new_order = _.isBoolean( save_order ) && save_order === true ? model.get( 'order' ) : parseFloat( model.get( 'order' ) ) + vc.clone_index;
 			params = _.extend( {}, model.get( 'params' ) );
 			tag = model.get( 'shortcode' );
 
@@ -410,8 +390,8 @@
 		events: {
 			"click #wpb-add-new-row": 'createRow',
 			'click #vc_post-settings-button': 'editSettings',
-			'click #vc_add-new-element, [data-vc-element="add-element-action"]': 'addElement',
-			'click [data-vc-element="add-text-block-action"]': 'addTextBlock',
+			'click #vc_add-new-element, .vc_add-element-button, .vc_add-element-not-empty-button': 'addElement',
+			'click .vc_add-text-block-button': 'addTextBlock',
 			'click .wpb_switch-to-composer': 'switchComposer',
 			'click #vc_templates-editor-button': 'openTemplatesWindow',
 			'click #vc_templates-more-layouts': 'openTemplatesWindow',
@@ -419,57 +399,18 @@
 			'click #wpb-save-post': 'save',
 			'click .vc_control-preview': 'preview'
 		},
-		initializeAccessPolicy: function () {
-			this.accessPolicy = {
-				be_editor: vc_user_access().editor( 'backend_editor' ),
-				fe_editor: vc_frontend_enabled && vc_user_access().editor( 'frontend_editor' ),
-				classic_editor: ! vc_user_access().check( 'backend_editor', 'disabled_ce_editor', undefined, true )
-			};
-		},
-		accessPolicyActions: function () {
-			var front = '', back = '';
-
-			if ( this.accessPolicy.fe_editor ) {
-				front = '<span class="vc_spacer"></span><a class="wpb_switch-to-front-composer" href="' + $( '#wpb-edit-inline' ).attr( 'href' ) + '">' + window.i18nLocale.main_button_title_frontend_editor + '</a>';
-			}
-
-			if ( this.accessPolicy.classic_editor ) {
-				if ( this.accessPolicy.be_editor ) {
-					back = '<span class="vc_spacer"></span><a class="wpb_switch-to-composer" href="#">' + window.i18nLocale.main_button_title_backend_editor + '</a>';
-				}
-			} else {
-				$( '#postdivrich' ).hide();
-				if ( this.accessPolicy.be_editor ) {
-					var _this = this;
-
-					_.defer( function () {
-						_this.show();
-						_this.status = 'shown';
-					} );
-				}
-			}
-
-			if ( front || back ) {
-				this.$buttonsContainer = $( '<div class="composer-switch"><span class="logo-icon"></span>' + back + front + '</div>' ).insertAfter( 'div#titlediv' );
-				if ( this.accessPolicy.classic_editor ) {
-					this.$switchButton = this.$buttonsContainer.find( '.wpb_switch-to-composer' );
-					this.$switchButton.click( this.switchComposer );
-				}
-			}
-		},
 		initialize: function () {
+			this.accessPolicy = $( '.vc_js_composer_group_access_show_rule' ).val();
+			if ( this.accessPolicy == 'no' ) {
+				return false;
+			}
+			this.buildRelevance();
 			_.bindAll( this,
 				'switchComposer',
 				'dropButton',
 				'processScroll',
 				'updateRowsSorting',
 				'updateElementsSorting' );
-			this.initializeAccessPolicy();
-			this.accessPolicyActions();
-			if ( ! this.accessPolicy.be_editor && ! this.accessPolicy.fe_editor ) {
-				return false;
-			}
-			this.buildRelevance();
 			vc.events.on( 'shortcodes:add', vcAddShortcodeDefaultParams, this );
 			vc.events.on( 'shortcodes:add', vc.atts.addShortcodeIdParam, this ); // update vc_grid_id on shortcode adding
 			vc.events.on( 'shortcodes:add', this.addShortcode, this );
@@ -482,6 +423,7 @@
 			vc.events.triggerShortcodeEvents( 'update', model );
 		},
 		render: function () {
+			var front = '';
 			// Find required elemnts of the view.
 			this.$vcStatus = $( '#wpb_vc_js_status' );
 			this.$metablock_content = $( '.metabox-composer-content' );
@@ -489,14 +431,28 @@
 			this.$post = $( '#postdivrich' );
 			this.$loading_block = $( '#vc_logo' );
 
-			vc.add_element_block_view = new vc.AddElementUIPanelBackendEditor( { el: '#vc_ui-panel-add-element' } );
-			vc.edit_element_block_view = new vc.EditElementUIPanel( { el: '#vc_ui-panel-edit-element' } );
+			if ( this.accessPolicy !== 'only' ) {
+				if ( vc_frontend_enabled ) {
+					front = '<span class="vc_spacer"></span><a class="wpb_switch-to-front-composer" href="' + $( '#wpb-edit-inline' ).attr( 'href' ) + '">' + window.i18nLocale.main_button_title_frontend_editor + '</a>';
+				}
+				this.$buttonsContainer = $( '<div class="composer-switch"><span class="logo-icon"></span><span class="vc_spacer"></span><a class="wpb_switch-to-composer" href="#">' + window.i18nLocale.main_button_title_backend_editor + '</a>' + front + '</div>' ).insertAfter( 'div#titlediv' );
+				// this.$switchButton = $('<a class="wpb_switch-to-composer button-primary" href="#">' + window.i18nLocale.main_button_title + '</a>').insertAfter('div#titlediv').wrap('<p class="composer-switch" />');
+				this.$switchButton = this.$buttonsContainer.find( '.wpb_switch-to-composer' );
+				this.$switchButton.click( this.switchComposer );
+			}
 
-			vc.templates_panel_view = new vc.TemplateWindowUIPanelBackendEditor( { el: '#vc_ui-panel-templates' } );
-			vc.post_settings_view = new vc.PostSettingsUIPanelBackendEditor( { el: '#vc_ui-panel-post-settings' } );
+			vc.add_element_block_view = new vc.AddElementBlockViewBackendEditor( { el: '#vc_add-element-dialog' } );
+			vc.edit_element_block_view = new vc.EditElementPanelView( { el: '#vc_properties-panel' } );
+			/**
+			 * @deprecated since 4.4
+			 * @type {vc.TemplatesEditorPanelViewBackendEditor}
+			 */
+			vc.templates_editor_view = new vc.TemplatesEditorPanelViewBackendEditor( { el: '#vc_templates-editor' } );
+			vc.templates_panel_view = new vc.TemplatesPanelViewBackend( { el: '#vc_templates-panel' } );
+			vc.post_settings_view = new vc.PostSettingsPanelViewBackendEditor( { el: '#vc_post-settings-panel' } );
 			this.setSortable();
 			this.setDraggable();
-			vc.is_mobile = 0 < $( 'body.mobile' ).length;
+			vc.is_mobile = $( 'body.mobile' ).length > 0;
 			vc.saved_custom_css = $( '#wpb_custom_post_css_field' ).val();
 			vc.updateSettingsBadge();
 			/**
@@ -509,14 +465,11 @@
 		},
 		addAll: function () {
 			this.views = {};
-			this.$content.removeClass( 'loading' ).empty();
+			this.$content.removeClass( 'loading' ).html( '' );
 			this.addChild( false );
 			this.checkEmpty();
 			this.$loading_block.removeClass( 'vc_ajax-loading' );
 			this.$metablock_content.removeClass( 'vc_loading-shortcodes' );
-			_.defer( function () {
-				vc.events.trigger( 'app.addAll' );
-			} );
 		},
 		addChild: function ( parent_id ) {
 			_.each( vc.shortcodes.where( { parent_id: parent_id } ), function ( shortcode ) {
@@ -568,7 +521,7 @@
 			view = this.getView( model );
 			params = _.extend( vc.getDefaults( model.get( 'shortcode' ) ), model.get( 'params' ) );
 			model.set( 'params', params, { silent: true } );
-			parentModelView = false !== model.get( 'parent_id' ) ?
+			parentModelView = model.get( 'parent_id' ) !== false ?
 				this.views[ model.get( 'parent_id' ) ] : false;
 			this.views[ model.id ] = view;
 			if ( model.get( 'parent_id' ) ) {
@@ -591,9 +544,9 @@
 			params = _.extend( vc.getDefaults( model.get( 'shortcode' ) ), model.get( 'params' ) );
 			model.set( 'params', params, { silent: true } );
 			view = this.getView( model );
-			parentModelView = false !== model.get( 'parent_id' ) ?
+			parentModelView = model.get( 'parent_id' ) !== false ?
 				this.views[ model.get( 'parent_id' ) ] : false;
-			view.use_default_content = true !== model.get( 'cloned' );
+			view.use_default_content = model.get( 'cloned' ) !== true;
 			this.views[ model.id ] = view;
 			if ( parentModelView ) {
 				parentModelView.addShortcode( view );
@@ -617,7 +570,7 @@
 		addRow: function ( view ) {
 			var before_shortcode;
 			before_shortcode = _.last( vc.shortcodes.filter( function ( shortcode ) {
-				return false === shortcode.get( 'parent_id' ) && parseFloat( shortcode.get( 'order' ) ) < parseFloat( this.get( 'order' ) );
+				return shortcode.get( 'parent_id' ) === false && parseFloat( shortcode.get( 'order' ) ) < parseFloat( this.get( 'order' ) );
 			}, view.model ) );
 			if ( before_shortcode ) {
 				view.render().$el.insertAfter( '[data-model-id=' + before_shortcode.id + ']' );
@@ -626,32 +579,19 @@
 			}
 		},
 		addTextBlock: function ( e ) {
-			var row, column, params;
-
 			e.preventDefault();
-
-			row = Shortcodes.create( {
-				shortcode: 'vc_row'
-			} );
-
-			column = Shortcodes.create( {
-				shortcode: 'vc_column',
-				params: { width: '1/1' },
-				parent_id: row.id,
-				root_id: row.id
-			} );
-
-			params = vc.getDefaults( 'vc_column_text' );
-			if ( 'undefined' !== typeof(window.vc_settings_presets[ 'vc_column_text' ]) ) {
-				params = _.extend( params, window.vc_settings_presets[ 'vc_column_text' ] );
-			}
-
-			return Shortcodes.create( {
-				shortcode: 'vc_column_text',
-				parent_id: column.id,
-				root_id: row.id,
-				params: params
-			} );
+			var row = Shortcodes.create( { shortcode: 'vc_row' } ),
+				column = Shortcodes.create( {
+					shortcode: 'vc_column',
+					params: { width: '1/1' },
+					parent_id: row.id,
+					root_id: row.id
+				} ),
+				text_block = Shortcodes.create( {
+					shortcode: 'vc_column_text', /*params:vc.getDefaults('vc_column_text'), */
+					parent_id: column.id, root_id: row.id
+				} );
+			return text_block;
 		},
 		/**
 		 * Create row
@@ -673,13 +613,16 @@
 			_.isObject( e ) && e.preventDefault();
 			vc.add_element_block_view.render( false );
 		},
+		/**
+		 * @deprecated since 4.4 use openTemplatesWindow
+		 * @param e
+		 */
+		openTemplatesEditor: function ( e ) {
+			e && e.preventDefault();
+			vc.templates_editor_view.render().show();
+		},
 		openTemplatesWindow: function ( e ) {
 			e && e.preventDefault();
-			if ( $( e.currentTarget ).is( '#vc_templates-more-layouts' ) ) {
-				vc.templates_panel_view.once( 'show', function () {
-					$( '[data-vc-ui-element-target="[data-tab=default_templates]"]' ).click();
-				} );
-			}
 			vc.templates_panel_view.render().show();
 		},
 		loadDefaultTemplate: function ( e ) {
@@ -708,6 +651,7 @@
 					var old_parent_id = model.get( 'parent_id' );
 					store.lock();
 					model.save( { parent_id: parent.id } );
+					//model.trigger('change_parent_id',model,parent.id,old_parent_id); - this is added in 6799894cf6e4cfd1333ded8522b5761099b0a234, and causes bug #2027, but is needed in TTA #1572, #1883
 					app.views[ old_parent_id ].checkIsEmpty();
 					app.views[ parent.id ].checkIsEmpty();
 				}
@@ -734,24 +678,25 @@
 		},
 		renderPlaceholder: function ( event, element ) {
 			var tag = $( element ).data( 'element_type' );
-			var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && true === vc.map[ tag ].is_container ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
-			var $helper = $( '<div class="vc_helper vc_helper-' + tag + '"><i class="vc_general vc_element-icon' +
-				( vc.map[ tag ].icon ? ' ' + vc.map[ tag ].icon : '' ) +
-				'"' +
-				( is_container ? ' data-is-container="true"' : '' ) +
-				'></i> ' + vc.map[ tag ].name + '</div>' ).prependTo( 'body' );
+			var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && vc.map[ tag ].is_container === true ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
+			var $helper = $( '<div class="vc_helper vc_helper-' + tag + '"><i class="vc_element-icon'
+			+ ( vc.map[ tag ].icon ? ' ' + vc.map[ tag ].icon : '' )
+			+ '"'
+			+ ( is_container ? ' data-is-container="true"' : '' )
+			+ '></i> ' + vc.map[ tag ].name + '</div>' ).prependTo( 'body' );
 			return $helper;
 		},
 		rowSortableSelector: "> .wpb_vc_row",
 		setSortable: function () {
+			var that = this;
 			// 1st level sorting (rows). work also in wp41.
 			$( '.wpb_main_sortable' ).sortable( {
 				forcePlaceholderSize: true,
 				placeholder: "widgets-placeholder",
+				// cursorAt: { left: 10, top : 20 },
 				cursor: "move",
 				items: this.rowSortableSelector, // wpb_sortablee
 				handle: '.column_move',
-				cancel: '.vc-non-draggable-row',
 				distance: 0.5,
 				start: this.sortingStarted,
 				stop: this.sortingStopped,
@@ -766,10 +711,9 @@
 				forceHelperSize: false,
 				connectWith: ".wpb_column_container",
 				placeholder: "vc_placeholder",
-				items: "> div.wpb_sortable,> div.vc-non-draggable", //wpb_sortablee
+				items: "> div.wpb_sortable", //wpb_sortablee
 				helper: this.renderPlaceholder,
 				distance: 3,
-				cancel: '.vc-non-draggable',
 				scroll: true,
 				scrollSensitivity: 70,
 				cursor: 'move',
@@ -788,9 +732,9 @@
 					if ( ! vc.check_relevance( parent_tag, tag ) ) {
 						$( this ).sortable( 'cancel' );
 					}
-					var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && true === vc.map[ tag ].is_container ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
-					if ( is_container && ! (true === allowed_container_element || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
-							'' )) ) {
+					var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && vc.map[ tag ].is_container === true ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
+					if ( is_container && ! (allowed_container_element === true || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
+							'' )) ) { // && ui.item.hasClass('wpb_container_block')
 						$( this ).sortable( 'cancel' );
 					}
 					$( '.vc_sorting-empty-container' ).removeClass( 'vc_sorting-empty-container' );
@@ -804,8 +748,8 @@
 						ui.placeholder.addClass( 'vc_hidden-placeholder' );
 						return false;
 					}
-					var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && true === vc.map[ tag ].is_container ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
-					if ( is_container && ! (true === allowed_container_element || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
+					var is_container = _.isObject( vc.map[ tag ] ) && ( ( _.isBoolean( vc.map[ tag ].is_container ) && vc.map[ tag ].is_container === true ) || ! _.isEmpty( vc.map[ tag ].as_parent ) );
+					if ( is_container && ! (allowed_container_element === true || allowed_container_element === ui.item.data( 'element_type' ).replace( /_inner$/,
 							'' )) ) {
 						ui.placeholder.addClass( 'vc_hidden-placeholder' );
 						return false;
@@ -813,52 +757,50 @@
 					if ( ! _.isNull( ui.sender ) && ui.sender.length && ! ui.sender.find( '[data-element_type]:visible' ).length ) {
 						ui.sender.addClass( 'vc_sorting-empty-container' );
 					}
-					ui.placeholder.removeClass( 'vc_hidden-placeholder' );
+					ui.placeholder.removeClass( 'vc_hidden-placeholder' ); // .parent().removeClass('vc_empty-container');
 					ui.placeholder.css( { maxWidth: ui.placeholder.parent().width() } );
 				}
 			} );
-			$( '.wpb_column_container' ).disableSelection();
 			return this;
 		},
 		setNotEmpty: function () {
+			// this.$metablock_content.removeClass('empty-composer');
 			$( '#vc_no-content-helper' ).addClass( 'vc_not-empty' );
 		},
 		setIsEmpty: function () {
+			// this.$metablock_content.addClass('empty-composer');
 			$( '#vc_no-content-helper' ).removeClass( 'vc_not-empty' )
 		},
 		checkEmpty: function ( model ) {
-			if ( _.isObject( model ) && false !== model.get( 'parent_id' ) && model.get( 'parent_id' ) != model.id ) {
+			if ( _.isObject( model ) && model.get( 'parent_id' ) !== false && model.get( 'parent_id' ) != model.id ) {
 				var parent_view = this.views[ model.get( 'parent_id' ) ];
 				parent_view.checkIsEmpty();
 			}
-			if ( 0 === Shortcodes.length ) {
+			if ( Shortcodes.length === 0 ) {
 				this.setIsEmpty();
 			} else {
 				this.setNotEmpty();
 			}
 		},
 		switchComposer: function ( e ) {
-			// @todo need to remove it separate js view and all logic should be removed from be editor.
 			if ( _.isObject( e ) ) {
 				e.preventDefault();
 			}
-			if ( ! this.accessPolicy.be_editor ) {
-				return false;
-			}
-			if ( 'shown' === this.status ) {
-				if ( this.accessPolicy.classic_editor ) {
+			if ( this.status == 'shown' ) {
+				if ( this.accessPolicy !== 'only' ) {
 					! _.isUndefined( this.$switchButton ) && this.$switchButton.text( window.i18nLocale.main_button_title_backend_editor );
 					! _.isUndefined( this.$buttonsContainer ) && this.$buttonsContainer.removeClass( 'vc_backend-status' );
 				}
 				this.close();
 				this.status = 'closed';
 			} else {
-				if ( this.accessPolicy.classic_editor ) {
+				if ( this.accessPolicy !== 'only' ) {
 					! _.isUndefined( this.$switchButton ) && this.$switchButton.text( window.i18nLocale.main_button_title_revert );
 					! _.isUndefined( this.$buttonsContainer ) && this.$buttonsContainer.addClass( 'vc_backend-status' );
 				}
 				this.show();
 				this.status = 'shown';
+
 			}
 		},
 		show: function () {
@@ -883,6 +825,7 @@
 		},
 		close: function () {
 			this.$vcStatus.val( "false" );
+			// if (this.$switchButton !== undefined) this.$switchButton.html(window.i18nLocale.main_button_title);
 			this.$el.hide();
 			if ( _.isObject( window.editorExpand ) ) {
 				_.defer( function () {
@@ -896,7 +839,7 @@
 			} );
 		},
 		checkVcStatus: function () {
-			if ( this.accessPolicy.be_editor && ( ! this.accessPolicy.classic_editor || 'true' === this.$vcStatus.val() ) ) {
+			if ( this.accessPolicy === 'only' || this.$vcStatus.val() === 'true' ) {
 				this.switchComposer();
 			}
 		},
@@ -912,7 +855,7 @@
 		},
 		navOnScroll: function () {
 			var $win = $( window );
-			this.$nav = $( '#vc_navbar' );
+			this.$nav = $( '#vc_navbar' ); // $('#wpb_visual_composer-elements');
 			this.setNavTop();
 			this.processScroll();
 			$win.unbind( 'scroll.composer' ).on( 'scroll.composer', this.processScroll );
@@ -922,11 +865,11 @@
 				this.$nav.removeClass( 'vc_subnav-fixed' );
 				return;
 			}
-			if ( ! this.navTop || 0 > this.navTop ) {
+			if ( ! this.navTop || this.navTop < 0 ) {
 				this.setNavTop();
 			}
 			this.scrollTop = $( window ).scrollTop() + 80;
-			if ( 0 < this.navTop && this.scrollTop >= this.navTop && ! this.isFixed ) {
+			if ( this.navTop > 0 && this.scrollTop >= this.navTop && ! this.isFixed ) {
 				this.isFixed = 1;
 				this.$nav.addClass( 'vc_subnav-fixed' );
 			} else if ( this.scrollTop <= this.navTop && this.isFixed ) {
@@ -984,11 +927,7 @@
 	$( function () {
 		if ( $( '#wpb_visual_composer' ).is( 'div' ) ) {
 			var app = vc.app = new VisualComposer();
-			if ( app.accessPolicy.be_editor ) {
-				'no' !== app.accessPolicy && vc.app.checkVcStatus();
-			} else {
-				app.$el.remove();
-			}
+			app.accessPolicy !== 'no' && vc.app.checkVcStatus();
 		}
 	} );
 	/**

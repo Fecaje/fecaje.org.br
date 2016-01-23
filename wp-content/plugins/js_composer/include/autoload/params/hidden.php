@@ -1,5 +1,4 @@
 <?php
-
 /**
  * required hooks for hidden field.
  * @since 4.5

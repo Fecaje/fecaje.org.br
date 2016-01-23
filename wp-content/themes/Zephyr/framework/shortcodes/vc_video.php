@@ -3,22 +3,38 @@
 /**
  * Shortcode: us_btn
  *
- * Dev note: if you want to change some of the default values or acceptable attributes, overload the shortcodes config.
- *
- * @var $shortcode string Current shortcode name
- * @var $shortcode_base string The original called shortcode name (differs if called an alias)
- * @var $content string Shortcode's inner content
- * @var $atts array Shortcode attributes
- *
- * @param $atts ['link'] string Video link
- * @param $atts ['ratio'] string Ratio: '16x9' / '4x3' / '3x2' / '1x1'
- * @param $atts ['max_width'] string Max width in pixels
- * @param $atts ['align'] string Video alignment: 'left' / 'center' / 'right'
- * @param $atts ['css'] string Extra css
- * @param $atts ['el_class'] string Extra class name
+ * @var $shortcode {String} Current shortcode name
+ * @var $shortcode_base {String} The original called shortcode name (differs if called an alias)
+ * @var $atts {Array} Shortcode attributes
+ * @var $content {String} Shortcode's inner content
  */
 
-$atts = us_shortcode_atts( $atts, 'vc_video' );
+$atts = shortcode_atts( array(
+	/**
+	 * @var string Video link
+	 */
+	'link' => 'http://vimeo.com/23237102',
+	/**
+	 * @var string Ratio: '16x9' / '4x3' / '3x2' / '1x1'
+	 */
+	'ratio' => '16x9',
+	/**
+	 * @var string Max width in pixels
+	 */
+	'max_width' => '',
+	/**
+	 * @var string Video alignment: 'left' / 'center' / 'right'
+	 */
+	'align' => 'left',
+	/**
+	 * @var string Extra css
+	 */
+	'css' => '',
+	/**
+	 * @var string Extra class name
+	 */
+	'el_class' => '',
+), $atts );
 
 $classes = '';
 $inner_css = '';

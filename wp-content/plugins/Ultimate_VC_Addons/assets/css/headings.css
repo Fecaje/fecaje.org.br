@@ -51,13 +51,21 @@
     line-height: normal;
     margin: 0 auto
 }
-.uvc-sub-heading div,
+#content-container .uvc-sub-heading p,
 .uvc-sub-heading p {
     font-family: inherit!important;
     font-weight: inherit!important;
     font-size: inherit!important;
     color: inherit!important;
     line-height: inherit!important
+}
+{
+    font-family: inherit!important;
+    font-weight: inherit!important;
+    font-size: inherit!important;
+    color: inherit!important;
+    line-height: inherit!important;
+    font-style: inherit!important
 }
 .uvc-heading p {
     word-break: normal;

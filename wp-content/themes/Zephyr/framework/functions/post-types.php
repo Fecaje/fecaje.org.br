@@ -11,7 +11,7 @@ function us_create_post_types() {
 			'add_new' => __( 'Add Portfolio Item', 'us' ),
 		),
 		'public' => TRUE,
-		'rewrite' => array( 'slug' => us_get_option( 'portfolio_slug', 'portfolio' ) ),
+		'rewrite' => array( 'slug' => us_get_option( 'portfolio_slug', 'us_portfolio' ) ),
 		'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'comments' ),
 		'can_export' => TRUE,
 		'capability_type' => 'us_portfolio',
@@ -23,7 +23,7 @@ function us_create_post_types() {
 		'hierarchical' => TRUE,
 		'label' => __( 'Portfolio Categories', 'us' ),
 		'singular_label' => __( 'Portfolio Category', 'us' ),
-		'rewrite' => TRUE,
+		'rewrite' => TRUE
 	) );
 
 	// Clients post type
@@ -45,12 +45,6 @@ function us_create_post_types() {
 		'capability_type' => 'us_client',
 		'map_meta_cap' => TRUE,
 	) );
-
-	// Portfolio slug may have changed, so we need to keep WP's rewrite rules fresh
-	if ( get_transient( 'us_flush_rules' ) ) {
-		flush_rewrite_rules();
-		delete_transient( 'us_flush_rules' );
-	}
 }
 
 // TODO Move to a separate plugin for proper action order, and remove page refreshes

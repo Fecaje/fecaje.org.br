@@ -34,7 +34,6 @@ $sample_date = strtotime( 'January 15 ' . date( 'Y' ) );
 $displayTab = array(
 	'priority' => 20,
 	'fields'   =>
-
 	/**
 	 * Filter the fields available on the display settings tab
 	 *
@@ -49,7 +48,7 @@ $displayTab = array(
 			),
 			'info-box-title'                     => array(
 				'type' => 'html',
-				'html' => '<h1>' . esc_html__( 'Display Settings', 'the-events-calendar' ) . '</h1>',
+				'html' => '<h2>' . __( 'Display Settings', 'the-events-calendar' ) . '</h2>',
 			),
 			'info-box-description'               => array(
 				'type' => 'html',
@@ -68,24 +67,24 @@ $displayTab = array(
 			),
 			'tribeEventsBasicSettingsTitle'      => array(
 				'type' => 'html',
-				'html' => '<h2>' . __( 'Basic Template Settings', 'the-events-calendar' ) . '</h2>',
+				'html' => '<h3>' . __( 'Basic Template Settings', 'the-events-calendar' ) . '</h3>',
 			),
 			'stylesheetOption'                   => array(
 				'type'            => 'radio',
 				'label'           => __( 'Default stylesheet used for events templates', 'the-events-calendar' ),
 				'default'         => 'tribe',
 				'options'         => array(
-					'skeleton' => esc_html__( 'Skeleton Styles', 'the-events-calendar' ) .
-								  '<p class="description tribe-style-selection">' .
-								  esc_html__( 'Only includes enough css to achieve complex layouts like calendar and week view.', 'the-events-calendar' ) .
-								  '</p>',
-					'full'     => esc_html__( 'Full Styles', 'the-events-calendar' ) .
+					'skeleton' => __( 'Skeleton Styles', 'the-events-calendar' ) .
 								  '<p class=\'description tribe-style-selection\'>' .
-								  esc_html__( 'More detailed styling, tries to grab styles from your theme.', 'the-events-calendar' ) .
+								  __( 'Only includes enough css to achieve complex layouts like calendar and week view.', 'the-events-calendar' ) .
 								  '</p>',
-					'tribe'    => esc_html__( 'Tribe Events Styles', 'the-events-calendar' ) .
+					'full'     => __( 'Full Styles', 'the-events-calendar' ) .
 								  '<p class=\'description tribe-style-selection\'>' .
-								  esc_html__( 'A fully designed and styled theme for your events pages.', 'the-events-calendar' ) .
+								  __( 'More detailed styling, tries to grab styles from your theme.', 'the-events-calendar' ) .
+								  '</p>',
+					'tribe'    => __( 'Tribe Events Styles', 'the-events-calendar' ) .
+								  '<p class=\'description tribe-style-selection\'>' .
+								  __( 'A fully designed and styled theme for your events pages.', 'the-events-calendar' ) .
 								  '</p>',
 				),
 				'validation_type' => 'options',
@@ -139,7 +138,7 @@ $displayTab = array(
 			),
 			'tribeEventsDateFormatSettingsTitle' => array(
 				'type' => 'html',
-				'html' => '<h2>' . __( 'Date Format Settings', 'the-events-calendar' ) . '</h2>',
+				'html' => '<h3>' . __( 'Date Format Settings', 'the-events-calendar' ) . '</h3>',
 			),
 			'tribeEventsDateFormatExplanation'   => array(
 				'type' => 'html',
@@ -205,7 +204,7 @@ $displayTab = array(
 			),
 			'tribeEventsAdvancedSettingsTitle'   => array(
 				'type' => 'html',
-				'html' => '<h2>' . __( 'Advanced Template Settings', 'the-events-calendar' ) . '</h2>',
+				'html' => '<h3>' . __( 'Advanced Template Settings', 'the-events-calendar' ) . '</h3>',
 			),
 			'tribeEventsBeforeHTML'              => array(
 				'type'            => 'wysiwyg',

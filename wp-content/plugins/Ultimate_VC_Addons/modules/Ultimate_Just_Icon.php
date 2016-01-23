@@ -325,16 +325,7 @@ if(!class_exists('AIO_Just_Icon'))
 			if($icon_type == 'custom'){
 
 				$img = apply_filters('ult_get_img_single', $icon_img, 'url');
-
-				if( isset( $icon_img ) ) {
-					$icon_img_arr = explode( '|', $icon_img );
-					$icon_img_id = ( isset( $icon_img_arr[0] ) && $icon_img_arr[0] != '' ) ? $icon_img_arr[0] : $icon_img;
-					$alt = get_post_meta($icon_img_id, '_wp_attachment_image_alt', true);	
-				}
-				else {
-					$alt = '';	
-				}
-				
+				$alt = get_post_meta($icon_img, '_wp_attachment_image_alt', true);
 				if($icon_style !== 'none'){
 					if($icon_color_bg !== '')
 						$style .= 'background:'.$icon_color_bg.';';

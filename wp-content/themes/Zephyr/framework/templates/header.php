@@ -13,161 +13,147 @@ $us_layout = US_Layout::instance();
 	<?php /* Don't remove the semicolon in the title tag below: it's needed for Theme Check */ ?>
 	<title><?php wp_title( '' ); ?></title>
 
-	<?php if ( us_get_option( 'favicon' ) ): ?>
-		<?php $favicon = usof_get_image_src( us_get_option( 'favicon' ) ); ?>
-		<?php if ( $favicon ): ?>
-			<link rel="shortcut icon" href="<?php echo esc_url( $favicon[0] ); ?>">
-		<?php endif;/*( $favicon )*/ ?>
-	<?php endif;/*( us_get_option( 'favicon' ) )*/ ?>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE" />
+
+<?php if ( us_get_option( 'favicon' ) ): ?>
+	<link rel="shortcut icon" href="<?php echo esc_url( us_get_option( 'favicon' ) ); ?>">
+<?php endif; ?>
 
 	<?php wp_head() ?>
 
-	<?php global $us_generate_css_file;
-	if ( ! isset( $us_generate_css_file ) OR ! $us_generate_css_file ): ?>
-		<style id='us-theme-options-css' type="text/css"><?php us_load_template( 'templates/theme-options.min.css' ) ?></style>
+	<?php global $us_generate_css_file; if ( ! isset( $us_generate_css_file ) OR ! $us_generate_css_file ): ?>
+	<style id='us-theme-options-css' type="text/css"><?php us_load_template( 'templates/theme-options.min.css' ) ?></style>
 	<?php endif; ?>
 </head>
-<body <?php body_class( 'l-body ' . $us_layout->body_classes() ) ?><?php echo $us_layout->body_styles() ?>>
-
-<?php if ( us_get_option( 'preloader' ) != 'disabled' ) {
-	$preloader_type = us_get_option( 'preloader' );
-	if ( ! in_array( $preloader_type, array( 1, 2, 3, 4, 5, 6, 7 ) ) ) {
-		$preloader_type = 1;
-	}
-	$preloader_type_class = ' type_' . $preloader_type;
-	?>
-	<div class='l-preloader'><?php echo "<div class='l-preloader-spinner'><div class='g-preloader " . $preloader_type_class . "'><div class='g-preloader-h'></div></div></div>"; ?></div>
-<?php } ?>
+<body <?php body_class('l-body '.$us_layout->body_classes()) ?><?php echo $us_layout->body_styles() ?>>
 
 <?php do_action( 'us_before_canvas' ) ?>
 
 <!-- CANVAS -->
 <div class="l-canvas <?php echo $us_layout->canvas_classes() ?>">
 
-	<?php if ( $us_layout->header_show != 'never' ): ?>
+<?php if ( $us_layout->header_show != 'never' ): ?>
 
-		<?php do_action( 'us_before_header' ) ?>
+	<?php do_action( 'us_before_header' ) ?>
 
-		<!-- HEADER -->
-		<div class="l-header <?php echo $us_layout->header_classes() ?>">
+	<!-- HEADER -->
+	<div class="l-header <?php echo $us_layout->header_classes() ?>">
+	
+		<?php if ( $us_layout->header_layout == 'extended' ): ?>
+		<div class="l-subheader at_top">
+			<div class="l-subheader-h i-cf">
 
-			<?php if ( $us_layout->header_layout == 'extended' ): ?>
-				<div class="l-subheader at_top">
-					<div class="l-subheader-h i-cf">
+				<?php do_action( 'us_top_subheader_start' ) ?>
+			
+				<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
+					<?php us_load_template( 'templates/widgets/contacts' ); ?>
+				<?php endif; ?>
 
-						<?php do_action( 'us_top_subheader_start' ) ?>
+				<?php if ( us_get_option( 'header_language_show' ) ): ?>
+					<?php us_load_template( 'templates/widgets/lang' ); ?>
+				<?php endif; ?>
 
-						<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
-							<?php us_load_template( 'templates/widgets/contacts' ); ?>
-						<?php endif; ?>
+				<?php if ( us_get_option( 'header_socials_show' ) ): ?>
+					<?php us_load_template( 'templates/widgets/socials' ); ?>
+				<?php endif; ?>
 
-						<?php if ( us_get_option( 'header_language_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/lang' ); ?>
-						<?php endif; ?>
+				<?php do_action( 'us_top_subheader_end' ) ?>
 
-						<?php if ( us_get_option( 'header_socials_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/socials' ); ?>
-						<?php endif; ?>
+			</div>
+		</div>
+		<?php endif/*( $us_layout->header_layout == 'extended' )*/; ?>
+		<div class="l-subheader at_middle">
+			<div class="l-subheader-h i-cf">
 
-						<?php do_action( 'us_top_subheader_end' ) ?>
+				<?php do_action( 'us_middle_subheader_start' ) ?>
 
-					</div>
-				</div>
-			<?php endif/*( $us_layout->header_layout == 'extended' )*/
-			; ?>
-			<div class="l-subheader at_middle">
-				<div class="l-subheader-h i-cf">
+				<?php us_load_template( 'templates/widgets/logo' ) ?>
 
-					<?php do_action( 'us_middle_subheader_start' ) ?>
+				<?php if ( $us_layout->header_layout == 'advanced' ): ?>
 
-					<?php us_load_template( 'templates/widgets/logo' ) ?>
-
-					<?php if ( $us_layout->header_layout == 'advanced' ): ?>
-
-						<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
-							<?php us_load_template( 'templates/widgets/contacts' ); ?>
-						<?php endif; ?>
-
-						<?php if ( us_get_option( 'header_socials_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/socials' ); ?>
-						<?php endif; ?>
-
-						<?php if ( us_get_option( 'header_language_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/lang' ); ?>
-						<?php endif; ?>
-
-					<?php elseif ( $us_layout->header_layout == 'sided' ): ?>
-
-						<?php us_load_template( 'templates/widgets/nav-main' ); ?>
-
-						<?php if ( us_get_option( 'header_search_show', TRUE ) ) { ?>
-							<?php us_load_template( 'templates/widgets/search', array( 'context' => 'header_search' ) ); ?>
-						<?php } ?>
-
-						<?php us_load_template( 'templates/widgets/cart' ); ?>
-
-						<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
-							<?php us_load_template( 'templates/widgets/contacts' ); ?>
-						<?php endif; ?>
-
-						<?php if ( us_get_option( 'header_socials_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/socials' ); ?>
-						<?php endif; ?>
-
-						<?php if ( us_get_option( 'header_language_show' ) ): ?>
-							<?php us_load_template( 'templates/widgets/lang' ); ?>
-						<?php endif; ?>
-
-					<?php elseif ( $us_layout->header_layout != 'centered' ): ?>
-
-						<?php us_load_template( 'templates/widgets/cart' ); ?>
-
-						<?php if ( us_get_option( 'header_search_show' ) ) { ?>
-							<?php us_load_template( 'templates/widgets/search', array( 'context' => 'header_search' ) ); ?>
-						<?php } ?>
-
-						<?php us_load_template( 'templates/widgets/nav-main' ); ?>
-
+					<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
+						<?php us_load_template( 'templates/widgets/contacts' ); ?>
 					<?php endif; ?>
 
-					<?php do_action( 'us_middle_subheader_end' ) ?>
-				</div>
+					<?php if ( us_get_option( 'header_socials_show' ) ): ?>
+						<?php us_load_template( 'templates/widgets/socials' ); ?>
+					<?php endif; ?>
+					
+					<?php if ( us_get_option( 'header_language_show' ) ): ?>
+						<?php us_load_template( 'templates/widgets/lang' ); ?>
+					<?php endif; ?>
+
+				<?php elseif ( $us_layout->header_layout == 'sided' ): ?>
+
+					<?php us_load_template( 'templates/widgets/nav-main' ); ?>
+
+					<?php if ( us_get_option( 'header_search_show', TRUE ) ) { ?>
+						<?php us_load_template( 'templates/widgets/search' ); ?>
+					<?php } ?>
+
+					<?php us_load_template( 'templates/widgets/cart' ); ?>
+
+					<?php if ( us_get_option( 'header_contacts_show' ) OR us_get_option( 'header_show_custom' ) ): ?>
+						<?php us_load_template( 'templates/widgets/contacts' ); ?>
+					<?php endif; ?>
+
+					<?php if ( us_get_option( 'header_socials_show' ) ): ?>
+						<?php us_load_template( 'templates/widgets/socials' ); ?>
+					<?php endif; ?>
+
+					<?php if ( us_get_option( 'header_language_show' ) ): ?>
+						<?php us_load_template( 'templates/widgets/lang' ); ?>
+					<?php endif; ?>
+
+				<?php elseif ( $us_layout->header_layout != 'centered' ): ?>
+				
+					<?php us_load_template( 'templates/widgets/cart' ); ?>
+
+					<?php if ( us_get_option( 'header_search_show' ) ) { ?>
+						<?php us_load_template( 'templates/widgets/search' ); ?>
+					<?php } ?>
+				
+					<?php us_load_template( 'templates/widgets/nav-main' ); ?>
+
+				<?php endif; ?>
+
+				<?php do_action( 'us_middle_subheader_end' ) ?>
 			</div>
-			<?php if ( $us_layout->header_layout == 'advanced' OR $us_layout->header_layout == 'centered' ): ?>
-				<div class="l-subheader at_bottom">
-					<div class="l-subheader-h i-cf">
-
-						<?php do_action( 'us_bottom_subheader_start' ) ?>
-
-						<?php if ( $us_layout->header_layout == 'advanced' ): ?>
-							<?php us_load_template( 'templates/widgets/cart' ); ?>
-						<?php endif; ?>
-
-						<?php if ( us_get_option( 'header_search_show' ) AND $us_layout->header_layout == 'advanced' ): ?>
-							<?php us_load_template( 'templates/widgets/search', array( 'context' => 'header_search' ) ); ?>
-						<?php endif; ?>
-
-						<?php us_load_template( 'templates/widgets/nav-main' ); ?>
-
-						<?php if ( us_get_option( 'header_search_show' ) AND $us_layout->header_layout == 'centered' ): ?>
-							<?php us_load_template( 'templates/widgets/search', array( 'context' => 'header_search' ) ); ?>
-						<?php endif; ?>
-
-						<?php if ( $us_layout->header_layout == 'centered' ): ?>
-							<?php us_load_template( 'templates/widgets/cart' ); ?>
-						<?php endif; ?>
-
-						<?php do_action( 'us_bottom_subheader_end' ) ?>
-
-					</div>
-				</div>
-			<?php endif/*( $us_layout->header_layout == 'advanced' OR $us_layout->header_layout == 'centered' )*/
-			; ?>
-
 		</div>
-		<!-- /HEADER -->
+		<?php if ( $us_layout->header_layout == 'advanced' OR $us_layout->header_layout == 'centered' ): ?>
+		<div class="l-subheader at_bottom">
+			<div class="l-subheader-h i-cf">
 
-		<?php do_action( 'us_after_header' ) ?>
+				<?php do_action( 'us_bottom_subheader_start' ) ?>
+				
+				<?php if ( $us_layout->header_layout == 'advanced' ): ?>
+					<?php us_load_template( 'templates/widgets/cart' ); ?>
+				<?php endif; ?>
 
-	<?php endif/*( $us_layout->header_show != 'never' )*/
-	; ?>
+				<?php if ( us_get_option( 'header_search_show' ) AND $us_layout->header_layout == 'advanced' ): ?>
+					<?php us_load_template( 'templates/widgets/search' ); ?>
+				<?php endif; ?>
+
+				<?php us_load_template( 'templates/widgets/nav-main' ); ?>
+
+				<?php if ( us_get_option( 'header_search_show' ) AND $us_layout->header_layout == 'centered' ): ?>
+					<?php us_load_template( 'templates/widgets/search' ); ?>
+				<?php endif; ?>
+
+				<?php if ( $us_layout->header_layout == 'centered' ): ?>
+					<?php us_load_template( 'templates/widgets/cart' ); ?>
+				<?php endif; ?>
+
+				<?php do_action( 'us_bottom_subheader_end' ) ?>
+				
+			</div>
+		</div>
+		<?php endif/*( $us_layout->header_layout == 'advanced' OR $us_layout->header_layout == 'centered' )*/; ?>
+
+	</div>
+	<!-- /HEADER -->
+
+	<?php do_action( 'us_after_header' ) ?>
+
+<?php endif/*( $us_layout->header_show != 'never' )*/; ?>
